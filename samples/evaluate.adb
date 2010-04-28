@@ -22,15 +22,11 @@ with Ada.Text_IO;
 
 procedure Evaluate is
 
-   use Ada.Text_IO;
-   use EL.Expressions;
-   use EL.Objects;
-
-   E : Expression;
-
-   Ctx : EL.Contexts.Default.Default_Context;
-   Result : Object;
+   Ctx    : EL.Contexts.Default.Default_Context;
+   E      : EL.Expressions.Expression;
+   Result : EL.Objects.Object;
 begin
-   E := Create_Expression ("1 + (2 - 3) * 4", Ctx);
-   Put_Line ("Result: " & To_String (E.Get_Value (Ctx)));
+   E := EL.Expressions.Create_Expression ("1 + (2 - 3) * 4", Ctx);
+   Result := E.Get_Value (Ctx);
+   Ada.Text_IO.Put_Line ("Result: " & EL.Objects.To_String (Result));
 end Evaluate;
