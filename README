@@ -8,7 +8,6 @@ Unified Expression Language shared by the JSP 2.1 and JSF 1.2 technologies.
 See Expression Language specification in JSR245
 (http://jcp.org/en/jsr/summary?id=245)
 
-
 Build with the following commands:
 
    ./configure
@@ -28,4 +27,12 @@ The unit tests are built using:
 And unit tests are executed with:
 
    bin/el_harness
+
+
+Documentation
+
+   The Ada EL sources as well as a wiki documentation is provided on:
+
+   http://code.google.com/p/ada-el/
+
 
