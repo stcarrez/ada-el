@@ -27,7 +27,7 @@ with Ada.Text_IO;
 with Bean;
 with Ada.Calendar;
 procedure Variable is
-   
+
    use Bean;
    use Ada.Text_IO;
    use EL.Expressions;
@@ -37,14 +37,14 @@ procedure Variable is
    E : Expression;
 
    Ctx : EL.Contexts.Default.Default_Context;
-   
+
    Joe  : Person_Access := Create_Person ("Joe", "Smith", 12);
    Bill : Person_Access := Create_Person ("Bill", "Johnson", 42);
       Start : Time;
-      
+
    Result : Object;
 begin
-   E := Create_Expression ("user.firstName & ' ' & user.lastName");
+   E := Create_Expression ("user.firstName & ' ' & user.lastName", Ctx);
 
    --  Bind the context to 'Joe' and evaluate
    Ctx.Set_Variable ("user", Joe);
@@ -54,7 +54,7 @@ begin
    end loop;
    Put_Line ("Time to eval: " & Duration'Image (Clock - Start));
    Put_Line ("Joe's name is " & To_String (Result));
-   
+
    --  Bind the context to 'Bill' and evaluate
    Ctx.Set_Variable ("user", Bill);
    Result := E.Get_Value (Ctx);

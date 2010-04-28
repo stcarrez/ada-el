@@ -1,4 +1,4 @@
-with "../config/shared";
+with "shared";
 with "el";
 
 project Samples is

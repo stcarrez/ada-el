@@ -8,3 +8,24 @@ Unified Expression Language shared by the JSP 2.1 and JSF 1.2 technologies.
 See Expression Language specification in JSR245
 (http://jcp.org/en/jsr/summary?id=245)
 
+
+Build with the following commands:
+
+   ./configure
+   make
+
+
+The samples can be built using:
+
+   gnatmake -Psamples
+   
+   
+The unit tests are built using:
+
+   gnatmake -Ptests
+
+
+And unit tests are executed with:
+
+   bin/el_harness
+

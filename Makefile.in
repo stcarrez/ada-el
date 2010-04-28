@@ -3,6 +3,18 @@
 GNATMAKE=gnatmake
 GPRPATH=el.gpr
 
+distdir=ada-el-@EL_VERSION@
+
+DIST_FILE=ada-el-@EL_VERSION@.tar.gz
+
+srcdir = .
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+top_builddir = .
+
+
 # Not intended for manual invocation.
 # Invoked if automatic builds are enabled.
 # Analyzes only on those sources that have changed.
@@ -29,3 +41,33 @@ build:
 
 # Clean, then build executables for all mains defined by the project.
 rebuild: clean build
+
+
+# Files to package in source distribution
+DISTFILES=README LICENSE.txt NOTICE.txt config.guess configure config.sub \
+configure.in Makefile.in install-sh \
+el.gpr tests.gpr samples.gpr \
+src samples regtests \
+bin obj
+
+dist:
+	-rm -rf $(distdir)
+	mkdir $(distdir)
+	-chmod 777 $(distdir)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+	-rm -f $(distdir)/bin/*
+	tar --exclude=.svn --exclude="*~" --exclude="*.o" --exclude="*.ali" \
+	    --exclude="*.log" \
+	    -cvzf $(DIST_FILE) $(distdir)

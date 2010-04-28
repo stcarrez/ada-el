@@ -30,19 +30,21 @@ procedure Functions is
 
    E : Expression;
 
-   Fn  : EL.Functions.Function_Mapper_Access := new EL.Functions.Default.Default_Function_Mapper;
+   Fn  : constant EL.Functions.Function_Mapper_Access
+     := new EL.Functions.Default.Default_Function_Mapper;
    Ctx : EL.Contexts.Default.Default_Context;
 
-   Joe  : Person_Access := Create_Person ("Joe", "Smith", 12);
-   Bill : Person_Access := Create_Person ("Bill", "Johnson", 42);
+   Joe  : constant Person_Access := Create_Person ("Joe", "Smith", 12);
+   Bill : constant Person_Access := Create_Person ("Bill", "Johnson", 42);
 
    Result : Object;
 begin
    --  Register the 'format' function.
    Fn.Set_Function ("format", Bean.Format'Access);
+   Ctx.Set_Function_Mapper (Fn);
 
    --  Create the expression
-   E := Create_Expression ("format(user.firstName) & ' ' & user.lastName", Fn);
+   E := Create_Expression ("format(user.firstName) & ' ' & user.lastName", Ctx);
 
    --  Bind the context to 'Joe' and evaluate
    Ctx.Set_Variable ("user", Joe);

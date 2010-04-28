@@ -1,9 +1,9 @@
-with "../config/shared";
+with "shared";
 
 project El is
 
    for Source_Dirs use ("src");
-   for Library_Dir use "../lib/el";
+   for Library_Dir use "lib";
    for Library_Name use "el";
    for Library_Kind use "static";
 

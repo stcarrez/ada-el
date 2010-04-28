@@ -19,11 +19,9 @@ with EL.Expressions;
 with EL.Objects;
 with EL.Contexts.Default;
 with Ada.Text_IO;
-with Ada.Calendar;
 
 procedure Evaluate is
 
-   use Ada.Calendar;
    use Ada.Text_IO;
    use EL.Expressions;
    use EL.Objects;
@@ -31,37 +29,8 @@ procedure Evaluate is
    E : Expression;
 
    Ctx : EL.Contexts.Default.Default_Context;
-   Start : Time;
    Result : Object;
-   D : Duration;
 begin
-   E := Create_Expression ("1 + (2 - 3) * 4");
+   E := Create_Expression ("1 + (2 - 3) * 4", Ctx);
    Put_Line ("Result: " & To_String (E.Get_Value (Ctx)));
-   Start := Clock;
-   for I in 1 .. 1_00_000 loop
-      E := Create_Expression ("12+232+1+10*100");
-   end loop;
-   D := Clock - Start;
-   D := D * Duration (1_000_000.0 / 100_000.0);
-   Put_Line ("Time for parsing using 100000 expressions: 1 parse = " & Duration'Image (D) & "us");
-
-   --  E := Create_Expression ("obj.name");
-   Start := Clock;
-   for I in 1 .. 100_000 loop
-       declare
-            Result : constant Object := E.Get_Value (Ctx);
-       begin
-            null;
-       end;
-   end loop;
-   D := Clock - Start;
-   D := D * Duration (1_000_000.0 / 100_000.0);
-   Put_Line ("Time for evaluating 100000 expressions: 1 eval = " & Duration'Image (D) & "us");
-
-   declare
-      Result : constant Object := E.Get_Value (Ctx);
-      S      : constant String := To_String (Result);
-   begin
-      Put_Line ("Result: " & S);
-   end;
 end Evaluate;
