@@ -25,38 +25,26 @@ with EL.Objects;
 with EL.Contexts.Default;
 with Ada.Text_IO;
 with Bean;
-with Ada.Calendar;
-procedure Variable is
+procedure Variables is
 
    use Bean;
-   use Ada.Text_IO;
-   use EL.Expressions;
-   use EL.Objects;
-      use Ada.Calendar;
 
-   E : Expression;
+   Joe  : constant Person_Access := Create_Person ("Joe", "Smith", 12);
+   Bill : constant Person_Access := Create_Person ("Bill", "Johnson", 42);
 
-   Ctx : EL.Contexts.Default.Default_Context;
-
-   Joe  : Person_Access := Create_Person ("Joe", "Smith", 12);
-   Bill : Person_Access := Create_Person ("Bill", "Johnson", 42);
-      Start : Time;
-
-   Result : Object;
+   Ctx    : EL.Contexts.Default.Default_Context;
+   E      : EL.Expressions.Expression;
+   Result : EL.Objects.Object;
 begin
-   E := Create_Expression ("user.firstName & ' ' & user.lastName", Ctx);
+   E := EL.Expressions.Create_Expression ("user.firstName & ' ' & user.lastName", Ctx);
 
    --  Bind the context to 'Joe' and evaluate
    Ctx.Set_Variable ("user", Joe);
-   Start := Ada.Calendar.Clock;
-   for I in 1 .. 1_000_000 loop
-      Result := E.Get_Value (Ctx);
-   end loop;
-   Put_Line ("Time to eval: " & Duration'Image (Clock - Start));
-   Put_Line ("Joe's name is " & To_String (Result));
+   Result := E.Get_Value (Ctx);
+   Ada.Text_IO.Put_Line ("Joe's name is " & EL.Objects.To_String (Result));
 
    --  Bind the context to 'Bill' and evaluate
    Ctx.Set_Variable ("user", Bill);
    Result := E.Get_Value (Ctx);
-   Put_Line ("Bill's name is " & To_String (Result));
-end Variable;
+   Ada.Text_IO.Put_Line ("Bill's name is " & EL.Objects.To_String (Result));
+end Variables;
