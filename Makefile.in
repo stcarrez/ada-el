@@ -44,11 +44,11 @@ rebuild: clean build
 
 
 # Files to package in source distribution
-DISTFILES=README LICENSE.txt NOTICE.txt config.guess configure config.sub \
+DISTFILES=README LICENSE.txt NOTICE.txt CHANGES config.guess configure config.sub \
 configure.in Makefile.in install-sh \
-el.gpr tests.gpr samples.gpr \
+el.gpr tests.gpr samples.gpr shared.gpr \
 src samples regtests \
-bin obj
+bin obj lib
 
 dist:
 	-rm -rf $(distdir)
