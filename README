@@ -1,0 +1,10 @@
+Expression Language
+
+This Ada05 library provides the support for a simple Expression Language
+closed to the Java Unified Expression Language (EL).
+
+The API provided by the EL library is inspired from the Java
+Unified Expression Language shared by the JSP 2.1 and JSF 1.2 technologies.
+See Expression Language specification in JSR245
+(http://jcp.org/en/jsr/summary?id=245)
+
