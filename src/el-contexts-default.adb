@@ -49,6 +49,15 @@ package body EL.Contexts.Default is
       return Context.Function_Mapper;
    end Get_Function_Mapper;
 
+   --  ------------------------------
+   --  Set the function mapper to be used when parsing an expression.
+   --  ------------------------------
+   procedure Set_Function_Mapper (Context : in out Default_Context;
+                                  Mapper  : in EL.Functions.Function_Mapper_Access) is
+   begin
+      Context.Function_Mapper := Mapper;
+   end Set_Function_Mapper;
+
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
                            Value   : access EL.Beans.Readonly_Bean'Class) is
