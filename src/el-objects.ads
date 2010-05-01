@@ -55,6 +55,25 @@ package EL.Objects is
    --  The null object.
    Null_Object : constant Object;
 
+   type Data_Type is (TYPE_NULL,
+                      --  The object holds a boolean value.
+                      TYPE_BOOLEAN,
+                      --  The object holds an integer value (64-bits).
+                      TYPE_INTEGER,
+                      --  The object holds a floating point value.
+                      TYPE_FLOAT,
+                      --  The object holds a string
+                      TYPE_STRING,
+                      --  The object holds a wide wide string
+                      TYPE_WIDE_STRING,
+                      --  The object holds a date and time
+                      TYPE_TIME,
+                      --  The object holds a generic bean
+                      TYPE_BEAN,
+                      --  Something else, unknown
+                      TYPE_EXTERNAL);
+
+
    --  ------------------------------
    --  Type definition
    --  ------------------------------
@@ -77,6 +96,9 @@ package EL.Objects is
    --  ------------------------------
    --  Generic Object holding a value
    --  ------------------------------
+
+   --  Get a type identification for the object value.
+   function Get_Type (Value : in Object) return Data_Type;
 
    --  Get the type definition of the object value.
    function Get_Type (Value : in Object) return Object_Type'Class;
@@ -148,11 +170,6 @@ package EL.Objects is
    function "-" (Left : Object) return Object;
 
 private
-
-   type Data_Type is (TYPE_NULL,
-                      TYPE_BOOLEAN, TYPE_INTEGER, TYPE_FLOAT,
-                      TYPE_STRING, TYPE_WIDE_STRING, TYPE_TIME,
-                      TYPE_BEAN, TYPE_EXTERNAL);
 
    type Object (Of_Type : Data_Type := TYPE_NULL) is record
       Type_Def : Object_Type_Access := null;

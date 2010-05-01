@@ -70,6 +70,7 @@ package EL.Expressions is
    --  ValueExpression
    --  ------------------------------   --
    type ValueExpression is new Expression with private;
+   type ValueExpression_Access is access all ValueExpression'Class;
 
    --  Get the value of the expression using the given expression context.
    --  Returns an object that holds a typed result.

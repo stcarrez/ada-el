@@ -80,6 +80,14 @@ package body EL.Objects is
    end Get_Type_Name;
 
    --  ------------------------------
+   --  Get a type identification for the object value.
+   --  ------------------------------
+   function Get_Type (Value : in Object) return Data_Type is
+   begin
+      return Value.Of_Type;
+   end Get_Type;
+
+   --  ------------------------------
    --  Get the type definition of the object value.
    --  ------------------------------
    function Get_Type (Value : Object) return Object_Type'Class is
