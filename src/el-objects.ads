@@ -97,6 +97,10 @@ package EL.Objects is
    --  Generic Object holding a value
    --  ------------------------------
 
+   --  Check whether the object contains a value.
+   --  Returns true if the object does not contain a value.
+   function Is_Null (Value : in Object) return Boolean;
+
    --  Get a type identification for the object value.
    function Get_Type (Value : in Object) return Data_Type;
 

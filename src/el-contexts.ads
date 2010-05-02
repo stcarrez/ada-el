@@ -58,6 +58,7 @@ package EL.Contexts is
    --  ------------------------------
    --  Context information for expression evaluation.
    type ELContext is interface;
+   type ELContext_Access is access all ELContext'Class;
 
    --  Retrieves the ELResolver associated with this ELcontext.
    function Get_Resolver (Context : ELContext) return ELResolver_Access is abstract;

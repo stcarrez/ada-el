@@ -60,6 +60,15 @@ package body EL.Objects is
    end Get_Name;
 
    --  ------------------------------
+   --  Check whether the object contains a value.
+   --  Returns true if the object does not contain a value.
+   --  ------------------------------
+   function Is_Null (Value : in Object) return Boolean is
+   begin
+      return Value.Of_Type = TYPE_NULL;
+   end Is_Null;
+
+   --  ------------------------------
    --  Translate the object
    --  ------------------------------
    function To_String (Type_Def : Basic_Type;
