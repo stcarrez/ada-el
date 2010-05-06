@@ -30,7 +30,9 @@ package body EL.Functions.Default is
 
    use Function_Maps;
 
+   --  ------------------------------
    --  Find the function knowing its name.
+   --  ------------------------------
    function Get_Function (Mapper : Default_Function_Mapper;
                           Name   : String) return Function_Access is
       C : constant Cursor := Mapper.Map.Find (Key => To_Unbounded_String (Name));
@@ -41,12 +43,41 @@ package body EL.Functions.Default is
       raise No_Function;
    end Get_Function;
 
+   --  ------------------------------
    --  Bind a name to a function.
+   --  ------------------------------
    procedure Set_Function (Mapper : in out Default_Function_Mapper;
                            Name   : in String;
                            Func   : in Function_Access) is
    begin
       Mapper.Map.Include (Key => To_Unbounded_String (Name), New_Item => Func);
    end Set_Function;
+
+   --  ------------------------------
+   --  Truncate the string representation represented by <b>Value</b> to
+   --  the length specified by <b>Size</b>.
+   --  ------------------------------
+   function Truncate (Value : EL.Objects.Object;
+                      Size  : EL.Objects.Object) return EL.Objects.Object is
+      Cnt : constant Integer := To_Integer (Size);
+   begin
+      if Cnt <= 0 then
+         return To_Object (String '(""));
+      end if;
+      if Get_Type (Value) = TYPE_WIDE_STRING then
+         declare
+            S : constant Wide_Wide_String := To_Wide_Wide_String (Value);
+         begin
+            return To_Object (S (1 .. Cnt));
+         end;
+      else
+         --  Optimized case: use a String if we can.
+         declare
+            S : constant String := To_String (Value);
+         begin
+            return To_Object (S (1 .. Cnt));
+         end;
+      end if;
+   end Truncate;
 
 end EL.Functions.Default;

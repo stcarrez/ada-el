@@ -41,6 +41,11 @@ package EL.Functions.Default is
                            Name   : in String;
                            Func   : in Function_Access);
 
+   --  Truncate the string representation represented by <b>Value</b> to
+   --  the length specified by <b>Size</b>.
+   function Truncate (Value : EL.Objects.Object;
+                      Size  : EL.Objects.Object) return EL.Objects.Object;
+
 private
 
    use Ada.Strings.Unbounded;

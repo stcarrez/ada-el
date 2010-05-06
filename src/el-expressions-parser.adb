@@ -396,8 +396,23 @@ package body EL.Expressions.Parser is
                         end if;
                      end loop;
 
+                     --  Parse a function call
+                  elsif C = ':' then
+                     P.Pos := P.Pos + 1;
+                     Peek (P, Token);
+                     if P.Pos <= P.Last then
+                        C := P.Expr (P.Pos);
+                     else
+                        C := ' ';
+                     end if;
+                     if Token /= T_Name or C /= '(' then
+                        raise Invalid_Expression with "Missing function name after ':'";
+                     end if;
+                     Parse_Function (P, Name & ":" & To_Unbounded_String (P.Token),
+                                     Result);
+
                   --  Parse a function call
-                  elsif C = ':' or C = '(' then
+                  elsif C = '(' then
                      Parse_Function (P, Name, Result);
 
                   else
