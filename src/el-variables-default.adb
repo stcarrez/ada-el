@@ -34,7 +34,8 @@ package body EL.Variables.Default is
       C : constant Variable_Maps.Cursor := Mapper.Map.Find (Name);
    begin
       if not Variable_Maps.Has_Element (C) then
-         raise No_Variable;
+         raise No_Variable
+           with "Variable not found: '" & To_String (Name) & "'";
       end if;
       return EL.Expressions.Create_ValueExpression (Variable_Maps.Element (C));
    end Get_Variable;

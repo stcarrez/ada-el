@@ -48,6 +48,9 @@ package EL.Expressions is
    --  Exception raised when parsing an invalid expression.
    Invalid_Expression : exception;
 
+   --  Exception raised when a variable cannot be resolved.
+   Invalid_Variable : exception;
+
    --  ------------------------------
    --  Expression
    --  ------------------------------

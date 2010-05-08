@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with EL.Variables;
 package EL.Contexts.Default is
 
    --  ------------------------------
@@ -23,6 +23,7 @@ package EL.Contexts.Default is
    --  ------------------------------
    --  Context information for expression evaluation.
    type Default_Context is new ELContext with private;
+   type Default_Context_Access is access all Default_Context'Class;
 
    --  Retrieves the ELResolver associated with this ELcontext.
    overriding
@@ -42,6 +43,14 @@ package EL.Contexts.Default is
    --  Set the function mapper to be used when parsing an expression.
    procedure Set_Function_Mapper (Context : in out Default_Context;
                                   Mapper  : in EL.Functions.Function_Mapper_Access);
+
+   --  Set the VariableMapper associated with this ELContext.
+   procedure Set_Variable_Mapper (Context : in out Default_Context;
+                                  Mapper  : in EL.Variables.VariableMapper_Access);
+
+   --  Set the ELResolver associated with this ELcontext.
+   procedure Set_Resolver (Context  : in out Default_Context;
+                           Resolver : in ELResolver_Access);
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;

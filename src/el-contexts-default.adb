@@ -29,6 +29,15 @@ package body EL.Contexts.Default is
    end Get_Resolver;
 
    --  ------------------------------
+   --  Set the ELResolver associated with this ELcontext.
+   --  ------------------------------
+   procedure Set_Resolver (Context  : in out Default_Context;
+                           Resolver : in ELResolver_Access) is
+   begin
+      Context.Resolver := Resolver;
+   end Set_Resolver;
+
+   --  ------------------------------
    --  Retrieves the VariableMapper associated with this ELContext.
    --  ------------------------------
    overriding
@@ -57,6 +66,15 @@ package body EL.Contexts.Default is
    begin
       Context.Function_Mapper := Mapper;
    end Set_Function_Mapper;
+
+   --  ------------------------------
+   --  Set the VariableMapper associated with this ELContext.
+   --  ------------------------------
+   procedure Set_Variable_Mapper (Context : in out Default_Context;
+                                  Mapper  : in EL.Variables.VariableMapper_Access) is
+   begin
+      Context.Var_Mapper := Mapper;
+   end Set_Variable_Mapper;
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
