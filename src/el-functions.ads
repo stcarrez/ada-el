@@ -63,33 +63,39 @@ package EL.Functions is
    type Function_Mapper_Access is access all Function_Mapper'Class;
 
    --  Find the function knowing its name.
-   function Get_Function (Mapper : Function_Mapper;
-                          Name   : String) return Function_Access is abstract;
+   function Get_Function (Mapper    : Function_Mapper;
+                          Namespace : String;
+                          Name      : String) return Function_Access is abstract;
+
+   --  Bind a name to a function in the given namespace.
+   procedure Set_Function (Mapper    : in out Function_Mapper;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_Access) is abstract;
 
    --  Bind a name to a function.
-   procedure Set_Function (Mapper : in out Function_Mapper;
-                           Name   : in String;
-                           Func   : in Function_Access) is abstract;
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_1_Access);
 
    --  Bind a name to a function.
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_1_Access);
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_2_Access);
 
    --  Bind a name to a function.
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_2_Access);
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_3_Access);
 
    --  Bind a name to a function.
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_3_Access);
-
-   --  Bind a name to a function.
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_4_Access);
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_4_Access);
 
    --  Register some pre-defined functions in the function mapper.
    procedure Register_Predefined (Mapper : in out Function_Mapper'Class);

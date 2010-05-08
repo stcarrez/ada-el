@@ -16,21 +16,21 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Fixtures;
 with AUnit.Test_Caller;
 with AUnit.Assertions;
-with EL.Expressions;
-with EL.Objects;
-with EL.Contexts;
-with EL.Contexts.Default;
 with Ada.Strings.Fixed;
 
 package body EL.Objects.Discrete_Tests is
 
    use EL.Objects;
    use AUnit.Assertions;
-   use AUnit.Test_Fixtures;
    use Ada.Strings.Fixed;
+
+   procedure Test_Eq (V : String; N : Test_Type);
+   procedure Test_Conversion (V : String; N : Test_Type);
+   procedure Test_Lt_Gt (V : String; N : Test_Type);
+   procedure Test_Sub (V : String; N : Test_Type);
+   procedure Test_Add (V : String; N : Test_Type);
 
    --  Generic test for To_Object and To_XXX types
    --  Several values are specified in the Test_Values string.
@@ -114,7 +114,7 @@ package body EL.Objects.Discrete_Tests is
       Is_Neg : constant Boolean := Index (V, "-") > 0;
    begin
       Res := To_Object_Test (N) < To_Object_Test (N);
-      Assert (Condition => Res = false,
+      Assert (Condition => Res = False,
               Message   => Test_Name & ".'<' returned invalid value: "
               & Boolean'Image (Res) & " when we expected: false");
       Res := To_Object_Test (N) > To_Object_Test (N);
@@ -156,10 +156,9 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    procedure Test_Eq (V : String; N : Test_Type) is
       Res   : Boolean;
-      Is_Neg : constant Boolean := Index (V, "-") > 0;
    begin
       Res := To_Object_Test (N) = To_Object_Test (N);
-      Assert (Condition => Res = True,
+      Assert (Condition => Res,
               Message   => Test_Name & ".'=' returned invalid value: "
               & Boolean'Image (Res) & " when we expected: true");
 
@@ -174,13 +173,20 @@ package body EL.Objects.Discrete_Tests is
 
    procedure Add_Tests (Suite : Access_Test_Suite) is
    begin
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.To_Object." & Test_Name, Test_To_Object'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.To_String." & Test_Name, Test_To_Object'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'='." & Test_Name, Test_Eq'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'+'." & Test_Name, Test_Add'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'-'." & Test_Name, Test_Sub'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'<'." & Test_Name, Test_Lt_Gt'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'>'." & Test_Name, Test_Lt_Gt'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.To_Object." & Test_Name,
+                                     Test_To_Object'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.To_String." & Test_Name,
+                                     Test_To_Object'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.'='." & Test_Name,
+                                     Test_Eq'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.'+'." & Test_Name,
+                                     Test_Add'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.'-'." & Test_Name,
+                                     Test_Sub'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.'<'." & Test_Name,
+                                     Test_Lt_Gt'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.'>'." & Test_Name,
+                                     Test_Lt_Gt'Access));
    end Add_Tests;
 
 end EL.Objects.Discrete_Tests;

@@ -18,12 +18,11 @@
 
 with AUnit.Test_Suites; use AUnit.Test_Suites;
 with AUnit.Test_Fixtures;
-with EL.Expressions;
 with EL.Objects;
 
 generic
    type Test_Type is private;
-   with function To_Type (Obj : EL.OBjects.Object) return Test_Type is <>;
+   with function To_Type (Obj : EL.Objects.Object) return Test_Type is <>;
    with function To_Object_Test (V : Test_Type) return EL.Objects.Object is <>;
    with function "-" (Left, Right : Test_Type) return Test_Type is <>;
    with function "+" (Left, Right : Test_Type) return Test_Type is <>;

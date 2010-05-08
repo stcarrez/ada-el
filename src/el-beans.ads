@@ -42,7 +42,7 @@ package EL.Beans is
    --  Get the value identified by the name.
    --  If the name cannot be found, the method should return the Null object.
    function Get_Value (From : Readonly_Bean;
-                       Name : String) return El.Objects.Object is abstract;
+                       Name : String) return EL.Objects.Object is abstract;
 
    --  ------------------------------
    --  Bean interface.

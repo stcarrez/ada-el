@@ -33,9 +33,11 @@ package body EL.Functions.Default is
    --  ------------------------------
    --  Find the function knowing its name.
    --  ------------------------------
-   function Get_Function (Mapper : Default_Function_Mapper;
-                          Name   : String) return Function_Access is
-      C : constant Cursor := Mapper.Map.Find (Key => To_Unbounded_String (Name));
+   function Get_Function (Mapper    : Default_Function_Mapper;
+                          Namespace : String;
+                          Name      : String) return Function_Access is
+      Full_Name : constant String := Namespace & ":" & Name;
+      C : constant Cursor := Mapper.Map.Find (Key => To_Unbounded_String (Full_Name));
    begin
       if Has_Element (C) then
          return Element (C);
@@ -46,11 +48,13 @@ package body EL.Functions.Default is
    --  ------------------------------
    --  Bind a name to a function.
    --  ------------------------------
-   procedure Set_Function (Mapper : in out Default_Function_Mapper;
-                           Name   : in String;
-                           Func   : in Function_Access) is
+   procedure Set_Function (Mapper    : in out Default_Function_Mapper;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_Access) is
+      Full_Name : constant String := Namespace & ":" & Name;
    begin
-      Mapper.Map.Include (Key => To_Unbounded_String (Name), New_Item => Func);
+      Mapper.Map.Include (Key => To_Unbounded_String (Full_Name), New_Item => Func);
    end Set_Function;
 
    --  ------------------------------

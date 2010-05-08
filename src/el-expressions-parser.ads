@@ -26,7 +26,8 @@ package EL.Expressions.Parser is
                     Context : in ELContext'Class;
                     Result  : out EL.Expressions.Nodes.ELNode_Access);
 
-   procedure Parse (Expr : Wide_Wide_String;
+   procedure Parse (Expr   : in Wide_Wide_String;
+                    Context : in ELContext'Class;
                     Result : out EL.Expressions.Nodes.ELNode_Access);
 
 end EL.Expressions.Parser;

@@ -33,13 +33,15 @@ package EL.Functions.Default is
    type Default_Function_Mapper is new Function_Mapper with private;
 
    --  Find the function knowing its name.
-   function Get_Function (Mapper : Default_Function_Mapper;
-                          Name   : String) return Function_Access;
+   function Get_Function (Mapper    : Default_Function_Mapper;
+                          Namespace : String;
+                          Name      : String) return Function_Access;
 
    --  Bind a name to a function.
-   procedure Set_Function (Mapper : in out Default_Function_Mapper;
-                           Name   : in String;
-                           Func   : in Function_Access);
+   procedure Set_Function (Mapper    : in out Default_Function_Mapper;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_Access);
 
    --  Truncate the string representation represented by <b>Value</b> to
    --  the length specified by <b>Size</b>.

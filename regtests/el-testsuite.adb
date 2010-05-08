@@ -16,7 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Fixtures;
 with AUnit.Test_Caller;
 with AUnit.Assertions;
 with EL.Expressions;
@@ -28,25 +27,25 @@ with EL.Objects.Discrete_Tests;
 with Ada.Calendar.Formatting;
 with Ada.Calendar.Conversions;
 with Interfaces.C;
-with El.Expressions.Tests;
+with EL.Expressions.Tests;
 package body EL.Testsuite is
 
    use Interfaces.C;
    use EL.Objects;
    use AUnit.Assertions;
-   use AUnit.Test_Fixtures;
    use Ada.Calendar;
    use Ada.Calendar.Conversions;
 
-   type Test is new AUnit.Test_Fixtures.Test_Fixture with record
-      I1 : Integer;
-      I2 : Integer;
-   end record;
+   function "+" (Left, Right : Boolean) return Boolean;
+   function "-" (Left, Right : Boolean) return Boolean;
 
-   procedure Test_To_Object_Integer (T : in out Test);
+   function "-" (Left, Right : Time) return Time;
+   function "+" (Left, Right : Time) return Time;
+   function Time_Value (S : String) return Ada.Calendar.Time;
 
    --  Test object integer
    procedure Test_To_Object_Integer (T : in out Test) is
+      pragma Unreferenced (T);
    begin
       declare
          Value : constant EL.Objects.Object := To_Object (Integer (1));
@@ -69,6 +68,8 @@ package body EL.Testsuite is
 
    --  Test object integer
    procedure Test_Expression (T : in out Test) is
+      pragma Unreferenced (T);
+
       E     : EL.Expressions.Expression;
       Value : Object;
       Ctx   : EL.Contexts.Default.Default_Context;
@@ -139,14 +140,14 @@ package body EL.Testsuite is
                                 To_Object_Test => EL.Objects.To_Object,
                                 Value          => Long_Long_Integer'Value,
                                 Test_Name      => "Long_Long_Integer",
-                                Test_Values    => "-10000000000000,1,0,1,1000_000_000_000");
+                                Test_Values => "-10000000000000,1,0,1,1000_000_000_000");
 
    function "-" (Left, Right : Boolean) return Boolean is
    begin
       return Left and Right;
    end "-";
 
-   function "+" (Left, Right: Boolean) return Boolean is
+   function "+" (Left, Right : Boolean) return Boolean is
    begin
       return Left or Right;
    end "+";
@@ -164,12 +165,12 @@ package body EL.Testsuite is
       return Ada.Calendar.Formatting.Value (S);
    end Time_Value;
 
-   function "+" (Left, Right: Time) return Time is
+   function "+" (Left, Right : Time) return Time is
    begin
       return To_Ada_Time (To_Unix_Time (Left) + To_Unix_Time (Right));
    end "+";
 
-   function "-" (Left, Right: Time) return Time is
+   function "-" (Left, Right : Time) return Time is
    begin
       return To_Ada_Time (To_Unix_Time (Left) - To_Unix_Time (Right));
    end "-";
@@ -180,7 +181,7 @@ package body EL.Testsuite is
                                 To_Object_Test => EL.Objects.To_Object,
                                 Value          => Time_Value,
                                 Test_Name      => "Time",
-                                Test_Values    => "1970-03-04 12:12:00,1980-04-04 13:13:10");
+                                Test_Values => "1970-03-04 12:12:00,1980-04-04 13:13:10");
 
    package Test_Float is new
      EL.Objects.Discrete_Tests (Test_Type      => Float,
@@ -211,7 +212,8 @@ package body EL.Testsuite is
    function Suite return Access_Test_Suite is
       Ret : constant Access_Test_Suite := new Test_Suite;
    begin
-      Ret.Add_Test (Caller.Create ("Test To_Object (Integer)", Test_To_Object_Integer'Access));
+      Ret.Add_Test (Caller.Create ("Test To_Object (Integer)",
+                                   Test_To_Object_Integer'Access));
       Ret.Add_Test (Caller.Create ("Test Expressions", Test_Expression'Access));
       Test_Boolean.Add_Tests (Ret);
       Test_Integer.Add_Tests (Ret);

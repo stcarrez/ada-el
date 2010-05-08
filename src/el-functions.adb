@@ -21,41 +21,49 @@ package body EL.Functions is
    --  ------------------------------
    --  Bind a name to a function.
    --  ------------------------------
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_1_Access) is
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_1_Access) is
    begin
-      Mapper.Set_Function (Name, Function_Access '(Of_Type => F_1_ARG, Func1 => Func));
+      Mapper.Set_Function (Namespace, Name,
+                           Function_Access '(Of_Type => F_1_ARG, Func1 => Func));
    end Set_Function;
 
    --  ------------------------------
    --  Bind a name to a function.
    --  ------------------------------
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_2_Access) is
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_2_Access) is
    begin
-      Mapper.Set_Function (Name, Function_Access '(Of_Type => F_2_ARG, Func2 => Func));
+      Mapper.Set_Function (Namespace, Name,
+                           Function_Access '(Of_Type => F_2_ARG, Func2 => Func));
    end Set_Function;
 
    --  ------------------------------
    --  Bind a name to a function.
    --  ------------------------------
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_3_Access) is
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_3_Access) is
    begin
-      Mapper.Set_Function (Name, Function_Access '(Of_Type => F_3_ARG, Func3 => Func));
+      Mapper.Set_Function (Namespace, Name,
+                           Function_Access '(Of_Type => F_3_ARG, Func3 => Func));
    end Set_Function;
 
    --  ------------------------------
    --  Bind a name to a function.
    --  ------------------------------
-   procedure Set_Function (Mapper : in out Function_Mapper'Class;
-                           Name   : in String;
-                           Func   : in Function_4_Access) is
+   procedure Set_Function (Mapper    : in out Function_Mapper'Class;
+                           Namespace : in String;
+                           Name      : in String;
+                           Func      : in Function_4_Access) is
    begin
-      Mapper.Set_Function (Name, Function_Access '(Of_Type => F_4_ARG, Func4 => Func));
+      Mapper.Set_Function (Namespace, Name,
+                           Function_Access '(Of_Type => F_4_ARG, Func4 => Func));
    end Set_Function;
 
    --  ------------------------------
@@ -63,11 +71,11 @@ package body EL.Functions is
    --  ------------------------------
    procedure Register_Predefined (Mapper : in out Function_Mapper'Class) is
    begin
-      Mapper.Set_Function ("int", EL.Objects.Cast_Integer'Access);
-      Mapper.Set_Function ("float", EL.Objects.Cast_Float'Access);
-      Mapper.Set_Function ("time", EL.Objects.Cast_Time'Access);
-      Mapper.Set_Function ("date", EL.Objects.Cast_Time'Access);
-      Mapper.Set_Function ("string", EL.Objects.Cast_String'Access);
+      Mapper.Set_Function ("", "int", EL.Objects.Cast_Integer'Access);
+      Mapper.Set_Function ("", "float", EL.Objects.Cast_Float'Access);
+      Mapper.Set_Function ("", "time", EL.Objects.Cast_Time'Access);
+      Mapper.Set_Function ("", "date", EL.Objects.Cast_Time'Access);
+      Mapper.Set_Function ("", "string", EL.Objects.Cast_String'Access);
    end Register_Predefined;
 
 end EL.Functions;

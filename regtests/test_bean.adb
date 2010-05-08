@@ -50,7 +50,7 @@ package body Test_Bean is
       elsif Name = DATE then
          return To_Object (From.Date);
       else
-         return El.Objects.Null_Object;
+         return EL.Objects.Null_Object;
       end if;
    end Get_Value;
 

@@ -20,7 +20,7 @@ with EL.Beans;
 with EL.Variables;
 package body EL.Expressions.Nodes is
 
-   use El.Variables;
+   use EL.Variables;
 
    --  ------------------------------
    --  Evaluate a node on a given context.
@@ -156,7 +156,7 @@ package body EL.Expressions.Nodes is
       if Resolver = null then
          raise Program_Error;
       end if;
-      return Resolver.all.Get_Value (Context, null, Expr.name);
+      return Resolver.all.Get_Value (Context, null, Expr.Name);
    end Get_Value;
 
    --  ------------------------------

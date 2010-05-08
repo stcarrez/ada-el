@@ -29,6 +29,15 @@ package body EL.Objects is
    use Ada.Calendar.Formatting;
    use type Interfaces.C.long;
 
+   --  Find the data type to be used for an arithmetic operation between two objects.
+   function Get_Arithmetic_Type (Left, Right : Object) return Data_Type;
+
+   --  Find the data type to be used for a composition operation between two objects.
+   function Get_Compose_Type (Left, Right : Object) return Data_Type;
+
+   --  Find the best type to be used to compare two operands.
+   function Get_Compare_Type (Left, Right : Object) return Data_Type;
+
    function "+"(Str : in String)
                 return Unbounded_String renames To_Unbounded_String;
 
@@ -252,7 +261,7 @@ package body EL.Objects is
             return Ada.Calendar.Conversions.To_Ada_Time (0);
 
          when TYPE_INTEGER =>
-            return Ada.Calendar.Conversions.To_Ada_Time (Long (Value.Int_Value));
+            return Ada.Calendar.Conversions.To_Ada_Time (long (Value.Int_Value));
 
          when TYPE_TIME =>
             return Value.Time_Value;
@@ -279,7 +288,7 @@ package body EL.Objects is
    begin
       case Value.Of_Type is
          when TYPE_NULL =>
-            return false;
+            return False;
 
          when TYPE_INTEGER =>
             return Value.Int_Value /= 0;
@@ -343,7 +352,7 @@ package body EL.Objects is
             return Float'Value (Value.Type_Def.To_String (Value));
 
       end case;
-   end to_float;
+   end To_Float;
 
    --  ------------------------------
    --  Convert the object to a long float.
@@ -569,7 +578,7 @@ package body EL.Objects is
    --  Find the best type to be used to compare two operands.
    --
    --  ------------------------------
-   function Get_Compare_Type (Left, Right: Object) return Data_Type is
+   function Get_Compare_Type (Left, Right : Object) return Data_Type is
    begin
       --  Operands are of the same type.
       if Left.Of_Type = Right.Of_Type then
@@ -580,8 +589,8 @@ package body EL.Objects is
       if Right.Of_Type = TYPE_EXTERNAL then
          return Left.Of_Type;
       end if;
-      -- 12 >= "23"
-      -- if Left.Of_Type = TYPE_STRING or
+      --  12 >= "23"
+      --  if Left.Of_Type = TYPE_STRING or
       case Left.Of_Type is
          when TYPE_BOOLEAN =>
             case Right.Of_Type is
@@ -609,7 +618,7 @@ package body EL.Objects is
    --  ------------------------------
    --  Find the data type to be used for an arithmetic operation between two objects.
    --  ------------------------------
-   function Get_Arithmetic_Type (Left, Right: Object) return Data_Type is
+   function Get_Arithmetic_Type (Left, Right : Object) return Data_Type is
    begin
       if Left.Of_Type = TYPE_FLOAT or Right.Of_Type = TYPE_FLOAT then
          return TYPE_FLOAT;
@@ -629,7 +638,7 @@ package body EL.Objects is
    --  ------------------------------
    --  Find the data type to be used for a composition operation between two objects.
    --  ------------------------------
-   function Get_Compose_Type (Left, Right: Object) return Data_Type is
+   function Get_Compose_Type (Left, Right : Object) return Data_Type is
    begin
       if Left.Of_Type = Right.Of_Type then
          return Left.Of_Type;
@@ -653,11 +662,12 @@ package body EL.Objects is
    --  Comparison of objects
    --  ------------------------------
    generic
-      with function Int_Comparator (Left, Right: Long_Long_Integer) return Boolean;
-      with function Boolean_Comparator (Left, Right: Boolean) return Boolean;
-      with function Float_Comparator (Left, Right: Long_Long_Float) return Boolean;
-      with function String_Comparator (Left, Right: String) return Boolean;
-      with function Wide_String_Comparator (Left, Right: Wide_Wide_String) return Boolean;
+      with function Int_Comparator (Left, Right : Long_Long_Integer) return Boolean;
+      with function Boolean_Comparator (Left, Right : Boolean) return Boolean;
+      with function Float_Comparator (Left, Right : Long_Long_Float) return Boolean;
+      with function String_Comparator (Left, Right : String) return Boolean;
+      with function Wide_String_Comparator (Left, Right : Wide_Wide_String)
+                                    return Boolean;
    function Compare (Left, Right : Object) return Boolean;
 
    --  ------------------------------
@@ -671,10 +681,12 @@ package body EL.Objects is
             return Boolean_Comparator (To_Boolean (Left), To_Boolean (Right));
 
          when TYPE_INTEGER | TYPE_TIME =>
-            return Int_Comparator (To_Long_Long_Integer (Left), To_Long_Long_Integer (Right));
+            return Int_Comparator (To_Long_Long_Integer (Left),
+                                   To_Long_Long_Integer (Right));
 
          when TYPE_FLOAT =>
-            return Float_Comparator (To_Long_Long_Float (Left), To_Long_Long_Float (Right));
+            return Float_Comparator (To_Long_Long_Float (Left),
+                                     To_Long_Long_Float (Right));
 
          when TYPE_STRING =>
             return String_Comparator (To_String (Left), To_String (Right));
@@ -743,8 +755,10 @@ package body EL.Objects is
    --  Arithmetic operations of objects
    --  ------------------------------
    generic
-      with function Int_Operation (Left, Right: Long_Long_Integer) return Long_Long_Integer;
-      with function Float_Operation (Left, Right: Long_Long_Float) return Long_Long_Float;
+      with function Int_Operation (Left, Right : Long_Long_Integer)
+                                    return Long_Long_Integer;
+      with function Float_Operation (Left, Right : Long_Long_Float)
+                                    return Long_Long_Float;
    function Arith (Left, Right : Object) return Object;
 
    --  Comparison of objects
@@ -770,7 +784,7 @@ package body EL.Objects is
       function Operation is new Arith (Int_Operation => "+",
                                        Float_Operation => "+");
    begin
-      return Operation (left, Right);
+      return Operation (Left, Right);
    end "+";
 
    function "-" (Left, Right : Object) return Object is
@@ -787,7 +801,7 @@ package body EL.Objects is
             return To_Object (-To_Long_Long_Integer (Left));
 
          when TYPE_FLOAT =>
-            return To_Object (- (To_Long_Long_Float (Left)));
+            return To_Object (-(To_Long_Long_Float (Left)));
 
          when others =>
             return Left;
@@ -810,9 +824,9 @@ package body EL.Objects is
    end "/";
 
    function "mod" (Left, Right : Object) return Object is
-      function "mod" (Left, Right: Long_Long_Float) return Long_Long_Float;
+      function "mod" (Left, Right : Long_Long_Float) return Long_Long_Float;
 
-      function "mod" (Left, Right: Long_Long_Float) return Long_Long_Float is
+      function "mod" (Left, Right : Long_Long_Float) return Long_Long_Float is
          L : constant Long_Long_Integer := Long_Long_Integer (Left);
          R : constant Long_Long_Integer := Long_Long_Integer (Right);
       begin

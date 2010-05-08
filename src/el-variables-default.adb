@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with El.Expressions;
+with EL.Expressions;
 package body EL.Variables.Default is
 
    overriding
@@ -36,7 +36,7 @@ package body EL.Variables.Default is
       if not Variable_Maps.Has_Element (C) then
          raise No_Variable;
       end if;
-      return El.Expressions.Create_ValueExpression (Variable_Maps.Element (C));
+      return EL.Expressions.Create_ValueExpression (Variable_Maps.Element (C));
    end Get_Variable;
 
    overriding

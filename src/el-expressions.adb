@@ -105,7 +105,7 @@ package body EL.Expressions is
       Node : EL.Expressions.Nodes.ELNode_Access;
    begin
       if Object.Node /= null then
-         Node := Object.Node.all'access;
+         Node := Object.Node.all'Access;
          Node.Ref_Counter := Node.Ref_Counter - 1;
          if Node.Ref_Counter = 0 then
             EL.Expressions.Nodes.Delete (Node);

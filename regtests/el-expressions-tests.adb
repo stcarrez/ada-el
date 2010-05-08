@@ -27,13 +27,17 @@ package body EL.Expressions.Tests is
    use AUnit.Assertions;
    use AUnit.Test_Fixtures;
 
+   procedure Check_Error (T    : in out Test'Class;
+                          Expr : in String);
+
    --  Check that evaluating an expression raises an exception
-   procedure Check_Error (T : in out Test'Class;
+   procedure Check_Error (T    : in out Test'Class;
                           Expr : in String) is
       E : Expression;
    begin
       E := Create_Expression (Context => T.Context, Expr => Expr);
 
+      pragma Unreferenced (E);
       Assert (Condition => False,
               Message => "Evaludation of '" & Expr & "' should raise an exception");
    exception

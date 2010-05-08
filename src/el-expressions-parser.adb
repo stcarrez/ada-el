@@ -29,17 +29,17 @@ package body EL.Expressions.Parser is
    use EL.Expressions.Nodes;
    use EL.Functions;
 
-   type Token_Type is (T_Eol,
-                       T_Left_Parent,
-                       T_Right_Parent,
-                       T_Lt, T_Le, T_Gt, T_Ge, T_Ne, T_Eq, T_Empty,
-                       T_Not,
-                       T_Or, T_And, T_Land,
-                       T_Minus, T_Plus, T_Mul, T_Div, T_Mod, T_Dot,
-                       T_Question, T_Colon, T_Comma,
-                       T_Number, T_Literal, T_Name,
-                       T_True, T_False, T_Null,
-                       T_Char);
+   type Token_Type is (T_EOL,
+                       T_LEFT_PARENT,
+                       T_RIGHT_PARENT,
+                       T_LT, T_LE, T_GT, T_GE, T_NE, T_EQ, T_EMPTY,
+                       T_NOT,
+                       T_OR, T_AND, T_LOGICAL_AND,
+                       T_MINUS, T_PLUS, T_MUL, T_Div, T_MOD, T_DOT,
+                       T_QUESTION, T_COLON, T_COMMA,
+                       T_NUMBER, T_LITERAL, T_NAME,
+                       T_TRUE, T_FALSE, T_NULL,
+                       T_UNKNOWN);
 
    type Parser is record
       Pos  : Natural;
@@ -49,7 +49,7 @@ package body EL.Expressions.Parser is
       Expr : access Wide_Wide_String;
       Token : Unbounded_Wide_Wide_String;
       Value : Long_Long_Integer;
-      Pending_Token : Token_Type := T_Eol;
+      Pending_Token : Token_Type := T_EOL;
       Mapper : Function_Mapper_Access;
    end record;
 
@@ -66,9 +66,10 @@ package body EL.Expressions.Parser is
    procedure Parse_Math (P : in out Parser; Result : out ELNode_Access);
    procedure Parse_Multiply (P : in out Parser; Result : out ELNode_Access);
    procedure Parse_Unary (P : in out Parser; Result : out ELNode_Access);
-   procedure Parse_Function (P      : in out Parser;
-                             Name   : in Unbounded_String;
-                             Result : out ELNode_Access);
+   procedure Parse_Function (P         : in out Parser;
+                             Namespace : in Unbounded_String;
+                             Name      : in Unbounded_String;
+                             Result    : out ELNode_Access);
 
    --  Parse the expression buffer to find the next token.
    procedure Peek (P : in out Parser; Token : out Token_Type);
@@ -81,10 +82,10 @@ package body EL.Expressions.Parser is
       return To_Unbounded_String (To_String (To_Wide_Wide_String (Str)));
    end To_Unbounded_String;
 
-   -- #{bean.name}
-   -- #{12 + 23}
-   -- #{bean.name + bean.name}
-   -- #{bean.name == 2 ? 'test' : 'foo'}
+   --  #{bean.name}
+   --  #{12 + 23}
+   --  #{bean.name + bean.name}
+   --  #{bean.name == 2 ? 'test' : 'foo'}
    --
    --  expr ::= expr ? expr : expr
    --  expr ::= expr <op> expr
@@ -110,14 +111,14 @@ package body EL.Expressions.Parser is
    begin
       Parse_Or (P, Cond);
       Peek (P, Token);
-      if Token /= T_Question then
+      if Token /= T_QUESTION then
          Put_Back (P, Token);
          Result := Cond;
          return;
       end if;
       Parse_Or (P, Left);
       Peek (P, Token);
-      if Token /= T_Colon then
+      if Token /= T_COLON then
          raise Invalid_Expression with "Missing :";
       end if;
       Parse_Choice (P, Right);
@@ -135,7 +136,7 @@ package body EL.Expressions.Parser is
       Parse_And (P, Left);
       loop
          Peek (P, Token);
-         exit when Token /= T_Or;
+         exit when Token /= T_OR;
          Parse_And (P, Right);
          Left := Create_Node (EL_LOR, Left, Right);
       end loop;
@@ -154,7 +155,7 @@ package body EL.Expressions.Parser is
       Parse_Equality (P, Left);
       loop
          Peek (P, Token);
-         exit when Token /= T_Land;
+         exit when Token /= T_LOGICAL_AND;
          Parse_Equality (P, Right);
          Left := Create_Node (EL_LAND, Left, Right);
       end loop;
@@ -174,7 +175,7 @@ package body EL.Expressions.Parser is
       Parse_Compare (P, Left);
       loop
          Peek (P, Token);
-         exit when Token /= T_eq and Token /= T_ne;
+         exit when Token /= T_EQ and Token /= T_NE;
          Parse_Equality (P, Right);
          Left := Create_Node (EL_LAND, Left, Right);
       end loop;
@@ -198,19 +199,19 @@ package body EL.Expressions.Parser is
       loop
          Peek (P, Token);
          case Token is
-            when T_Lt =>
+            when T_LT =>
                Parse_Math (P, Right);
                Left := Create_Node (EL_LT, Left, Right);
 
-            when T_Le =>
+            when T_LE =>
                Parse_Math (P, Right);
                Left := Create_Node (EL_LE, Left, Right);
 
-            when T_Gt =>
+            when T_GT =>
                Parse_Math (P, Right);
                Left := Create_Node (EL_GT, Left, Right);
 
-            when T_Ge =>
+            when T_GE =>
                Parse_Math (P, Right);
                Left := Create_Node (EL_GE, Left, Right);
 
@@ -237,20 +238,20 @@ package body EL.Expressions.Parser is
       loop
          Peek (P, Token);
          case Token is
-            when T_Plus =>
+            when T_PLUS =>
                Parse_Multiply (P, Right);
                Left := Create_Node (EL_ADD, Left, Right);
 
-            when T_Minus =>
+            when T_MINUS =>
                Parse_Multiply (P, Right);
                Left := Create_Node (EL_SUB, Left, Right);
 
-            when T_And =>
+            when T_AND =>
                Parse_Multiply (P, Right);
                Left := Create_Node (EL_AND, Left, Right);
 
             when others =>
-              exit;
+               exit;
 
          end case;
       end loop;
@@ -271,7 +272,7 @@ package body EL.Expressions.Parser is
       loop
          Peek (P, Token);
          case Token is
-            when T_Mul =>
+            when T_MUL =>
                Parse_Unary (P, Right);
                Left := Create_Node (EL_MUL, Left, Right);
 
@@ -279,7 +280,7 @@ package body EL.Expressions.Parser is
                Parse_Unary (P, Right);
                Left := Create_Node (EL_DIV, Left, Right);
 
-            when T_Mod =>
+            when T_MOD =>
                Parse_Unary (P, Right);
                Left := Create_Node (EL_MOD, Left, Right);
 
@@ -320,42 +321,42 @@ package body EL.Expressions.Parser is
                end if;
                return;
 
-            when T_Not =>
+            when T_NOT =>
                Parse_Unary (P, Node);
-               Result := Create_Node (EL_Not, Node);
+               Result := Create_Node (EL_NOT, Node);
                return;
 
-            when T_Minus =>
+            when T_MINUS =>
                Parse_Unary (P, Node);
-               Result := Create_Node (EL_Minus, Node);
+               Result := Create_Node (EL_MINUS, Node);
                return;
 
-            when T_Empty =>
+            when T_EMPTY =>
                Parse_Unary (P, Node);
-               Result := Create_Node (EL_Minus, Node);
+               Result := Create_Node (EL_MINUS, Node);
                return;
 
             when T_NUMBER =>
                Result := Create_Node (P.Value);
                return;
                --
-            when T_Literal =>
+            when T_LITERAL =>
                Result := Create_Node (P.Token);
                return;
 
-            when T_True =>
+            when T_TRUE =>
                Result := Create_Node (True);
                return;
 
-            when T_False =>
+            when T_FALSE =>
                Result := Create_Node (False);
                return;
 
-            when T_Null =>
+            when T_NULL =>
                Result := Create_Node (False);
                return;
 
-               --              when T_Minus =>
+               --              when T_MINUS =>
 --                 Peek (P, Token);
 --                 if Token = T_NUMBER then
 --                    Result := Create_Node (-P.Value);
@@ -363,7 +364,7 @@ package body EL.Expressions.Parser is
 --                 end if;
 --                 raise Invalid_Expression with "Missing number after '-'";
 
-            when T_Name =>
+            when T_NAME =>
                --  name
                --  name.name.name
                --  name[expr]
@@ -386,7 +387,7 @@ package body EL.Expressions.Parser is
                      while C = '.' loop
                         P.Pos := P.Pos + 1;
                         Peek (P, Token);
-                        exit when Token /= T_Name;
+                        exit when Token /= T_NAME;
                         Name := To_Unbounded_String (P.Token);
                         Result := Create_Value (Variable => Result, Name => Name);
                         if P.Pos <= P.Last then
@@ -405,15 +406,14 @@ package body EL.Expressions.Parser is
                      else
                         C := ' ';
                      end if;
-                     if Token /= T_Name or C /= '(' then
+                     if Token /= T_NAME or C /= '(' then
                         raise Invalid_Expression with "Missing function name after ':'";
                      end if;
-                     Parse_Function (P, Name & ":" & To_Unbounded_String (P.Token),
-                                     Result);
+                     Parse_Function (P, Name, To_Unbounded_String (P.Token), Result);
 
                   --  Parse a function call
                   elsif C = '(' then
-                     Parse_Function (P, Name, Result);
+                     Parse_Function (P, To_Unbounded_String (""), Name, Result);
 
                   else
                      Result := Create_Variable (Name);
@@ -438,9 +438,9 @@ package body EL.Expressions.Parser is
       C, C1 : Wide_Wide_Character;
    begin
       --  If a token was put back, return it.
-      if P.Pending_Token /= T_Eol then
+      if P.Pending_Token /= T_EOL then
          Token := P.Pending_Token;
-         P.Pending_Token := T_Eol;
+         P.Pending_Token := T_EOL;
          return;
       end if;
 
@@ -453,7 +453,7 @@ package body EL.Expressions.Parser is
 
       --  Check for end of string.
       if P.Pos > P.Last then
-         Token := T_Eol;
+         Token := T_EOL;
          return;
       end if;
 
@@ -472,7 +472,7 @@ package body EL.Expressions.Parser is
                   C1 := P.Expr (P.Pos);
                   P.Pos := P.Pos + 1;
                elsif C1 = C then
-                  Token := T_Literal;
+                  Token := T_LITERAL;
                   return;
                end if;
                Append (P.Token, C1);
@@ -501,7 +501,7 @@ package body EL.Expressions.Parser is
                end;
             end if;
 
-            Token := T_Number;
+            Token := T_NUMBER;
             return;
 
          --  Parse a name composed of letters or digits.
@@ -520,7 +520,7 @@ package body EL.Expressions.Parser is
             case Element (P.Token, 1) is
                when 'a' | 'A' =>
                   if P.Token = "and" then
-                     Token := T_Land;
+                     Token := T_LOGICAL_AND;
                      return;
                   end if;
 
@@ -532,151 +532,151 @@ package body EL.Expressions.Parser is
 
                when 'e' | 'E' =>
                   if P.Token = "eq" then
-                     Token := T_Eq;
+                     Token := T_EQ;
                      return;
                   elsif P.Token = "empty" then
-                     Token := T_Empty;
+                     Token := T_EMPTY;
                   end if;
 
                when 'f' | 'F' =>
                   if P.Token = "false" then
-                     Token := T_False;
+                     Token := T_FALSE;
                      return;
                   end if;
 
                when 'g' | 'G' =>
                   if P.Token = "ge" then
-                     Token := T_Ge;
+                     Token := T_GE;
                      return;
 
                   elsif P.Token = "gt" then
-                     Token := T_Gt;
+                     Token := T_GT;
                      return;
                   end if;
 
                when 'm' | 'M' =>
                   if P.Token = "mod" then
-                     Token := T_Mod;
+                     Token := T_MOD;
                      return;
                   end if;
 
                when 'l' | 'L' =>
                   if P.Token = "le" then
-                     Token := T_Le;
+                     Token := T_LE;
                      return;
 
                   elsif P.Token = "lt" then
-                     Token := T_Lt;
+                     Token := T_LT;
                      return;
                   end if;
 
                when 'n' | 'N' =>
                   if P.Token = "not" then
-                     Token := T_Not;
+                     Token := T_NOT;
                      return;
 
                   elsif P.Token = "null" then
-                     Token := T_Null;
+                     Token := T_NULL;
                      return;
                   end if;
 
                when 't' | 'T' =>
                   if P.Token = "true" then
-                     Token := T_True;
+                     Token := T_TRUE;
                      return;
                   end if;
 
                when others =>
                   null;
             end case;
-            Token := T_Name;
+            Token := T_NAME;
             return;
 
          when '(' =>
-            Token := T_Left_Parent;
+            Token := T_LEFT_PARENT;
             return;
 
          when ')' =>
-            Token := T_Right_Parent;
+            Token := T_RIGHT_PARENT;
             return;
 
          when '+' =>
-            Token := T_Plus;
+            Token := T_PLUS;
             return;
 
          when '-' =>
-            Token := T_Minus;
+            Token := T_MINUS;
             return;
 
          when '.' =>
-            Token := T_Dot;
+            Token := T_DOT;
             return;
 
          when ',' =>
-            Token := T_Comma;
+            Token := T_COMMA;
             return;
 
          when '*' =>
-            Token := T_Mul;
+            Token := T_MUL;
             return;
 
          when '%' =>
-            Token := T_Mod;
+            Token := T_MOD;
             return;
 
          when '?' =>
-            Token := T_Question;
+            Token := T_QUESTION;
             return;
 
          when ':' =>
-            Token := T_Colon;
+            Token := T_COLON;
             return;
 
          when '!' =>
-            Token := T_Not;
+            Token := T_NOT;
             return;
 
          when '<' =>
             --  Comparison operators < or <=
-            Token := T_Lt;
+            Token := T_LT;
             if P.Pos <= P.Last then
                C1 := P.Expr (P.Pos);
                if C1 = '=' then
                   P.Pos := P.Pos + 1;
-                  Token := T_Le;
+                  Token := T_LE;
                end if;
             end if;
             return;
 
          when '>' =>
             --  Comparison operators > or >=
-            Token := T_Gt;
+            Token := T_GT;
             if P.Pos <= P.Last then
                C1 := P.Expr (P.Pos);
                if C1 = '=' then
                   P.Pos := P.Pos + 1;
-                  Token := T_Ge;
+                  Token := T_GE;
                end if;
             end if;
             return;
 
          when '&' =>
-            Token := T_And;
+            Token := T_AND;
             if P.Pos <= P.Last then
                C1 := P.Expr (P.Pos);
                if C1 = '&' then
-                  Token := T_Land;
+                  Token := T_LOGICAL_AND;
                   P.Pos := P.Pos + 1;
                end if;
             end if;
             return;
 
          when '=' =>
-            Token := T_Eq;
+            Token := T_EQ;
             return;
 
          when others =>
-            Token := T_Char;
+            Token := T_UNKNOWN;
             return;
       end case;
    end Peek;
@@ -702,12 +702,14 @@ package body EL.Expressions.Parser is
    --  Parse a function call.
    --  The function call can have up to 4 arguments.
    --  ------------------------------
-   procedure Parse_Function (P      : in out Parser;
-                             Name   : in Unbounded_String;
-                             Result : out ELNode_Access) is
+   procedure Parse_Function (P         : in out Parser;
+                             Namespace : in Unbounded_String;
+                             Name      : in Unbounded_String;
+                             Result    : out ELNode_Access) is
       Token : Token_Type;
       Arg1, Arg2, Arg3, Arg4 : ELNode_Access;
       Func : Function_Access;
+      NS   : constant String := To_String (Namespace);
       N    : constant String := To_String (Name);
    begin
 
@@ -715,7 +717,7 @@ package body EL.Expressions.Parser is
          raise Invalid_Expression with "There is no function mapper";
       end if;
 
-      Func := P.Mapper.Get_Function (N);
+      Func := P.Mapper.Get_Function (NS, N);
       --  if Func = null then
       --   raise Invalid_Expression with "Function '" & N & "' not found";
       --  end if;
@@ -725,8 +727,8 @@ package body EL.Expressions.Parser is
       P.Pos := P.Pos + 1;
       Parse_Choice (P, Arg1);
       Peek (P, Token);
-      if Token /= T_Comma then
-         if Token /= T_Right_Parent then
+      if Token /= T_COMMA then
+         if Token /= T_RIGHT_PARENT then
             raise Invalid_Expression with "Missing ')' at end of function call";
          end if;
          Result := Create_Node (Func, Arg1);
@@ -734,8 +736,8 @@ package body EL.Expressions.Parser is
       end if;
       Parse_Choice (P, Arg2);
       Peek (P, Token);
-      if Token /= T_Comma then
-         if Token /= T_Right_Parent then
+      if Token /= T_COMMA then
+         if Token /= T_RIGHT_PARENT then
             raise Invalid_Expression with "Missing ')' at end of function call";
          end if;
          Result := Create_Node (Func, Arg1, Arg2);
@@ -743,8 +745,8 @@ package body EL.Expressions.Parser is
       end if;
       Parse_Choice (P, Arg3);
       Peek (P, Token);
-      if Token /= T_Comma then
-         if Token /= T_Right_Parent then
+      if Token /= T_COMMA then
+         if Token /= T_RIGHT_PARENT then
             raise Invalid_Expression with "Missing ')' at end of function call";
          end if;
          Result := Create_Node (Func, Arg1, Arg2, Arg3);
@@ -753,7 +755,7 @@ package body EL.Expressions.Parser is
       Parse_Choice (P, Arg4);
       Peek (P, Token);
       Result := Create_Node (Func, Arg1, Arg2, Arg3, Arg4);
-      if Token /= T_Right_Parent then
+      if Token /= T_RIGHT_PARENT then
          raise Invalid_Expression with "Missing ')' at end of function call";
       end if;
    end Parse_Function;
@@ -769,19 +771,25 @@ package body EL.Expressions.Parser is
       P.Pos := P.Expr.all'First;
       P.Last := P.Expr.all'Last;
       Parse_Choice (P, Result);
-      if P.Pos <= P.Last or P.Pending_Token /= T_Eol then
+      if P.Pos <= P.Last or P.Pending_Token /= T_EOL then
          raise Invalid_Expression with "Syntax error at end of expression";
       end if;
    end Parse;
 
-   procedure Parse (Expr : Wide_Wide_String;
-                    Result : out EL.Expressions.Nodes.ELNode_Access) is
+   procedure Parse (Expr    : in Wide_Wide_String;
+                    Context : in ELContext'Class;
+                    Result  : out EL.Expressions.Nodes.ELNode_Access) is
+      S : aliased Wide_Wide_String := Expr;
       P : Parser;
    begin
-      P.Pos := Expr'First;
-      P.Last := Expr'Last;
-      P.Expr := new Wide_Wide_String '(Expr);
-      Result := null;
+      P.Mapper := Context.Get_Function_Mapper;
+      P.Expr := S'Unchecked_Access;
+      P.Pos := P.Expr.all'First;
+      P.Last := P.Expr.all'Last;
+      Parse_Choice (P, Result);
+      if P.Pos <= P.Last or P.Pending_Token /= T_EOL then
+         raise Invalid_Expression with "Syntax error at end of expression";
+      end if;
    end Parse;
 
 end EL.Expressions.Parser;
