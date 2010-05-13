@@ -57,4 +57,17 @@ package EL.Beans is
                         Name  : in String;
                         Value : in EL.Objects.Object) is abstract;
 
+   --  ------------------------------
+   --  List of objects
+   --  ------------------------------
+   --  The <b>List_Bean</b> interface gives access to a list of objects.
+   type List_Bean is interface and Readonly_Bean;
+
+   --  Get the number of elements in the list.
+   function Get_Count (From : List_Bean) return Natural is abstract;
+
+   --  Get the element at the given index.
+   function Get_Row (From  : List_Bean;
+                     Index : Natural) return EL.Objects.Object is abstract;
+
 end EL.Beans;
