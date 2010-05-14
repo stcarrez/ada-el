@@ -40,11 +40,13 @@ procedure Functions is
    Result : Object;
 begin
    --  Register the 'format' function.
-   Fn.Set_Function ("format", Bean.Format'Access);
+   Fn.Set_Function (Namespace => "",
+                    Name      => "format",
+                    Func      => Bean.Format'Access);
    Ctx.Set_Function_Mapper (Fn);
 
    --  Create the expression
-   E := Create_Expression ("format(user.firstName) & ' ' & user.lastName", Ctx);
+   E := Create_Expression ("#{format(user.firstName) & ' ' & user.lastName}", Ctx);
 
    --  Bind the context to 'Joe' and evaluate
    Ctx.Set_Variable ("user", Joe);

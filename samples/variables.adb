@@ -36,7 +36,7 @@ procedure Variables is
    E      : EL.Expressions.Expression;
    Result : EL.Objects.Object;
 begin
-   E := EL.Expressions.Create_Expression ("user.firstName & ' ' & user.lastName", Ctx);
+   E := EL.Expressions.Create_Expression ("#{user.firstName} #{user.lastName}", Ctx);
 
    --  Bind the context to 'Joe' and evaluate
    Ctx.Set_Variable ("user", Joe);

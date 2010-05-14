@@ -26,7 +26,7 @@ procedure Evaluate is
    E      : EL.Expressions.Expression;
    Result : EL.Objects.Object;
 begin
-   E := EL.Expressions.Create_Expression ("1 + (2 - 3) * 4", Ctx);
+   E := EL.Expressions.Create_Expression ("#{1 + (2 - 3) * 4}", Ctx);
    Result := E.Get_Value (Ctx);
    Ada.Text_IO.Put_Line ("Result: " & EL.Objects.To_String (Result));
 end Evaluate;
