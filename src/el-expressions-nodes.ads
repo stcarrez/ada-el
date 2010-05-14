@@ -67,7 +67,7 @@ package EL.Expressions.Nodes is
    type ELBinary is new ELNode with private;
    type Binary_Node is (EL_EQ, EL_NE, EL_LE, EL_LT, EL_GE, EL_GT,
                         EL_ADD, EL_SUB, EL_MUL, EL_DIV, EL_MOD,
-                        EL_AND, EL_OR, EL_LAND, EL_LOR);
+                        EL_AND, EL_OR, EL_LAND, EL_LOR, EL_CONCAT);
 
    --  Evaluate a node on a given context.
    overriding

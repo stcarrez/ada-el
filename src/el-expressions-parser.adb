@@ -39,6 +39,7 @@ package body EL.Expressions.Parser is
                        T_QUESTION, T_COLON, T_COMMA,
                        T_NUMBER, T_LITERAL, T_NAME,
                        T_TRUE, T_FALSE, T_NULL,
+                       T_BRACE_END,
                        T_UNKNOWN);
 
    type Parser is record
@@ -99,6 +100,67 @@ package body EL.Expressions.Parser is
    --  literal ::= '...' | ".."
    --  number ::= [0-9]+
    --
+
+   --  Parse a literal or an expression
+   procedure Parse_EL (P : in out Parser;
+                       Result : out ELNode_Access) is
+      Literal, Node : ELNode_Access;
+      C : Wide_Wide_Character;
+   begin
+      while P.Pos <= P.Last loop
+         C := P.Expr (P.Pos);
+         if C = '\' then
+            P.Pos := P.Pos + 1;
+            exit when P.Pos > P.Last;
+            C := P.Expr (P.Pos);
+            Append (P.Token, C);
+
+         elsif C = '#' or C = '$' then
+            P.Pos := P.Pos + 1;
+            if P.Pos > P.Last then
+               raise Invalid_Expression with "Missing '{' to start expression";
+            end if;
+            C := P.Expr (P.Pos);
+            if C /= '{' then
+               raise Invalid_Expression with "Missing '{' to start expression";
+            end if;
+
+            if Length (P.Token) > 0 then
+               if Literal /= null then
+                  Literal := Create_Node (EL_CONCAT, Literal,
+                                          Create_Node (P.Token));
+               else
+                  Literal := Create_Node (P.Token);
+               end if;
+            end if;
+            P.Pos := P.Pos + 1;
+            Parse_Choice (P, Node);
+            if P.Pending_Token /= T_BRACE_END then
+               raise Invalid_Expression with "Missing '}' to close expression";
+            end if;
+            P.Pending_Token := T_EOL;
+            Set_Unbounded_Wide_Wide_String (P.Token, "");
+            if Literal /= null then
+               Literal := Create_Node (EL_CONCAT, Literal, Node);
+            else
+               Literal := Node;
+            end if;
+         else
+            Append (P.Token, C);
+            P.Pos := P.Pos + 1;
+         end if;
+      end loop;
+      if Length (P.Token) > 0 then
+         Node := Create_Node (P.Token);
+         if Literal /= null then
+            Result := Create_Node (EL_CONCAT, Literal, Node);
+         else
+            Result := Node;
+         end if;
+      else
+         Result := Literal;
+      end if;
+   end Parse_EL;
 
    --  Parse a choice expression, then Or.
    --
@@ -675,6 +737,10 @@ package body EL.Expressions.Parser is
             Token := T_EQ;
             return;
 
+         when '}' =>
+            Token := T_BRACE_END;
+            return;
+
          when others =>
             Token := T_UNKNOWN;
             return;
@@ -770,7 +836,7 @@ package body EL.Expressions.Parser is
       P.Expr := S'Unchecked_Access;
       P.Pos := P.Expr.all'First;
       P.Last := P.Expr.all'Last;
-      Parse_Choice (P, Result);
+      Parse_EL (P, Result);
       if P.Pos <= P.Last or P.Pending_Token /= T_EOL then
          raise Invalid_Expression with "Syntax error at end of expression";
       end if;
@@ -786,7 +852,7 @@ package body EL.Expressions.Parser is
       P.Expr := S'Unchecked_Access;
       P.Pos := P.Expr.all'First;
       P.Last := P.Expr.all'Last;
-      Parse_Choice (P, Result);
+      Parse_EL (P, Result);
       if P.Pos <= P.Last or P.Pending_Token /= T_EOL then
          raise Invalid_Expression with "Syntax error at end of expression";
       end if;

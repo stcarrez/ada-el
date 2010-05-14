@@ -66,11 +66,14 @@ package body EL.Expressions is
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
                                return Expression is
+      use EL.Expressions.Nodes;
       Result : Expression;
       Node   : EL.Expressions.Nodes.ELNode_Access;
    begin
       EL.Expressions.Parser.Parse (Expr => Expr, Context => Context, Result => Node);
-      Result.Node := Node.all'Access;
+      if Node /= null then
+         Result.Node := Node.all'Access;
+      end if;
       return Result;
    end Create_Expression;
 

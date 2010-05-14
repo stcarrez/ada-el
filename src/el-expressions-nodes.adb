@@ -58,47 +58,56 @@ package body EL.Expressions.Nodes is
       Right : constant Object := Expr.Right.Get_Value (Context);
    begin
       case Expr.Kind is
-      when EL_EQ =>
-         return To_Object (Left = Right);
+         when EL_EQ =>
+            return To_Object (Left = Right);
 
-      when EL_NE =>
-         return To_Object (Left /= Right);
+         when EL_NE =>
+            return To_Object (Left /= Right);
 
-      when EL_LE =>
-         return To_Object (Left <= Right);
+         when EL_LE =>
+            return To_Object (Left <= Right);
 
-      when EL_LT =>
-         return To_Object (Left < Right);
+         when EL_LT =>
+            return To_Object (Left < Right);
 
-      when EL_GE =>
-         return To_Object (Left >= Right);
+         when EL_GE =>
+            return To_Object (Left >= Right);
 
-      when EL_GT =>
-         return To_Object (Left > Right);
+         when EL_GT =>
+            return To_Object (Left > Right);
 
-      when EL_ADD =>
-         return Left + Right;
+         when EL_ADD =>
+            return Left + Right;
 
-      when EL_SUB =>
-         return Left - Right;
+         when EL_SUB =>
+            return Left - Right;
 
-      when EL_MUL =>
-         return Left * Right;
+         when EL_MUL =>
+            return Left * Right;
 
-      when EL_DIV =>
-         return Left / Right;
+         when EL_DIV =>
+            return Left / Right;
 
-      when EL_MOD =>
-         return Left mod Right;
+         when EL_MOD =>
+            return Left mod Right;
 
-      when EL_LAND =>
-         return To_Object (To_Boolean (Left) and To_Boolean (Right));
+         when EL_LAND =>
+            return To_Object (To_Boolean (Left) and To_Boolean (Right));
 
-      when EL_LOR | EL_OR =>
-         return To_Object (To_Boolean (Left) or To_Boolean (Right));
+         when EL_LOR | EL_OR =>
+            return To_Object (To_Boolean (Left) or To_Boolean (Right));
 
-      when EL_AND =>
-         return Left & Right;
+         when EL_CONCAT =>
+            if Get_Type (Left) = TYPE_WIDE_STRING
+              or Get_Type (Right) = TYPE_WIDE_STRING then
+               return To_Object (To_Wide_Wide_String (Left)
+                                 & To_Wide_Wide_String (Right));
+            else
+               return To_Object (To_String (Left) & To_String (Right));
+            end if;
+
+         when EL_AND =>
+            return Left & Right;
 
       end case;
    end Get_Value;
