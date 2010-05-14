@@ -40,7 +40,11 @@ package body EL.Expressions is
       pragma Unreferenced (Context);
    begin
       if Expr.Bean = null then
-         return EL.Objects.Null_Object;
+         if Expr.Node = null then
+            return EL.Objects.Null_Object;
+         else
+            return EL.Expressions.Nodes.Get_Value (Expr.Node.all, Context);
+         end if;
       end if;
       return To_Object (Expr.Bean);
    end Get_Value;
