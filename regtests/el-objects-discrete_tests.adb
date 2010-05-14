@@ -19,7 +19,8 @@
 with AUnit.Test_Caller;
 with AUnit.Assertions;
 with Ada.Strings.Fixed;
-
+with Ada.Text_IO;
+with Ada.Calendar;
 package body EL.Objects.Discrete_Tests is
 
    use EL.Objects;
@@ -169,6 +170,30 @@ package body EL.Objects.Discrete_Tests is
    end Test_Eq;
    procedure Test_Eq is new Test_Basic_Object (Test_Eq);
 
+   --  ------------------------------
+   --  Test EL.Objects."="
+   --  ------------------------------
+   procedure Test_Perf (V : String; N : Test_Type) is
+      use Ada.Calendar;
+
+      Res   : Boolean;
+      Start : Ada.Calendar.Time;
+      Value : EL.Objects.Object := To_Object_Test (N);
+      D     : Duration;
+   begin
+      Start := Ada.Calendar.Clock;
+      for I in 1 .. 1_000 loop
+         declare
+            V : EL.Objects.Object := Value;
+         begin
+            V := V + V;
+         end;
+      end loop;
+      D := Ada.Calendar.Clock - Start;
+      Ada.Text_IO.Put_Line ("Perf " & Test_Name & ": " & Duration'Image (D * 1000.0));
+   end Test_Perf;
+   procedure Test_Perf is new Test_Basic_Object (Test_Perf);
+
    package Caller is new AUnit.Test_Caller (Test);
 
    procedure Add_Tests (Suite : Access_Test_Suite) is
@@ -187,6 +212,8 @@ package body EL.Objects.Discrete_Tests is
                                      Test_Lt_Gt'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Objects.'>'." & Test_Name,
                                      Test_Lt_Gt'Access));
+      Suite.Add_Test (Caller.Create ("Performance EL.Objects.'>'." & Test_Name,
+        Test_Perf'Access));
    end Add_Tests;
 
 end EL.Objects.Discrete_Tests;

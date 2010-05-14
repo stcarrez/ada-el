@@ -87,31 +87,31 @@ package body EL.Testsuite is
               Message => "[2] Expression result invalid: " & To_String (Value));
 
       --  Simple add
-      E := EL.Expressions.Create_Expression ("1+1", Ctx);
+      E := EL.Expressions.Create_Expression ("#{1+1}", Ctx);
       Value := E.Get_Value (Ctx);
       Assert (Condition => To_Integer (Value) = 2,
               Message => "[2.1] Expression result invalid: " & To_String (Value));
 
       --  Constant expressions
-      E := EL.Expressions.Create_Expression ("12 + (123 - 3) * 4", Ctx);
+      E := EL.Expressions.Create_Expression ("#{12 + (123 - 3) * 4}", Ctx);
       Value := E.Get_Value (Ctx);
       Assert (Condition => To_Integer (Value) = 492,
               Message => "[3] Expression result invalid: " & To_String (Value));
 
       --  Constant expressions
-      E := EL.Expressions.Create_Expression ("12 + (123 - 3) * 4 + (23? 10 : 0)", Ctx);
+      E := EL.Expressions.Create_Expression ("#{12 + (123 - 3) * 4 + (23? 10 : 0)}", Ctx);
       Value := E.Get_Value (Ctx);
       Assert (Condition => To_Integer (Value) = 502,
               Message => "[4] Expression result invalid: " & To_String (Value));
 
       --  Choice expressions
-      E := EL.Expressions.Create_Expression ("1 > 2 ? 12 + 2 : 3 * 3", Ctx);
+      E := EL.Expressions.Create_Expression ("#{1 > 2 ? 12 + 2 : 3 * 3}", Ctx);
       Value := E.Get_Value (Ctx);
       Assert (Condition => To_Integer (Value) = 9,
               Message => "[5] Expression result invalid: " & To_String (Value));
 
       --  Choice expressions using strings
-      E := EL.Expressions.Create_Expression ("1 > 2 ? 12 + 2 : 'A string'", Ctx);
+      E := EL.Expressions.Create_Expression ("#{1 > 2 ? 12 + 2 : 'A string'}", Ctx);
       Value := E.Get_Value (Ctx);
       Assert (Condition => To_String (Value) = "A string",
               Message => "[6] Expression result invalid: " & To_String (Value));

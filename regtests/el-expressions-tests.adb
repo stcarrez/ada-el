@@ -65,25 +65,31 @@ package body EL.Expressions.Tests is
    begin
       T.Context.Set_Variable ("user", P);
 
-      Check (T, "user.firstName", "Joe");
-      Check (T, "user.lastName", "Black");
-      Check (T, "user.age", " 42");
-      Check (T, "user.date", To_String (To_Object (P.Date)));
-      Check (T, "user.weight", To_String (To_Object (P.Weight)));
+      Check (T, "#{user.firstName}", "Joe");
+      Check (T, "#{user.lastName}", "Black");
+      Check (T, "#{user.age}", " 42");
+      Check (T, "#{user.date}", To_String (To_Object (P.Date)));
+      Check (T, "#{user.weight}", To_String (To_Object (P.Weight)));
 
       P.Age := P.Age + 1;
-      Check (T, "user.age", " 43");
-      Check (T, "user.firstName & ' ' & user.lastName", "Joe Black");
+      Check (T, "#{user.age}", " 43");
+      Check (T, "#{user.firstName & ' ' & user.lastName}", "Joe Black");
+
+      Check (T, "Joe is#{user.age} year#{user.age > 0 ? 's' : ''} old",
+             "Joe is 43 years old");
    end Test_Bean_Evaluation;
 
    --  Test evaluation of expression using a bean
    procedure Test_Parse_Error (T : in out Test) is
    begin
-      Check_Error (T, "1 +");
-      Check_Error (T, "12(");
-      Check_Error (T, "foo(1)");
-      Check_Error (T, "1+2+'abc");
-      Check_Error (T, "1+""");
+      Check_Error (T, "#{1 +}");
+      Check_Error (T, "#{12(}");
+      Check_Error (T, "#{foo(1)}");
+      Check_Error (T, "#{1+2+'abc}");
+      Check_Error (T, "#{1+""}");
+      Check_Error (T, "#{12");
+      Check_Error (T, "${1");
+      Check_Error (T, "test #{'}");
    end Test_Parse_Error;
 
    package Caller is new AUnit.Test_Caller (Test);
