@@ -55,6 +55,7 @@ package EL.Expressions is
    --  Expression
    --  ------------------------------
    type Expression is new Ada.Finalization.Controlled with private;
+   type Expression_Access is access all Expression'Class;
 
    --  Get the value of the expression using the given expression context.
    --  Returns an object that holds a typed result.
