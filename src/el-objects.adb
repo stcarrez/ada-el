@@ -248,6 +248,10 @@ package body EL.Objects is
             return Long_Long_Integer'Value (Value.Type_Def.To_String (Value));
 
       end case;
+
+   exception
+      when Constraint_Error =>
+         return 0;
    end To_Long_Long_Integer;
 
    --  ------------------------------
