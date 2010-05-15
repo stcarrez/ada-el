@@ -29,6 +29,8 @@ package body EL.Objects is
    use Ada.Calendar.Formatting;
    use type Interfaces.C.long;
 
+   type String_Access is access constant String;
+
    --  Find the data type to be used for an arithmetic operation between two objects.
    function Get_Arithmetic_Type (Left, Right : Object) return Data_Type;
 
@@ -42,7 +44,7 @@ package body EL.Objects is
                 return Unbounded_String renames To_Unbounded_String;
 
    type Basic_Type is new Object_Type with record
-      Name : Unbounded_String;
+      Name : String_Access;
    end record;
 
    --  Get the type name
@@ -52,20 +54,28 @@ package body EL.Objects is
    function To_String (Type_Def : Basic_Type;
                        Value    : in Object) return String;
 
-   Integer_Type     : aliased constant Basic_Type := Basic_Type '(Name => +("Integer"));
-   Boolean_Type     : aliased constant Basic_Type := Basic_Type '(Name => +("Boolean"));
-   String_Type      : aliased constant Basic_Type := Basic_Type '(Name => +("String"));
-   Wide_String_Type : aliased constant Basic_Type := Basic_Type '(Name => +("Wide_String"));
-   Float_Type       : aliased constant Basic_Type := Basic_Type '(Name => +("Float"));
-   Time_Type        : aliased constant Basic_Type := Basic_Type '(Name => +("Time"));
-   Bean_Type        : aliased constant Basic_Type := Basic_Type '(Name => +("Bean"));
+   INTEGER_NAME     : aliased constant String := "Integer";
+   BOOLEAN_NAME     : aliased constant String := "Boolean";
+   STRING_NAME      : aliased constant String := "String";
+   WIDE_STRING_NAME : aliased constant String := "Wide_Wide_String";
+   FLOAT_NAME       : aliased constant String := "Float";
+   TIME_NAME        : aliased constant String := "Time";
+   BEAN_NAME        : aliased constant String := "Bean";
+
+   Integer_Type     : aliased constant Basic_Type := Basic_Type '(Name => INTEGER_NAME'Access);
+   Boolean_Type     : aliased constant Basic_Type := Basic_Type '(Name => BOOLEAN_NAME'Access);
+   String_Type      : aliased constant Basic_Type := Basic_Type '(Name => STRING_NAME'Access);
+   Wide_String_Type : aliased constant Basic_Type := Basic_Type '(Name => WIDE_STRING_NAME'Access);
+   Float_Type       : aliased constant Basic_Type := Basic_Type '(Name => FLOAT_NAME'Access);
+   Time_Type        : aliased constant Basic_Type := Basic_Type '(Name => TIME_NAME'Access);
+   Bean_Type        : aliased constant Basic_Type := Basic_Type '(Name => BEAN_NAME'Access);
 
    --  ------------------------------
    --  Get the type name
    --  ------------------------------
    function Get_Name (Type_Def : Basic_Type) return String is
    begin
-      return To_String (Type_Def.Name);
+      return Type_Def.Name.all;
    end Get_Name;
 
    --  ------------------------------
