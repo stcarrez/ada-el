@@ -139,7 +139,7 @@ package body EL.Expressions.Parser is
                raise Invalid_Expression with "Missing '}' to close expression";
             end if;
             P.Pending_Token := T_EOL;
-            Set_Unbounded_Wide_Wide_String (P.Token, "");
+            Delete (P.Token, 1, Length (P.Token));
             if Literal /= null then
                Literal := Create_Node (EL_CONCAT, Literal, Node);
             else
@@ -526,7 +526,7 @@ package body EL.Expressions.Parser is
          --  Collect up to the end of the string and put
          --  the result in the parser token result.
          when ''' | '"' =>
-            Set_Unbounded_Wide_Wide_String (P.Token, "");
+            Delete (P.Token, 1, Length (P.Token));
             while P.Pos <= P.Last loop
                C1 := P.Expr (P.Pos);
                P.Pos := P.Pos + 1;
@@ -568,7 +568,7 @@ package body EL.Expressions.Parser is
 
          --  Parse a name composed of letters or digits.
          when 'a' .. 'z' | 'A' .. 'Z' =>
-            Set_Unbounded_Wide_Wide_String (P.Token, "");
+            Delete (P.Token, 1, Length (P.Token));
             Append (P.Token, C);
             while P.Pos <= P.Last loop
                C := P.Expr (P.Pos);
