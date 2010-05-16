@@ -57,6 +57,15 @@ package body EL.Expressions.Tests is
       Assert (Condition => To_String (V) = Expect,
               Message => "Evaluate '" & Expr & "' returned '" & To_String (V)
               & "' when we expect '" & Expect & "'");
+
+      declare
+         E2 : constant Expression := E.Reduce_Expression (Context => T.Context);
+         V2 : constant Object := E2.Get_Value (Context => T.Context);
+      begin
+         Assert (To_String (V2) = Expect,
+                 "Reduce produced incorrect result: " & To_String (V2));
+      end;
+
    end Check;
 
    --  Test evaluation of expression using a bean
