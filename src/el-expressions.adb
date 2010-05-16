@@ -18,7 +18,16 @@
 
 with EL.Expressions.Nodes;
 with EL.Expressions.Parser;
+with Util.Concurrent.Counters;
 package body EL.Expressions is
+
+   --  ------------------------------
+   --  Check whether the expression is a holds a constant value.
+   --  ------------------------------
+   function Is_Constant (Expr : Expression'Class) return Boolean is
+   begin
+      return Expr.Node = null;
+   end Is_Constant;
 
    --  ------------------------------
    --  Get the value of the expression using the given expression context.
@@ -27,7 +36,7 @@ package body EL.Expressions is
                        Context : ELContext'Class) return Object is
    begin
       if Expr.Node = null then
-         return EL.Objects.Null_Object;
+         return Expr.Value;
       end if;
       return EL.Expressions.Nodes.Get_Value (Expr.Node.all, Context);
    end Get_Value;
@@ -81,6 +90,29 @@ package body EL.Expressions is
       return Result;
    end Create_Expression;
 
+   --  ------------------------------
+   --  Reduce the expression by eliminating known variables and computing
+   --  constant expressions.  The result expression is either another
+   --  expression or a computed constant value.
+   --  ------------------------------
+   function Reduce_Expression (Expr    : Expression;
+                               Context : ELContext'Class)
+                               return Expression is
+      use EL.Expressions.Nodes;
+      use Ada.Finalization;
+   begin
+      if Expr.Node = null then
+         return Expr;
+      end if;
+      declare
+         Result : constant Reduction := Expr.Node.Reduce (Context);
+      begin
+         return Expression '(Controlled with
+                             Node => Result.Node,
+                             Value => Result.Value);
+      end;
+   end Reduce_Expression;
+
    function Create_ValueExpression (Bean : access EL.Beans.Readonly_Bean'Class)
                                     return ValueExpression is
       Result : ValueExpression;
@@ -101,20 +133,29 @@ package body EL.Expressions is
       return Result;
    end Create_Expression;
 
+   overriding
+   function Reduce_Expression (Expr    : ValueExpression;
+                               Context : ELContext'Class)
+                               return ValueExpression is
+   begin
+      return Expr;
+   end Reduce_Expression;
+
    procedure Adjust (Object : in out Expression) is
    begin
       if Object.Node /= null then
-         Object.Node.Ref_Counter := Object.Node.Ref_Counter + 1;
+         Util.Concurrent.Counters.Decrement (Object.Node.Ref_Counter);
       end if;
    end Adjust;
 
    procedure Finalize (Object : in out Expression) is
-      Node : EL.Expressions.Nodes.ELNode_Access;
+      Node    : EL.Expressions.Nodes.ELNode_Access;
+      Is_Zero : Boolean;
    begin
       if Object.Node /= null then
          Node := Object.Node.all'Access;
-         Node.Ref_Counter := Node.Ref_Counter - 1;
-         if Node.Ref_Counter = 0 then
+         Util.Concurrent.Counters.Decrement (Node.Ref_Counter, Is_Zero);
+         if Is_Zero then
             EL.Expressions.Nodes.Delete (Node);
             Object.Node := null;
          end if;

@@ -20,7 +20,7 @@
 --  package EL.Expressions
 --  package EL.Objects
 with EL.Expressions.Nodes;
-package EL.Expressions.Parser is
+private package EL.Expressions.Parser is
 
    procedure Parse (Expr    : in String;
                     Context : in ELContext'Class;

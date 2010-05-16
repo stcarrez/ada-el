@@ -70,8 +70,9 @@ package body EL.Contexts.Default is
    --  ------------------------------
    --  Set the VariableMapper associated with this ELContext.
    --  ------------------------------
+   overriding
    procedure Set_Variable_Mapper (Context : in out Default_Context;
-                                  Mapper  : in EL.Variables.VariableMapper_Access) is
+                                  Mapper  : access EL.Variables.VariableMapper'Class) is
    begin
       Context.Var_Mapper := Mapper;
    end Set_Variable_Mapper;

@@ -45,8 +45,9 @@ package EL.Contexts.Default is
                                   Mapper  : in EL.Functions.Function_Mapper_Access);
 
    --  Set the VariableMapper associated with this ELContext.
+   overriding
    procedure Set_Variable_Mapper (Context : in out Default_Context;
-                                  Mapper  : in EL.Variables.VariableMapper_Access);
+                                  Mapper  : access EL.Variables.VariableMapper'Class);
 
    --  Set the ELResolver associated with this ELcontext.
    procedure Set_Resolver (Context  : in out Default_Context;

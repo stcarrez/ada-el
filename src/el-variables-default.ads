@@ -50,7 +50,8 @@ private
                                             Equivalent_Keys => "=");
 
    type Default_Variable_Mapper is new VariableMapper with record
-      Map : Variable_Maps.Map;
+      Next_Mapper : VariableMapper_Access;
+      Map         : Variable_Maps.Map;
    end record;
 
 end EL.Variables.Default;

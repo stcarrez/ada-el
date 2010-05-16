@@ -37,7 +37,7 @@
 with EL.Objects;
 with Ada.Finalization;
 
-limited with EL.Expressions.Nodes;
+limited private with EL.Expressions.Nodes;
 with EL.Contexts;
 with EL.Beans;
 package EL.Expressions is
@@ -57,6 +57,9 @@ package EL.Expressions is
    type Expression is new Ada.Finalization.Controlled with private;
    type Expression_Access is access all Expression'Class;
 
+   --  Check whether the expression is a holds a constant value.
+   function Is_Constant (Expr : Expression'Class) return Boolean;
+
    --  Get the value of the expression using the given expression context.
    --  Returns an object that holds a typed result.
    function Get_Value (Expr    : Expression;
@@ -67,6 +70,13 @@ package EL.Expressions is
    --  resolved during evaluation of the expression.
    --  Raises <b>Invalid_Expression</b> if the expression is invalid.
    function Create_Expression (Expr    : String;
+                               Context : ELContext'Class)
+                               return Expression;
+
+   --  Reduce the expression by eliminating known variables and computing
+   --  constant expressions.  The result expression is either another
+   --  expression or a computed constant value.
+   function Reduce_Expression (Expr    : Expression;
                                Context : ELContext'Class)
                                return Expression;
 
@@ -88,6 +98,11 @@ package EL.Expressions is
 
    function Is_Readonly (Expr : in ValueExpression) return Boolean;
 
+   overriding
+   function Reduce_Expression (Expr    : ValueExpression;
+                               Context : ELContext'Class)
+                               return ValueExpression;
+
    --  Parse an expression and return its representation ready for evaluation.
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
@@ -102,7 +117,8 @@ private
    procedure Finalize (Object : in out Expression);
 
    type Expression is new Ada.Finalization.Controlled with record
-      Node : access EL.Expressions.Nodes.ELNode'Class;
+      Node  : access EL.Expressions.Nodes.ELNode'Class := null;
+      Value : EL.Objects.Object := EL.Objects.Null_Object;
    end record;
 
    type ValueExpression is new Expression with record
