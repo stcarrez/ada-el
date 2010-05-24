@@ -62,6 +62,7 @@ package EL.Beans is
    --  ------------------------------
    --  The <b>List_Bean</b> interface gives access to a list of objects.
    type List_Bean is interface and Readonly_Bean;
+   type List_Bean_Access is access all List_Bean'Class;
 
    --  Get the number of elements in the list.
    function Get_Count (From : List_Bean) return Natural is abstract;

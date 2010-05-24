@@ -16,6 +16,10 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with EL.Variables;
+with Ada.Strings.Unbounded;
+
+private with Ada.Strings.Unbounded.Hash;
+private with Ada.Containers.Indefinite_Hashed_Maps;
 package EL.Contexts.Default is
 
    --  ------------------------------
@@ -61,6 +65,7 @@ package EL.Contexts.Default is
    --  Default Resolver
    --  ------------------------------
    type Default_ELResolver is new ELResolver with private;
+   type Default_ELResolver_Access is access all Default_ELResolver'Class;
 
    --  Get the value associated with a base object and a given property.
    overriding
@@ -77,6 +82,16 @@ package EL.Contexts.Default is
                         Name     : in Unbounded_String;
                         Value    : in Object);
 
+   --  Register the value under the given name.
+   procedure Register (Resolver : in out Default_ELResolver;
+                       Name     : in Unbounded_String;
+                       Value    : access EL.Beans.Readonly_Bean'Class);
+
+   --  Register the value under the given name.
+   procedure Register (Resolver : in out Default_ELResolver;
+                       Name     : in Unbounded_String;
+                       Value    : in EL.Objects.Object);
+
 private
 
    type Default_Context is new ELContext with record
@@ -87,8 +102,14 @@ private
 
    use EL.Beans;
 
+   package Bean_Maps is new
+     Ada.Containers.Indefinite_Hashed_Maps (Key_Type => Unbounded_String,
+                                            Element_Type => EL.Objects.Object,
+                                            Hash => Ada.Strings.Unbounded.Hash,
+                                            Equivalent_Keys => "=");
+
    type Default_ELResolver is new ELResolver with record
-      N : Natural;
+      Map : Bean_Maps.Map;
    end record;
 
 end EL.Contexts.Default;

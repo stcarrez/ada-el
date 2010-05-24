@@ -111,6 +111,9 @@ package EL.Expressions is
    function Create_ValueExpression (Bean : access EL.Beans.Readonly_Bean'Class)
                                     return ValueExpression;
 
+   function Create_ValueExpression (Bean : EL.Objects.Object)
+                                    return ValueExpression;
+
 private
 
    procedure Adjust   (Object : in out Expression);

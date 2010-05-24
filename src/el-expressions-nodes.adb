@@ -315,7 +315,15 @@ package body EL.Expressions.Nodes is
            with "Cannot resolve variable: '" & To_String (Expr.Name) & "'";
       end if;
       return Resolver.all.Get_Value (Context, null, Expr.Name);
+
    exception
+      when No_Variable =>
+         if Resolver = null then
+            raise Invalid_Variable
+              with "Cannot resolve variable: '" & To_String (Expr.Name) & "'";
+         end if;
+         return Resolver.all.Get_Value (Context, null, Expr.Name);
+
       when others =>
          return EL.Objects.Null_Object;
    end Get_Value;

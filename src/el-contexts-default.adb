@@ -84,7 +84,7 @@ package body EL.Contexts.Default is
       if Context.Var_Mapper = null then
          Context.Var_Mapper := new EL.Variables.Default.Default_Variable_Mapper;
       end if;
-      Context.Var_Mapper.Bind (Name, Value);
+      Context.Var_Mapper.Bind (Name, EL.Objects.To_Object (Value));
    end Set_Variable;
 
    --  ------------------------------
@@ -95,7 +95,6 @@ package body EL.Contexts.Default is
                        Context  : ELContext'Class;
                        Base     : access EL.Beans.Readonly_Bean'Class;
                        Name     : Unbounded_String) return Object is
-      pragma Unreferenced (Resolver);
       pragma Unreferenced (Context);
 
       R : Object;
@@ -104,6 +103,13 @@ package body EL.Contexts.Default is
          return Base.Get_Value (To_String (Name));
       end if;
 
+      declare
+         Pos : constant Bean_Maps.Cursor := Resolver.Map.Find (Name);
+      begin
+         if Bean_Maps.Has_Element (Pos) then
+            return Bean_Maps.Element (Pos);
+         end if;
+      end;
       return R;
    end Get_Value;
 
@@ -119,5 +125,25 @@ package body EL.Contexts.Default is
    begin
       null;
    end Set_Value;
+
+   --  ------------------------------
+   --  Register the value under the given name.
+   --  ------------------------------
+   procedure Register (Resolver : in out Default_ELResolver;
+                       Name     : in Unbounded_String;
+                       Value    : access EL.Beans.Readonly_Bean'Class) is
+   begin
+      Resolver.Register (Name, To_Object (Value));
+   end Register;
+
+   --  ------------------------------
+   --  Register the value under the given name.
+   --  ------------------------------
+   procedure Register (Resolver : in out Default_ELResolver;
+                       Name     : in Unbounded_String;
+                       Value    : in EL.Objects.Object) is
+   begin
+      Bean_Maps.Include (Resolver.Map, Name, Value);
+   end Register;
 
 end EL.Contexts.Default;

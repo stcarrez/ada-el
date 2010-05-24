@@ -27,7 +27,7 @@ package EL.Variables.Default is
    overriding
    procedure Bind (Mapper : in out Default_Variable_Mapper;
                    Name   : in String;
-                   Value  : access EL.Beans.Readonly_Bean'Class);
+                   Value  : in EL.Objects.Object);
 
    overriding
    function Get_Variable (Mapper : Default_Variable_Mapper;
@@ -42,11 +42,12 @@ package EL.Variables.Default is
 private
 
    use EL.Beans;
+   use type EL.Objects.Object;
 
    package Variable_Maps is new
-     Ada.Containers.Indefinite_Hashed_Maps (Key_Type => Unbounded_String,
-                                            Element_Type => EL.Beans.Readonly_Bean_Access,
-                                            Hash => Ada.Strings.Unbounded.Hash,
+     Ada.Containers.Indefinite_Hashed_Maps (Key_Type      => Unbounded_String,
+                                            Element_Type  => EL.Objects.Object,
+                                            Hash          => Ada.Strings.Unbounded.Hash,
                                             Equivalent_Keys => "=");
 
    type Default_Variable_Mapper is new VariableMapper with record

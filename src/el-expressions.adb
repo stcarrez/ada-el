@@ -50,7 +50,7 @@ package body EL.Expressions is
    begin
       if Expr.Bean = null then
          if Expr.Node = null then
-            return EL.Objects.Null_Object;
+            return Expr.Value;
          else
             return EL.Expressions.Nodes.Get_Value (Expr.Node.all, Context);
          end if;
@@ -118,6 +118,14 @@ package body EL.Expressions is
       Result : ValueExpression;
    begin
       Result.Bean := Bean;
+      return Result;
+   end Create_ValueExpression;
+
+   function Create_ValueExpression (Bean : EL.Objects.Object)
+                                    return ValueExpression is
+      Result : ValueExpression;
+   begin
+      Result.Value := Bean;
       return Result;
    end Create_ValueExpression;
 

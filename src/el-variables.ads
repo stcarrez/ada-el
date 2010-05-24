@@ -24,6 +24,7 @@
 with EL.Beans;
 with Ada.Strings.Unbounded;
 with EL.Expressions;
+with EL.Objects;
 package EL.Variables is
 
    use Ada.Strings.Unbounded;
@@ -35,7 +36,7 @@ package EL.Variables is
 
    procedure Bind (Mapper : in out VariableMapper;
                    Name   : in String;
-                   Value  : access EL.Beans.Readonly_Bean'Class) is abstract;
+                   Value  : in EL.Objects.Object) is abstract;
 
    function Get_Variable (Mapper : VariableMapper;
                           Name   : Unbounded_String)

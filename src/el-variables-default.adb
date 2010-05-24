@@ -21,10 +21,10 @@ package body EL.Variables.Default is
    overriding
    procedure Bind (Mapper : in out Default_Variable_Mapper;
                    Name   : in String;
-                   Value  : access EL.Beans.Readonly_Bean'Class) is
+                   Value  : in EL.Objects.Object) is
    begin
-      Mapper.Map.Include (Key => To_Unbounded_String (Name),
-                          New_Item => Value.all'Access);
+      Mapper.Map.Include (Key      => To_Unbounded_String (Name),
+                          New_Item => Value);
    end Bind;
 
    overriding
