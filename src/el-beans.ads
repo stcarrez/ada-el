@@ -67,8 +67,11 @@ package EL.Beans is
    --  Get the number of elements in the list.
    function Get_Count (From : List_Bean) return Natural is abstract;
 
-   --  Get the element at the given index.
-   function Get_Row (From  : List_Bean;
-                     Index : Natural) return EL.Objects.Object is abstract;
+   --  Set the current row index.  Valid row indexes start at 1.
+   procedure Set_Row_Index (From  : in out List_Bean;
+                            Index : in Natural) is abstract;
+
+   --  Get the element at the current row index.
+   function Get_Row (From  : List_Bean) return EL.Objects.Object is abstract;
 
 end EL.Beans;
