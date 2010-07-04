@@ -32,7 +32,7 @@ private package EL.Expressions.Nodes is
 
    type Reduction;
 
-   type ELNode is abstract tagged record
+   type ELNode is abstract tagged limited record
       Ref_Counter : Util.Concurrent.Counters.Counter;
    end record;
 
