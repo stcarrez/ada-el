@@ -1,16 +1,14 @@
 with "config";
-with "aunit";
-with "el.gpr";
+with "../util/util";
 
-project Tests is
+project El is
+   Version := "@EL_VERSION@";
+   Library_Dir := "@EL_LIBDIR@";
 
-   for Languages use ("Ada", "Project file");
-
-   Mains := ("el_harness.adb");
-
-   for Source_Dirs use ("regtests");
-
-   for Main use Mains;
+   for Source_Dirs use ("src");
+   for Library_Dir use Library_Dir;
+   for Library_Name use "el";
+   for Library_Kind use "static";
 
    for Object_Dir use "./" & Config'Object_Dir & "/obj";
    for Exec_Dir use "./" & Config'Exec_Dir & "/bin";
@@ -20,4 +18,4 @@ project Tests is
    package Compiler renames Config.Compiler;
    package Linker renames Config.Linker;
 
-end Tests;
+end El;
