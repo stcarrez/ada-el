@@ -46,7 +46,6 @@ package body EL.Expressions is
    --  ------------------------------
    function Get_Value (Expr    : ValueExpression;
                        Context : ELContext'Class) return Object is
-      pragma Unreferenced (Context);
    begin
       if Expr.Bean = null then
          if Expr.Node = null then
@@ -145,6 +144,7 @@ package body EL.Expressions is
    function Reduce_Expression (Expr    : ValueExpression;
                                Context : ELContext'Class)
                                return ValueExpression is
+      pragma Unreferenced (Context);
    begin
       return Expr;
    end Reduce_Expression;

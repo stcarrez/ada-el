@@ -253,7 +253,7 @@ package body EL.Expressions.Nodes is
    overriding
    function Reduce (Expr    : ELTernary;
                     Context : ELContext'Class) return Reduction is
-      Cond : Reduction := Expr.Cond.Reduce (Context);
+      Cond : constant Reduction := Expr.Cond.Reduce (Context);
    begin
       --  Condition value is known, evaluate one or the other part.
       if Cond.Node = null then
@@ -435,6 +435,7 @@ package body EL.Expressions.Nodes is
    overriding
    function Reduce (Expr    : ELObject;
                     Context : ELContext'Class) return Reduction is
+      pragma Unreferenced (Context);
    begin
       return Reduction '(Value => Expr.Value,
                          Node  => null);
