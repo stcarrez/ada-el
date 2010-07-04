@@ -152,7 +152,7 @@ package body EL.Expressions is
    procedure Adjust (Object : in out Expression) is
    begin
       if Object.Node /= null then
-         Util.Concurrent.Counters.Decrement (Object.Node.Ref_Counter);
+         Util.Concurrent.Counters.Increment (Object.Node.Ref_Counter);
       end if;
    end Adjust;
 
