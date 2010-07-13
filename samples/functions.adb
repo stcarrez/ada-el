@@ -46,7 +46,7 @@ begin
    Ctx.Set_Function_Mapper (Fn);
 
    --  Create the expression
-   E := Create_Expression ("#{format(user.firstName) & ' ' & user.lastName}", Ctx);
+   E := Create_Expression ("#{format(user.firstName)} #{user.lastName}", Ctx);
 
    --  Bind the context to 'Joe' and evaluate
    Ctx.Set_Variable ("user", Joe);
