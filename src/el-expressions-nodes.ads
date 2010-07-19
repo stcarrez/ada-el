@@ -65,7 +65,7 @@ private package EL.Expressions.Nodes is
    --  ------------------------------
    type ELUnary is new ELNode with private;
 
-   type Unary_Node is (EL_VOID, EL_NOT, EL_MINUS);
+   type Unary_Node is (EL_VOID, EL_NOT, EL_MINUS, EL_EMPTY);
 
    --  Evaluate a node on a given context.
    overriding

@@ -37,6 +37,9 @@ package body EL.Expressions.Nodes is
       when EL_MINUS =>
          return -Value;
 
+      when EL_EMPTY =>
+         return To_Object (Is_Empty (Value));
+
       when others =>
          return Value;
       end case;
@@ -61,6 +64,9 @@ package body EL.Expressions.Nodes is
 
             when EL_MINUS =>
                Value.Value := -Value.Value;
+
+            when EL_EMPTY =>
+               Value.Value := To_Object (Is_Empty (Value.Value));
 
             when others =>
                null;

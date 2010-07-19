@@ -395,7 +395,7 @@ package body EL.Expressions.Parser is
 
             when T_EMPTY =>
                Parse_Unary (P, Node);
-               Result := Create_Node (EL_MINUS, Node);
+               Result := Create_Node (EL_EMPTY, Node);
                return;
 
             when T_NUMBER =>
@@ -598,6 +598,7 @@ package body EL.Expressions.Parser is
                      return;
                   elsif P.Token = "empty" then
                      Token := T_EMPTY;
+                     return;
                   end if;
 
                when 'f' | 'F' =>
