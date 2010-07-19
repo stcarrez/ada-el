@@ -35,7 +35,7 @@ with System;
 with Ada.Calendar;
 with Ada.Strings.Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
-limited with El.Beans;
+limited with EL.Beans;
 package EL.Objects is
 
    use Ada.Strings.Unbounded;
@@ -100,6 +100,13 @@ package EL.Objects is
    --  Check whether the object contains a value.
    --  Returns true if the object does not contain a value.
    function Is_Null (Value : in Object) return Boolean;
+
+   --  Check whether the object is empty.
+   --  If the object is null, returns true.
+   --  If the object is the empty string, returns true.
+   --  If the object is a list bean whose Get_Count is 0, returns true.
+   --  Otherwise returns false.
+   function Is_Empty (Value : in Object) return Boolean;
 
 --     function Is_Constant (Value : in Object) return Boolean;
    --  Get a type identification for the object value.

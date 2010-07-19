@@ -23,6 +23,7 @@ with Ada.Characters.Conversions;
 with Ada.Calendar.Formatting;
 with Ada.Calendar.Conversions;
 with Interfaces.C;
+with EL.Beans;
 package body EL.Objects is
 
    use Ada.Characters.Conversions;
@@ -86,6 +87,45 @@ package body EL.Objects is
    begin
       return Value.Of_Type = TYPE_NULL;
    end Is_Null;
+
+   --  ------------------------------
+   --  Check whether the object is empty.
+   --  If the object is null, returns true.
+   --  If the object is the empty string, returns true.
+   --  If the object is a list bean whose Get_Count is 0, returns true.
+   --  Otherwise returns false.
+   --  ------------------------------
+   function Is_Empty (Value : in Object) return Boolean is
+   begin
+      case Value.Of_Type is
+         when TYPE_NULL =>
+            return True;
+
+         when TYPE_STRING =>
+            return Value.String_Value = "";
+
+         when TYPE_WIDE_STRING  =>
+            return Value.Wide_String_Value = "";
+
+         when TYPE_BEAN =>
+            if Value.Bean = null then
+               return True;
+            end if;
+            if not (Value.Bean.all in EL.Beans.List_Bean'Class) then
+               return False;
+            end if;
+            declare
+               L : constant EL.Beans.List_Bean_Access :=
+                 EL.Beans.List_Bean'Class (Value.Bean.all)'Unchecked_Access;
+            begin
+               return L.Get_Count = 0;
+            end;
+
+         when others =>
+            return False;
+
+      end case;
+   end Is_Empty;
 
    --  ------------------------------
    --  Translate the object
