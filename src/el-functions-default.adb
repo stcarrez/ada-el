@@ -42,7 +42,7 @@ package body EL.Functions.Default is
       if Has_Element (C) then
          return Element (C);
       end if;
-      raise No_Function;
+      raise No_Function with "Function '" & Full_Name & "' not found";
    end Get_Function;
 
    --  ------------------------------
