@@ -638,6 +638,10 @@ package body EL.Expressions.Parser is
                      Token := T_NOT;
                      return;
 
+                  elsif P.Token = "ne" then
+                     Token := T_NE;
+                     return;
+
                   elsif P.Token = "null" then
                      Token := T_NULL;
                      return;
