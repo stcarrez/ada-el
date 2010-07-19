@@ -74,6 +74,7 @@ package body EL.Expressions.Tests is
    begin
       T.Context.Set_Variable ("user", P);
 
+      Check (T, "#{user ne null}", "FALSE");
       Check (T, "#{empty user}", "FALSE");
       Check (T, "#{not empty user}", "TRUE");
       Check (T, "#{user.firstName}", "Joe");
