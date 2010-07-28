@@ -95,7 +95,7 @@ package EL.Contexts.Default is
 private
 
    type Default_Context is new ELContext with record
-      Var_Mapper : access EL.Variables.VariableMapper'Class;
+      Var_Mapper : EL.Variables.VariableMapper_Access; --  access EL.Variables.VariableMapper'Class;
       Resolver   : ELResolver_Access;
       Function_Mapper : EL.Functions.Function_Mapper_Access;
    end record;

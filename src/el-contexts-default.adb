@@ -16,6 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
+with EL.Variables;
 with EL.Variables.Default;
 package body EL.Contexts.Default is
 
@@ -73,13 +74,19 @@ package body EL.Contexts.Default is
    overriding
    procedure Set_Variable_Mapper (Context : in out Default_Context;
                                   Mapper  : access EL.Variables.VariableMapper'Class) is
+      use EL.Variables;
    begin
-      Context.Var_Mapper := Mapper;
+      if Mapper = null then
+         Context.Var_Mapper := null;
+      else
+         Context.Var_Mapper := Mapper.all'Unchecked_Access;
+      end if;
    end Set_Variable_Mapper;
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
                            Value   : access EL.Beans.Readonly_Bean'Class) is
+      use EL.Variables;
    begin
       if Context.Var_Mapper = null then
          Context.Var_Mapper := new EL.Variables.Default.Default_Variable_Mapper;
