@@ -22,7 +22,7 @@ project Config is
 
          when "debug" =>
             for Default_Switches ("Ada") use warnings
-               & ("-gnata", "-gnatVaMI");
+               & ("-gnata", "-gnatVaMI", "-gnat05");
 
          when "optimize" =>
             for Default_Switches ("Ada") use warnings
