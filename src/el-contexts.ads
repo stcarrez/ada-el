@@ -77,4 +77,9 @@ package EL.Contexts is
    function Get_Function_Mapper (Context : ELContext)
                                  return EL.Functions.Function_Mapper_Access is abstract;
 
+   --  Set the function mapper associated with this ELContext.
+   procedure Set_Function_Mapper (Context : in out ELContext;
+                                  Mapper  : access EL.Functions.Function_Mapper'Class)
+     is abstract;
+
 end EL.Contexts;

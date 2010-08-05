@@ -62,10 +62,11 @@ package body EL.Contexts.Default is
    --  ------------------------------
    --  Set the function mapper to be used when parsing an expression.
    --  ------------------------------
+   overriding
    procedure Set_Function_Mapper (Context : in out Default_Context;
-                                  Mapper  : in EL.Functions.Function_Mapper_Access) is
+                                  Mapper  : access EL.Functions.Function_Mapper'Class) is
    begin
-      Context.Function_Mapper := Mapper;
+      Context.Function_Mapper := Mapper.all'Unchecked_Access;
    end Set_Function_Mapper;
 
    --  ------------------------------

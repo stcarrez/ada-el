@@ -45,8 +45,9 @@ package EL.Contexts.Default is
                                  return EL.Functions.Function_Mapper_Access;
 
    --  Set the function mapper to be used when parsing an expression.
+   overriding
    procedure Set_Function_Mapper (Context : in out Default_Context;
-                                  Mapper  : in EL.Functions.Function_Mapper_Access);
+                                  Mapper  : access EL.Functions.Function_Mapper'Class);
 
    --  Set the VariableMapper associated with this ELContext.
    overriding
