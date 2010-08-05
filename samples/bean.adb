@@ -17,16 +17,16 @@
 -----------------------------------------------------------------------
 
 package body Bean is
-   
+
    use EL.Objects;
 
    FIRST_NAME : constant String := "firstName";
    LAST_NAME  : constant String := "lastName";
    AGE        : constant String := "age";
-   
+
    Null_Object : Object;
 
-   
+
    function Create_Person (First_Name, Last_Name : String;
 			   Age : Natural) return Person_Access is
    begin
@@ -39,13 +39,13 @@ package body Bean is
    function Get_Value (From : Person; Name : String) return EL.Objects.Object is
    begin
       if Name = FIRST_NAME then
-	 return To_Object (From.First_Name);
+         return To_Object (From.First_Name);
       elsif Name = LAST_NAME then
-	 return To_Object (From.Last_Name);
+         return To_Object (From.Last_Name);
       elsif Name = AGE then
-	 return To_Object (From.Age);
+         return To_Object (From.Age);
       else
-	 return Null_Object;
+         return Null_Object;
       end if;
    end Get_Value;
 
@@ -55,11 +55,11 @@ package body Bean is
                         Value : in EL.Objects.Object) is
    begin
       if Name = FIRST_NAME then
-	 From.First_Name := To_Unbounded_String (Value);
+         From.First_Name := To_Unbounded_String (Value);
       elsif Name = LAST_NAME then
-	 From.Last_Name := To_Unbounded_String (Value);
+         From.Last_Name := To_Unbounded_String (Value);
       elsif Name = AGE then
-	 From.Age := Natural (To_Integer (Value));
+         From.Age := Natural (To_Integer (Value));
       end if;
    end Set_Value;
 
