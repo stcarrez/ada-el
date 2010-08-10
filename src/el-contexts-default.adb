@@ -66,7 +66,11 @@ package body EL.Contexts.Default is
    procedure Set_Function_Mapper (Context : in out Default_Context;
                                   Mapper  : access EL.Functions.Function_Mapper'Class) is
    begin
-      Context.Function_Mapper := Mapper.all'Unchecked_Access;
+      if Mapper = null then
+         Context.Function_Mapper := null;
+      else
+         Context.Function_Mapper := Mapper.all'Unchecked_Access;
+      end if;
    end Set_Function_Mapper;
 
    --  ------------------------------
