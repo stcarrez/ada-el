@@ -43,10 +43,11 @@ private
 
    use EL.Beans;
    use type EL.Objects.Object;
+   use type EL.Expressions.ValueExpression;
 
    package Variable_Maps is new
      Ada.Containers.Indefinite_Hashed_Maps (Key_Type      => Unbounded_String,
-                                            Element_Type  => EL.Objects.Object,
+                                            Element_Type  => EL.Expressions.ValueExpression,
                                             Hash          => Ada.Strings.Unbounded.Hash,
                                             Equivalent_Keys => "=");
 

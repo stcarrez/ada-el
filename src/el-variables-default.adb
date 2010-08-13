@@ -22,9 +22,11 @@ package body EL.Variables.Default is
    procedure Bind (Mapper : in out Default_Variable_Mapper;
                    Name   : in String;
                    Value  : in EL.Objects.Object) is
+      Expr : constant EL.Expressions.ValueExpression
+        := EL.Expressions.Create_ValueExpression (Value);
    begin
       Mapper.Map.Include (Key      => To_Unbounded_String (Name),
-                          New_Item => Value);
+                          New_Item => Expr);
    end Bind;
 
    overriding
@@ -40,7 +42,7 @@ package body EL.Variables.Default is
          raise No_Variable
            with "Variable not found: '" & To_String (Name) & "'";
       end if;
-      return EL.Expressions.Create_ValueExpression (Variable_Maps.Element (C));
+      return Variable_Maps.Element (C);
    end Get_Variable;
 
    overriding
@@ -48,7 +50,8 @@ package body EL.Variables.Default is
                            Name   : in Unbounded_String;
                            Value  : in EL.Expressions.ValueExpression) is
    begin
-      null;
+      Mapper.Map.Include (Key      => Name,
+                          New_Item => Value);
    end Set_Variable;
 
 end EL.Variables.Default;
