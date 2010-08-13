@@ -92,7 +92,8 @@ package EL.Expressions is
    function Get_Value (Expr    : in ValueExpression;
                        Context : in ELContext'Class) return Object;
 
-   procedure Set_Value (Expr    : in ValueExpression;
+   --  Set the value of the expression to the given object value.
+   procedure Set_Value (Expr    : in out ValueExpression;
                         Context : in ELContext'Class;
                         Value   : in Object);
 

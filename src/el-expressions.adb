@@ -57,11 +57,14 @@ package body EL.Expressions is
       return To_Object (Expr.Bean);
    end Get_Value;
 
-   procedure Set_Value (Expr    : in ValueExpression;
+   --  ------------------------------
+   --  Set the value of the expression to the given object value.
+   --  ------------------------------
+   procedure Set_Value (Expr    : in out ValueExpression;
                         Context : in ELContext'Class;
                         Value   : in Object) is
    begin
-      null;
+      Expr.Value := Value;
    end Set_Value;
 
    function Is_Readonly (Expr : in ValueExpression) return Boolean is
