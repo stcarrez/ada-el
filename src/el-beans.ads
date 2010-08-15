@@ -36,7 +36,7 @@ package EL.Beans is
    --  interface, expressions like 'foo.name' will resolve to 'foo'
    --  and the 'Get_Value' method will be called with 'name'.
    --
-   type Readonly_Bean is interface;
+   type Readonly_Bean is limited interface;
    type Readonly_Bean_Access is access all Readonly_Bean'Class;
 
    --  Get the value identified by the name.
@@ -48,7 +48,7 @@ package EL.Beans is
    --  Bean interface.
    --  ------------------------------
    --  The ''Bean'' interface allows to modify a property value.
-   type Bean is interface and Readonly_Bean;
+   type Bean is limited interface and Readonly_Bean;
 
    --  Set the value identified by the name.
    --  If the name cannot be found, the method should raise the No_Value
@@ -61,7 +61,7 @@ package EL.Beans is
    --  List of objects
    --  ------------------------------
    --  The <b>List_Bean</b> interface gives access to a list of objects.
-   type List_Bean is interface and Readonly_Bean;
+   type List_Bean is limited interface and Readonly_Bean;
    type List_Bean_Access is access all List_Bean'Class;
 
    --  Get the number of elements in the list.
