@@ -239,7 +239,11 @@ package body EL.Expressions.Parser is
          Peek (P, Token);
          exit when Token /= T_EQ and Token /= T_NE;
          Parse_Equality (P, Right);
-         Left := Create_Node (EL_LAND, Left, Right);
+         if Token = T_EQ then
+            Left := Create_Node (EL_EQ, Left, Right);
+         else
+            Left := Create_Node (EL_NE, Left, Right);
+         end if;
       end loop;
       Put_Back (P, Token);
       Result := Left;
@@ -644,6 +648,12 @@ package body EL.Expressions.Parser is
 
                   elsif P.Token = "null" then
                      Token := T_NULL;
+                     return;
+                  end if;
+
+               when 'o' =>
+                  if P.Token = "or" then
+                     Token := T_OR;
                      return;
                   end if;
 

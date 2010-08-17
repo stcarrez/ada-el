@@ -74,20 +74,23 @@ package body EL.Expressions.Tests is
    begin
       T.Context.Set_Variable ("user", P);
 
-      Check (T, "#{user ne null}", "FALSE");
+      Check (T, "#{user ne null}", "TRUE");
       Check (T, "#{empty user}", "FALSE");
       Check (T, "#{not empty user}", "TRUE");
       Check (T, "#{user.firstName}", "Joe");
       Check (T, "#{user.lastName}", "Black");
-      Check (T, "#{user.age}", " 42");
+      Check (T, "#{user.age}", "42");
       Check (T, "#{user.date}", To_String (To_Object (P.Date)));
       Check (T, "#{user.weight}", To_String (To_Object (P.Weight)));
 
       P.Age := P.Age + 1;
-      Check (T, "#{user.age}", " 43");
+      Check (T, "#{user.age}", "43");
       Check (T, "#{user.firstName & ' ' & user.lastName}", "Joe Black");
 
-      Check (T, "Joe is#{user.age} year#{user.age > 0 ? 's' : ''} old",
+      Check (T, "#{user.firstName eq 'Joe'}", "TRUE");
+      Check (T, "#{user.firstName ne 'Joe'}", "FALSE");
+      Check (T, "#{user.firstName eq 'Boe' or user.firstName eq 'Joe'}", "TRUE");
+      Check (T, "Joe is #{user.age} year#{user.age > 0 ? 's' : ''} old",
              "Joe is 43 years old");
    end Test_Bean_Evaluation;
 
