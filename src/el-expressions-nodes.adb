@@ -18,6 +18,8 @@
 with Ada.Unchecked_Deallocation;
 with EL.Beans;
 with EL.Variables;
+with EL.Beans.Methods;
+with Util.Strings;
 package body EL.Expressions.Nodes is
 
    use EL.Variables;
@@ -422,6 +424,44 @@ package body EL.Expressions.Nodes is
    end Delete;
 
    --  ------------------------------
+   --  Evaluate the node and return a method info with
+   --  the bean object and the method binding.
+   --  ------------------------------
+   function Get_Method_Info (Node    : in ELValue;
+                             Context : in ELContext'Class) return Method_Info is
+      use EL.Beans.Methods;
+      use type Util.Strings.Name_Access;
+
+      Var  : constant Object := Node.Variable.Get_Value (Context);
+      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
+      Name : constant String := To_String (Node.Name);
+   begin
+      if Bean = null then
+         raise Invalid_Variable;
+      end if;
+
+      --  If the bean is a method bean, get the methods that it exposes
+      --  and look for the binding that matches our method name.
+      if Bean.all in Method_Bean'Class then
+         declare
+            MBean    : constant Method_Bean_Access := Method_Bean (Bean.all)'Access;
+            Bindings : constant Method_Binding_Array_Access := MBean.Get_Method_Bindings;
+            Result   : Method_Info;
+         begin
+            for I in Bindings'Range loop
+               if Bindings (I) /= null and then Bindings (I).Name /= null
+                 and then Name = Bindings (I).Name.all then
+                  Result.Object := Bean;
+                  Result.Binding := Bindings (I);
+                  return Result;
+               end if;
+            end loop;
+         end;
+      end if;
+      raise Invalid_Method with "Method '" & Name & "' not found";
+   end Get_Method_Info;
+
+   --  ------------------------------
    --  Literal object (integer, boolean, float, string)
    --  ------------------------------
 
@@ -595,6 +635,7 @@ package body EL.Expressions.Nodes is
          case Of_Type is
             when EL_NOT =>
                null;
+
             when EL_MINUS =>
                null;
 

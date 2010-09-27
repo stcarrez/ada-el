@@ -149,6 +149,12 @@ private package EL.Expressions.Nodes is
    --  Value property referring to a variable
    --  ------------------------------
    type ELValue is new ELNode with private;
+   type ELValue_Access is access all ELValue'Class;
+
+   --  Evaluate the node and return a method info with
+   --  the bean object and the method binding.
+   function Get_Method_Info (Node    : in ELValue;
+                             Context : in ELContext'Class) return Method_Info;
 
    --  Evaluate a node on a given context.
    overriding
