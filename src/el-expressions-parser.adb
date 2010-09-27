@@ -697,6 +697,10 @@ package body EL.Expressions.Parser is
             Token := T_MUL;
             return;
 
+         when '/' =>
+            Token := T_DIV;
+            return;
+
          when '%' =>
             Token := T_MOD;
             return;
