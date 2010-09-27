@@ -16,7 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with EL.Variables;
 with EL.Variables.Default;
 package body EL.Contexts.Default is
 
