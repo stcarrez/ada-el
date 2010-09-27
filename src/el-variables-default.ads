@@ -41,7 +41,6 @@ package EL.Variables.Default is
 
 private
 
-   use EL.Beans;
    use type EL.Objects.Object;
    use type EL.Expressions.ValueExpression;
 

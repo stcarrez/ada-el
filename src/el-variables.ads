@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Contexts -- Contexts for evaluating an expression
+--  EL.Variables -- Variable mapper
 --  Copyright (C) 2009, 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -21,7 +21,6 @@
 --  information when evaluating an expression.  The context provides
 --  a resolver whose role is to find variables given their name.
 
-with EL.Beans;
 with Ada.Strings.Unbounded;
 with EL.Expressions;
 with EL.Objects;
