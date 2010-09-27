@@ -170,11 +170,15 @@ package body EL.Objects is
    begin
       case Value.Of_Type is
          when TYPE_INTEGER =>
-            declare
-               S : constant String := Long_Long_Integer'Image (Value.Int_Value);
-            begin
-               return S (S'First + 1 .. S'Last);
-            end;
+            if Value.Int_Value >= 0 then
+               declare
+                  S : constant String := Long_Long_Integer'Image (Value.Int_Value);
+               begin
+                  return S (S'First + 1 .. S'Last);
+               end;
+            else
+               return Long_Long_Integer'Image (Value.Int_Value);
+            end if;
 
          when TYPE_BOOLEAN =>
             return Boolean'Image (Value.Bool_Value);
