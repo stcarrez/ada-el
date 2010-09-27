@@ -3,7 +3,8 @@ with "el";
 
 project Samples is
 
-   Mains := ("evaluate.adb", "variables.adb", "functions.adb");
+   Mains := ("evaluate.adb", "variables.adb", "functions.adb",
+	     "methods.adb");
 
    for Main use Mains;
 
