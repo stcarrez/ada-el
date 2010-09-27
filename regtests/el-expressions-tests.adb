@@ -20,12 +20,16 @@ with AUnit.Test_Caller;
 with AUnit.Assertions;
 with EL.Expressions;
 with Test_Bean;
+with Action_Bean;
+with Ada.Text_IO;
+with Ada.Strings.Unbounded;
 package body EL.Expressions.Tests is
 
    use Test_Bean;
    use EL.Expressions;
    use AUnit.Assertions;
    use AUnit.Test_Fixtures;
+   use Ada.Strings.Unbounded;
 
    procedure Check_Error (T    : in out Test'Class;
                           Expr : in String);
@@ -65,8 +69,28 @@ package body EL.Expressions.Tests is
          Assert (To_String (V2) = Expect,
                  "Reduce produced incorrect result: " & To_String (V2));
       end;
-
    end Check;
+
+   --  Test evaluation of expression using a bean
+   procedure Test_Simple_Evaluation (T : in out Test) is
+   begin
+      Check (T, "#{true}", "TRUE");
+      Check (T, "#{false}", "FALSE");
+      Check (T, "#{not false}", "TRUE");
+      Check (T, "#{! false}", "TRUE");
+      Check (T, "#{4 * 3}", "12");
+      Check (T, "#{12 / 3}", "4");
+      Check (T, "#{12 div 3}", "4");
+      Check (T, "#{3 % 2}", "1");
+      Check (T, "#{3 mod 2}", "1");
+      Check (T, "#{3 > 4 ? 1 : 2}", "2");
+      Check (T, "#{3 < 4 ? 1 : 2}", "1");
+      Check (T, "#{true and false}", "FALSE");
+      Check (T, "#{true or false}", "TRUE");
+      Check (T, "#{- 23}", "-23");
+      Check (T, "#{1.0}", "1");
+      Check (T, "#{'\\''}", "'");
+   end Test_Simple_Evaluation;
 
    --  Test evaluation of expression using a bean
    procedure Test_Bean_Evaluation (T : in out Test) is
@@ -80,6 +104,11 @@ package body EL.Expressions.Tests is
       Check (T, "#{user.firstName}", "Joe");
       Check (T, "#{user.lastName}", "Black");
       Check (T, "#{user.age}", "42");
+      Check (T, "#{user.age le 42}", "TRUE");
+      Check (T, "#{user.age lt 44}", "TRUE");
+      Check (T, "#{user.age ge 42}", "TRUE");
+      Check (T, "#{user.age ge 45}", "FALSE");
+      Check (T, "#{user.age gt 42}", "FALSE");
       Check (T, "#{user.date}", To_String (To_Object (P.Date)));
       Check (T, "#{user.weight}", To_String (To_Object (P.Weight)));
 
@@ -105,7 +134,84 @@ package body EL.Expressions.Tests is
       Check_Error (T, "#{12");
       Check_Error (T, "${1");
       Check_Error (T, "test #{'}");
+      Check_Error (T, "#{12 > 23 ? 44}");
    end Test_Parse_Error;
+
+   --  Test evaluation of method expression
+   procedure Test_Method_Evaluation (T : in out Test) is
+      use Action_Bean;
+
+      A1 : constant Action_Access := new Action;
+      A2 : constant Action_Access := new Action;
+      P  : constant Person_Access := Create_Person ("Joe", "Black", 42);
+      M  : EL.Expressions.Method_Expression :=
+        Create_Expression (Context => T.Context,
+                           Expr    => "#{action.notify}");
+   begin
+      T.Context.Set_Variable ("action", A1);
+      Proc_Action.Execute (M, Person (P.all), T.Context);
+
+      Assert (T, P.Last_Name = A1.Person.Last_Name, "Name was not set");
+
+      P.Last_Name := To_Unbounded_String ("John");
+      T.Context.Set_Variable ("action", A2);
+      Proc_Action.Execute (M, Person (P.all), T.Context);
+
+      Assert (T, "John" = A2.Person.Last_Name, "Name was not set");
+   end Test_Method_Evaluation;
+
+   --  Test evaluation of method expression
+   procedure Test_Invalid_Method (T : in out Test) is
+      use Action_Bean;
+
+      A1 : constant Action_Access := new Action;
+      A2 : constant Action_Access := new Action;
+      P  : constant Person_Access := Create_Person ("Joe", "Black", 42);
+      M2 : EL.Expressions.Method_Expression;
+      M  : EL.Expressions.Method_Expression :=
+        Create_Expression (Context => T.Context,
+                           Expr    => "#{action.bar}");
+   begin
+      --  Bean is not found
+      begin
+         Proc_Action.Execute (M, Person (P.all), T.Context);
+         Assert (T, False, "The Invalid_Variable exception was not raised");
+
+      exception
+         when EL.Expressions.Invalid_Variable =>
+            null;
+      end;
+
+      T.Context.Set_Variable ("action", A1);
+      begin
+         Proc_Action.Execute (M, Person (P.all), T.Context);
+         Assert (T, False, "The Invalid_Method exception was not raised");
+
+      exception
+         when EL.Expressions.Invalid_Method =>
+            null;
+      end;
+
+      --  M2 is not initialized, this should raise Invalid_Expression
+      begin
+         Proc_Action.Execute (M2, Person (P.all), T.Context);
+         Assert (T, False, "The Invalid_Method exception was not raised");
+
+      exception
+         when EL.Expressions.Invalid_Expression =>
+            null;
+      end;
+
+      --  Create a method expression with an invalid expression
+      begin
+         M := Create_Expression ("#{12+13}", T.Context);
+         Assert (T, False, "The Invalid_Expression exception was not raised");
+
+      exception
+         when EL.Expressions.Invalid_Expression =>
+            null;
+      end;
+   end Test_Invalid_Method;
 
    package Caller is new AUnit.Test_Caller (Test);
 
@@ -113,6 +219,8 @@ package body EL.Expressions.Tests is
    begin
       --  Test_Bean verifies several methods.  Register several times
       --  to enumerate what is tested.
+      Suite.Add_Test (Caller.Create ("Test EL.Beans.Get_Value (constant expressions)",
+                                      Test_Simple_Evaluation'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Contexts.Set_Variable",
                                      Test_Bean_Evaluation'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Beans.Get_Value",
@@ -123,7 +231,10 @@ package body EL.Expressions.Tests is
                                      Test_Bean_Evaluation'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Expressions.Create_Expression (Parse Error)",
                                      Test_Parse_Error'Access));
-
+      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Get_Method_Info",
+                                     Test_Method_Evaluation'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Get_Method_Info (Invalid_method)",
+                                     Test_Invalid_Method'Access));
    end Add_Tests;
 
 end EL.Expressions.Tests;
