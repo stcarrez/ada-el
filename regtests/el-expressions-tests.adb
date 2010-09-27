@@ -83,13 +83,19 @@ package body EL.Expressions.Tests is
       Check (T, "#{12 div 3}", "4");
       Check (T, "#{3 % 2}", "1");
       Check (T, "#{3 mod 2}", "1");
+      Check (T, "#{3 <= 2}", "FALSE");
+      Check (T, "#{3 < 2}", "FALSE");
+      Check (T, "#{3 > 2}", "TRUE");
+      Check (T, "#{3 >= 2}", "TRUE");
+      Check (T, "#{3 >= 2 && 2 >= 3}", "FALSE");
+      Check (T, "#{3 >= 4 || 2 < 3}", "TRUE");
       Check (T, "#{3 > 4 ? 1 : 2}", "2");
       Check (T, "#{3 < 4 ? 1 : 2}", "1");
       Check (T, "#{true and false}", "FALSE");
       Check (T, "#{true or false}", "TRUE");
       Check (T, "#{- 23}", "-23");
       Check (T, "#{1.0}", "1");
-      Check (T, "#{'\\''}", "'");
+      Check (T, "#{'a\\'b'}", "'");
    end Test_Simple_Evaluation;
 
    --  Test evaluation of expression using a bean
@@ -135,6 +141,9 @@ package body EL.Expressions.Tests is
       Check_Error (T, "${1");
       Check_Error (T, "test #{'}");
       Check_Error (T, "#{12 > 23 ? 44}");
+      Check_Error (T, "#{");
+      Check_Error (T, "${(12+1}");
+      Check_Error (T, "#{'\\''}");
    end Test_Parse_Error;
 
    --  Test evaluation of method expression
