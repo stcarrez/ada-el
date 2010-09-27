@@ -40,6 +40,7 @@ with Ada.Finalization;
 limited private with EL.Expressions.Nodes;
 with EL.Contexts;
 with EL.Beans;
+with EL.Beans.Methods;
 package EL.Expressions is
 
    use EL.Objects;
@@ -50,6 +51,9 @@ package EL.Expressions is
 
    --  Exception raised when a variable cannot be resolved.
    Invalid_Variable : exception;
+
+   --  Exception raised when a method cannot be found.
+   Invalid_Method : exception;
 
    --  ------------------------------
    --  Expression
@@ -97,6 +101,7 @@ package EL.Expressions is
                         Context : in ELContext'Class;
                         Value   : in Object);
 
+   --  Returns true if the expression is read-only.
    function Is_Readonly (Expr : in ValueExpression) return Boolean;
 
    overriding
@@ -115,6 +120,47 @@ package EL.Expressions is
    function Create_ValueExpression (Bean : EL.Objects.Object)
                                     return ValueExpression;
 
+   --  ------------------------------
+   --  Method Expression
+   --  ------------------------------
+   --  A <b>Method_Expression</b> is an expression that refers to a method.
+   --  Information about the object and method is retrieved by using
+   --  the <b>Get_Method_Info</b> operation.
+   type Method_Expression is new EL.Expressions.Expression with private;
+
+   type Method_Info is record
+      Object  : access EL.Beans.Readonly_Bean'Class;
+      Binding : EL.Beans.Methods.Method_Binding_Access;
+   end record;
+
+   --  Evaluate the method expression and return the object and method
+   --  binding to execute the method.  The result contains a pointer
+   --  to the bean object and a method binding.  The method binding
+   --  contains the information to invoke the method
+   --  (such as an access to the function or procedure).
+   --  Raises the <b>Invalid_Method</b> exception if the method
+   --  cannot be resolved.
+   function Get_Method_Info (Expr   : Method_Expression;
+                            Context : ELContext'Class)
+                         return Method_Info;
+
+   --  Parse an expression and return its representation ready for evaluation.
+   --  The context is used to resolve the functions.  Variables will be
+   --  resolved during evaluation of the expression.
+   --  Raises <b>Invalid_Expression</b> if the expression is invalid.
+   overriding
+   function Create_Expression (Expr    : String;
+                               Context : EL.Contexts.ELContext'Class)
+                               return Method_Expression;
+
+   --  Reduce the expression by eliminating known variables and computing
+   --  constant expressions.  The result expression is either another
+   --  expression or a computed constant value.
+   overriding
+   function Reduce_Expression (Expr    : Method_Expression;
+                               Context : EL.Contexts.ELContext'Class)
+                               return Method_Expression;
+
 private
 
    procedure Adjust   (Object : in out Expression);
@@ -128,5 +174,7 @@ private
    type ValueExpression is new Expression with record
       Bean : access EL.Beans.Readonly_Bean'Class;
    end record;
+
+   type Method_Expression is new EL.Expressions.Expression with null record;
 
 end EL.Expressions;

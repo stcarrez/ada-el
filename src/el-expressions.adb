@@ -67,6 +67,9 @@ package body EL.Expressions is
       Expr.Value := Value;
    end Set_Value;
 
+   --  ------------------------------
+   --  Returns true if the expression is read-only.
+   --  ------------------------------
    function Is_Readonly (Expr : in ValueExpression) return Boolean is
    begin
       if Expr.Bean = null then
@@ -131,7 +134,9 @@ package body EL.Expressions is
       return Result;
    end Create_ValueExpression;
 
+   --  ------------------------------
    --  Parse an expression and return its representation ready for evaluation.
+   --  ------------------------------
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
                                return ValueExpression is
@@ -172,5 +177,68 @@ package body EL.Expressions is
          end if;
       end if;
    end Finalize;
+
+   --  ------------------------------
+   --  Evaluate the method expression and return the object and method
+   --  binding to execute the method.  The result contains a pointer
+   --  to the bean object and a method binding.  The method binding
+   --  contains the information to invoke the method
+   --  (such as an access to the function or procedure).
+   --  Raises the <b>Invalid_Method</b> exception if the method
+   --  cannot be resolved.
+   --  ------------------------------
+   function Get_Method_Info (Expr    : Method_Expression;
+                             Context : ELContext'Class)
+                             return Method_Info is
+      use EL.Expressions.Nodes;
+   begin
+      if Expr.Node = null then
+         raise Invalid_Expression with "Method expression is empty";
+      end if;
+      declare
+         Node : constant ELValue_Access := ELValue'Class (Expr.Node.all)'Access;
+      begin
+         return Node.Get_Method_Info (Context);
+      end;
+   end Get_Method_Info;
+
+   --  ------------------------------
+   --  Parse an expression and return its representation ready for evaluation.
+   --  The context is used to resolve the functions.  Variables will be
+   --  resolved during evaluation of the expression.
+   --  Raises <b>Invalid_Expression</b> if the expression is invalid.
+   --  ------------------------------
+   overriding
+   function Create_Expression (Expr    : String;
+                               Context : EL.Contexts.ELContext'Class)
+                               return Method_Expression is
+     use type EL.Expressions.Nodes.ELNode_Access;
+
+     Result : Method_Expression;
+     Node   : EL.Expressions.Nodes.ELNode_Access;
+   begin
+      EL.Expressions.Parser.Parse (Expr => Expr, Context => Context, Result => Node);
+
+      --  The root of the method expression must be an ELValue node.
+      if Node = null or else not (Node.all in Nodes.ELValue'Class) then
+         raise Invalid_Expression with "Expression is not a method expression";
+      end if;
+      Result.Node := Node.all'Access;
+      return Result;
+   end Create_Expression;
+
+   --  ------------------------------
+   --  Reduce the expression by eliminating known variables and computing
+   --  constant expressions.  The result expression is either another
+   --  expression or a computed constant value.
+   --  ------------------------------
+   overriding
+   function Reduce_Expression (Expr    : Method_Expression;
+                               Context : EL.Contexts.ELContext'Class)
+                               return Method_Expression is
+      pragma Unreferenced (Context);
+   begin
+      return Expr;
+   end Reduce_Expression;
 
 end EL.Expressions;
