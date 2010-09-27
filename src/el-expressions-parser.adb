@@ -752,6 +752,17 @@ package body EL.Expressions.Parser is
             end if;
             return;
 
+         when '|' =>
+            Token := T_OR;
+            if P.Pos <= P.Last then
+               C1 := P.Expr (P.Pos);
+               if C1 = '|' then
+                  Token := T_OR;
+                  P.Pos := P.Pos + 1;
+               end if;
+            end if;
+            return;
+
          when '=' =>
             Token := T_EQ;
             return;
