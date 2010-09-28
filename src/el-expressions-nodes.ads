@@ -212,11 +212,11 @@ private package EL.Expressions.Nodes is
    procedure Delete (Node : in out ELFunction);
 
    --  Create constant nodes
-   function Create_Node (Value   : Boolean) return ELNode_Access;
-   function Create_Node (Value   : Long_Long_Integer) return ELNode_Access;
-   function Create_Node (Value   : String) return ELNode_Access;
-   function Create_Node (Value   : Wide_Wide_String) return ELNode_Access;
-   function Create_Node (Value   : Long_Float) return ELNode_Access;
+   function Create_Node (Value : Boolean) return ELNode_Access;
+   function Create_Node (Value : Long_Long_Integer) return ELNode_Access;
+   function Create_Node (Value : String) return ELNode_Access;
+   function Create_Node (Value : Wide_Wide_String) return ELNode_Access;
+   function Create_Node (Value : Long_Float) return ELNode_Access;
    function Create_Node (Value : Unbounded_Wide_Wide_String) return ELNode_Access;
    function Create_Variable (Name : Unbounded_String) return ELNode_Access;
    function Create_Value (Variable : ELNode_Access;
