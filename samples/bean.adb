@@ -146,7 +146,7 @@ package body Bean is
    function Get_Method_Bindings (From : in Person)
                                  return EL.Beans.Methods.Method_Binding_Array_Access is
    begin
-      return Binding_Array'Unchecked_Access;
+      return Binding_Array'Access;
    end Get_Method_Bindings;
 
    procedure Free (Object : in out Person_Access) is
