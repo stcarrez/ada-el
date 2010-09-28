@@ -221,6 +221,7 @@ package body EL.Expressions is
 
       --  The root of the method expression must be an ELValue node.
       if Node = null or else not (Node.all in Nodes.ELValue'Class) then
+         EL.Expressions.Nodes.Delete (Node);
          raise Invalid_Expression with "Expression is not a method expression";
       end if;
       Result.Node := Node.all'Access;
