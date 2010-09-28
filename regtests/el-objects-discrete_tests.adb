@@ -17,30 +17,28 @@
 -----------------------------------------------------------------------
 
 with AUnit.Test_Caller;
-with AUnit.Assertions;
 with Ada.Strings.Fixed;
 with Ada.Text_IO;
 with Ada.Calendar;
 package body EL.Objects.Discrete_Tests is
 
    use EL.Objects;
-   use AUnit.Assertions;
    use Ada.Strings.Fixed;
 
-   procedure Test_Eq (V : String; N : Test_Type);
-   procedure Test_Conversion (V : String; N : Test_Type);
-   procedure Test_Lt_Gt (V : String; N : Test_Type);
-   procedure Test_Sub (V : String; N : Test_Type);
-   procedure Test_Add (V : String; N : Test_Type);
+   procedure Test_Eq (T : Test; V : String; N : Test_Type);
+   procedure Test_Conversion (T : Test; V : String; N : Test_Type);
+   procedure Test_Lt_Gt (T : Test; V : String; N : Test_Type);
+   procedure Test_Sub (T : Test; V : String; N : Test_Type);
+   procedure Test_Add (T : Test; V : String; N : Test_Type);
 
    --  Generic test for To_Object and To_XXX types
    --  Several values are specified in the Test_Values string.
    generic
-      with procedure Basic_Test (V : String; N : Test_Type);
+      with procedure Basic_Test (T : in Test; V : String; N : Test_Type);
    procedure Test_Basic_Object (T : in out Test);
 
    procedure Test_Basic_Object (T : in out Test) is
-      pragma Unreferenced (T);
+      pragma Unmodified (T);
 
       Pos, Next : Natural;
    begin
@@ -54,7 +52,7 @@ package body EL.Objects.Discrete_Tests is
             V : constant String := Test_Values (Pos .. Next - 1);
             N : constant Test_Type := Value (V);
          begin
-            Basic_Test (V, N);
+            Basic_Test (T, V, N);
          end;
          Pos := Next + 1;
       end loop;
@@ -63,16 +61,16 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    --  Test EL.Objects.To_Object
    --  ------------------------------
-   procedure Test_Conversion (V : String; N : Test_Type) is
+   procedure Test_Conversion (T : Test; V : String; N : Test_Type) is
       Value : EL.Objects.Object;
    begin
       Value := To_Object (V);
-      Assert (Condition => To_Type (Value) = N,
-              Message   => Test_Name & " returned invalid value: "
-              & To_String (Value) & " when we expected: " & V);
+      T.Assert (Condition => To_Type (Value) = N,
+                Message   => Test_Name & " returned invalid value: "
+                & To_String (Value) & " when we expected: " & V);
 
-      Assert (Condition => V = To_String (Value),
-              Message   => Test_Name & ".To_String returned invalid value: "
+      T.Assert (Condition => V = To_String (Value),
+                Message   => Test_Name & ".To_String returned invalid value: "
                 & To_String (Value) & " when we expected: " & V);
    end Test_Conversion;
    procedure Test_To_Object is new Test_Basic_Object (Basic_Test => Test_Conversion);
@@ -80,13 +78,13 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    --  Test EL.Objects."+"
    --  ------------------------------
-   procedure Test_Add (V : String; N : Test_Type) is
+   procedure Test_Add (T : Test; V : String; N : Test_Type) is
       Value : EL.Objects.Object := To_Object_Test (N);
    begin
       Value := Value + To_Object_Test (N);
-      Assert (Condition => To_Type (Value) = N + N,
-              Message   => Test_Name & " returned invalid value: "
-              & To_String (Value) & " when we expected: " & V);
+      T.Assert (Condition => To_Type (Value) = N + N,
+                Message   => Test_Name & " returned invalid value: "
+                & To_String (Value) & " when we expected: " & V);
    end Test_Add;
 
    procedure Test_Add is new Test_Basic_Object (Test_Add);
@@ -94,15 +92,15 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    --  Test EL.Objects."-"
    --  ------------------------------
-   procedure Test_Sub (V : String; N : Test_Type) is
+   procedure Test_Sub (T : Test; V : String; N : Test_Type) is
       pragma Unreferenced (V);
 
       Value : EL.Objects.Object;
    begin
       Value := To_Object_Test (N) - To_Object_Test (N);
-      Assert (Condition => To_Type (Value) = N - N,
-              Message   => Test_Name & " returned invalid value: "
-              & To_String (Value) & " when we expected: 0");
+      T.Assert (Condition => To_Type (Value) = N - N,
+                Message   => Test_Name & " returned invalid value: "
+                & To_String (Value) & " when we expected: 0");
    end Test_Sub;
 
    procedure Test_Sub is new Test_Basic_Object (Test_Sub);
@@ -110,43 +108,45 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    --  Test EL.Objects."<" and EL.Objects.">"
    --  ------------------------------
-   procedure Test_Lt_Gt (V : String; N : Test_Type) is
+   procedure Test_Lt_Gt (T : Test; V : String; N : Test_Type) is
       Res   : Boolean;
-      Is_Neg : constant Boolean := Index (V, "-") > 0;
+      Is_Neg : constant Boolean := Index (V, "-") = V'First;
+      O : EL.Objects.Object := To_Object_Test (N);
    begin
       Res := To_Object_Test (N) < To_Object_Test (N);
-      Assert (Condition => Res = False,
-              Message   => Test_Name & ".'<' returned invalid value: "
-              & Boolean'Image (Res) & " when we expected: false");
+      T.Assert (Condition => Res = False,
+                Message   => Test_Name & ".'<' returned invalid value: "
+                & Boolean'Image (Res) & " when we expected: false");
       Res := To_Object_Test (N) > To_Object_Test (N);
-      Assert (Condition => Res = False,
-              Message   => Test_Name & ".'>' returned invalid value: "
-              & Boolean'Image (Res) & " when we expected: false");
+      T.Assert (Condition => Res = False,
+                Message   => Test_Name & ".'>' returned invalid value: "
+                & Boolean'Image (Res) & " when we expected: false");
       Res := To_Object_Test (N) + To_Object_Test (N) < To_Object_Test (N);
-      Assert (Condition => Res = Is_Neg,
-              Message   => Test_Name & ".'<' returned invalid value: "
-              & Boolean'Image (Res) & " when we expected: "
-              & Boolean'Image (Is_Neg)
-              & " with value: " & V);
+      T.Assert (Condition => Res = Is_Neg,
+                Message   => Test_Name & ".'<' returned invalid value: "
+                & Boolean'Image (Res) & " when we expected: "
+                & Boolean'Image (Is_Neg)
+                & " with value: " & V & "Num=" & Long_Long_Integer'Image (To_Long_Long_Integer (O))
+                & " Sum=" & Long_Long_Integer'Image (To_Long_Long_Integer (O + O)));
       Res := To_Object_Test (N) > To_Object_Test (N) + To_Object_Test (N);
-      Assert (Condition => Res = Is_Neg,
-              Message   => Test_Name & ".'>' returned invalid value: "
-              & Boolean'Image (Res) & " when we expected: "
-              & Boolean'Image (Is_Neg)
-              & " with value: " & V);
+      T.Assert (Condition => Res = Is_Neg,
+                Message   => Test_Name & ".'>' returned invalid value: "
+                & Boolean'Image (Res) & " when we expected: "
+                & Boolean'Image (Is_Neg)
+                & " with value: " & V);
       if V /= "0" and V /= "false" and V /= "true" then
          Res := To_Object_Test (N) < To_Object_Test (N) + To_Object_Test (N);
-         Assert (Condition => Res = not Is_Neg,
-                 Message   => Test_Name & ".'<' returned invalid value: "
-                 & Boolean'Image (Res) & " when we expected: "
-                 & Boolean'Image (not Is_Neg)
-                 & " with value: " & V);
+         T.Assert (Condition => Res = not Is_Neg,
+                   Message   => Test_Name & ".'<' returned invalid value: "
+                   & Boolean'Image (Res) & " when we expected: "
+                   & Boolean'Image (not Is_Neg)
+                   & " with value: " & V);
          Res := To_Object_Test (N) + To_Object_Test (N) > To_Object_Test (N);
-         Assert (Condition => Res = not Is_Neg,
-                 Message   => Test_Name & ".'>' returned invalid value: "
-                 & Boolean'Image (Res) & " when we expected: "
-                 & Boolean'Image (not Is_Neg)
-                 & " with value: " & V);
+         T.Assert (Condition => Res = not Is_Neg,
+                   Message   => Test_Name & ".'>' returned invalid value: "
+                   & Boolean'Image (Res) & " when we expected: "
+                   & Boolean'Image (not Is_Neg)
+                   & " with value: " & V);
       end if;
    end Test_Lt_Gt;
 
@@ -155,17 +155,17 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    --  Test EL.Objects."="
    --  ------------------------------
-   procedure Test_Eq (V : String; N : Test_Type) is
+   procedure Test_Eq (T : Test; V : String; N : Test_Type) is
       Res   : Boolean;
    begin
       Res := To_Object_Test (N) = To_Object_Test (N);
-      Assert (Condition => Res,
-              Message   => Test_Name & ".'=' returned invalid value: "
-              & Boolean'Image (Res) & " when we expected: true");
+      T.Assert (Condition => Res,
+                Message   => Test_Name & ".'=' returned invalid value: "
+                & Boolean'Image (Res) & " when we expected: true");
 
       Res := To_Object_Test (N) = To_Object ("Something" & V);
-      Assert (Condition => Res = False,
-              Message   => Test_Name & ".'=' returned invalid value: "
+      T.Assert (Condition => Res = False,
+                Message   => Test_Name & ".'=' returned invalid value: "
                 & Boolean'Image (Res) & " where we expected: False");
    end Test_Eq;
    procedure Test_Eq is new Test_Basic_Object (Test_Eq);
@@ -173,12 +173,13 @@ package body EL.Objects.Discrete_Tests is
    --  ------------------------------
    --  Test EL.Objects."="
    --  ------------------------------
-   procedure Test_Perf (V : String; N : Test_Type) is
+   procedure Test_Perf (T : Test; V : String; N : Test_Type) is
+      pragma Unreferenced (T, V);
+
       use Ada.Calendar;
 
-      Res   : Boolean;
       Start : Ada.Calendar.Time;
-      Value : EL.Objects.Object := To_Object_Test (N);
+      Value : constant EL.Objects.Object := To_Object_Test (N);
       D     : Duration;
    begin
       Start := Ada.Calendar.Clock;
@@ -187,6 +188,8 @@ package body EL.Objects.Discrete_Tests is
             V : EL.Objects.Object := Value;
          begin
             V := V + V;
+
+            pragma Unreferenced (V);
          end;
       end loop;
       D := Ada.Calendar.Clock - Start;
