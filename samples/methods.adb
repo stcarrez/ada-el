@@ -33,14 +33,14 @@ procedure Methods is
    use Bean;
    use EL.Beans.Methods;
 
-   Joe  : constant Person_Access := Create_Person ("Joe", "Smith", 12);
-   Bill : constant Person_Access := Create_Person ("Bill", "Johnson", 42);
+   Joe    : Person_Access := Create_Person ("Joe", "Smith", 12);
+   Bill   : Person_Access := Create_Person ("Bill", "Johnson", 42);
 
    Ctx    : EL.Contexts.Default.Default_Context;
    Method : EL.Expressions.Method_Expression;
 
    procedure Evaluate (Ctx : EL.Contexts.ELContext'Class;
-		       Msg : in String) is
+                       Msg : in String) is
       Result : constant String := Func_String.Execute (Method, Msg, Ctx);
    begin
       Ada.Text_IO.Put_Line ("#{user.print} returned: " & Result);
@@ -59,5 +59,6 @@ begin
    Ctx.Set_Variable ("user", Bill);
    Evaluate (Ctx, "This is Bill");
 
-   Ctx.Set_Variable_Mapper (null);
+   Free (Joe);
+   Free (Bill);
 end Methods;
