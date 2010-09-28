@@ -721,8 +721,10 @@ package body EL.Expressions.Nodes is
       procedure Free is new Ada.Unchecked_Deallocation (Object => ELNode'Class,
                                                         Name   => ELNode_Access);
    begin
-      Delete (Node.all);
-      Free (Node);
+      if Node /= null then
+         Delete (Node.all);
+         Free (Node);
+      end if;
    end Delete;
 
 end EL.Expressions.Nodes;
