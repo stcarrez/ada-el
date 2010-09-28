@@ -23,18 +23,19 @@
 with EL.Expressions;
 with EL.Objects;
 with EL.Contexts.Default;
+with EL.Beans;
 with Ada.Text_IO;
 with Bean;
 procedure Variables is
 
    use Bean;
 
-   Joe  : constant Person_Access := Create_Person ("Joe", "Smith", 12);
-   Bill : constant Person_Access := Create_Person ("Bill", "Johnson", 42);
-
+   Joe    : Person_Access := Create_Person ("Joe", "Smith", 12);
+   Bill   : Person_Access := Create_Person ("Bill", "Johnson", 42);
    Ctx    : EL.Contexts.Default.Default_Context;
    E      : EL.Expressions.Expression;
    Result : EL.Objects.Object;
+
 begin
    E := EL.Expressions.Create_Expression ("#{user.firstName} #{user.lastName}", Ctx);
 
@@ -47,4 +48,7 @@ begin
    Ctx.Set_Variable ("user", Bill);
    Result := E.Get_Value (Ctx);
    Ada.Text_IO.Put_Line ("Bill's name is " & EL.Objects.To_String (Result));
+
+   Free (Joe);
+   Free (Bill);
 end Variables;
