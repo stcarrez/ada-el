@@ -26,6 +26,7 @@ with Test_Bean;
 with Action_Bean;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
+with Ada.Unchecked_Deallocation;
 package body EL.Expressions.Tests is
 
    use Test_Bean;
@@ -34,47 +35,68 @@ package body EL.Expressions.Tests is
    use AUnit.Test_Fixtures;
    use Ada.Strings.Unbounded;
 
+   procedure Free is new Ada.Unchecked_Deallocation (Object => EL.Contexts.Default.Default_Context'Class,
+                                                     Name   => EL.Contexts.Default.Default_Context_Access);
+
    procedure Check_Error (T    : in out Test'Class;
                           Expr : in String);
+
+   --  Set up performed before each test case
+   procedure Set_Up (T : in out Test) is
+   begin
+      Ada.Text_IO.Put_Line ("Allocate context");
+      T.Context := new EL.Contexts.Default.Default_Context;
+   end Set_Up;
+
+   --  Tear down performed after each test case
+   procedure Tear_Down (T : in out Test) is
+   begin
+      Ada.Text_IO.Put_Line ("Free context");
+      Free (T.Context);
+   end Tear_Down;
 
    --  Check that evaluating an expression raises an exception
    procedure Check_Error (T    : in out Test'Class;
                           Expr : in String) is
       E : Expression;
    begin
-      E := Create_Expression (Context => T.Context, Expr => Expr);
+      E := Create_Expression (Context => T.Context.all, Expr => Expr);
 
       pragma Unreferenced (E);
-      Assert (Condition => False,
-              Message => "Evaludation of '" & Expr & "' should raise an exception");
+      T.Assert (Condition => False,
+                Message => "Evaludation of '" & Expr & "' should raise an exception");
    exception
       when Invalid_Expression =>
          null;
    end Check_Error;
 
+   --  ------------------------------
    --  Check that evaluating an expression returns the expected result
    --  (to keep the test simple, results are only checked using strings)
+   --  ------------------------------
    procedure Check (T      : in out Test;
                     Expr   : in String;
                     Expect : in String) is
-      E : constant Expression := Create_Expression (Context => T.Context,
-                                                    Expr => Expr);
-      V : constant Object := E.Get_Value (Context => T.Context);
+      E : constant Expression := Create_Expression (Context => T.Context.all,
+                                                    Expr    => Expr);
+      V : constant Object := E.Get_Value (Context => T.Context.all);
    begin
-      Assert (Condition => To_String (V) = Expect,
-              Message => "Evaluate '" & Expr & "' returned '" & To_String (V)
-              & "' when we expect '" & Expect & "'");
+      T.Assert (Condition => To_String (V) = Expect,
+                Message => "Evaluate '" & Expr & "' returned '" & To_String (V)
+                & "' when we expect '" & Expect & "'");
 
       declare
-         E2 : constant Expression := E.Reduce_Expression (Context => T.Context);
-         V2 : constant Object := E2.Get_Value (Context => T.Context);
+         E2 : constant Expression := E.Reduce_Expression (Context => T.Context.all);
+         V2 : constant Object := E2.Get_Value (Context => T.Context.all);
       begin
-         Assert (To_String (V2) = Expect,
-                 "Reduce produced incorrect result: " & To_String (V2));
+         T.Assert (To_String (V2) = Expect,
+                   "Reduce produced incorrect result: " & To_String (V2));
       end;
    end Check;
 
+   --  ------------------------------
    --  Test evaluation of expression using a bean
+   --  ------------------------------
    procedure Test_Simple_Evaluation (T : in out Test) is
    begin
       Check (T, "#{true}", "TRUE");
@@ -86,6 +108,7 @@ package body EL.Expressions.Tests is
       Check (T, "#{12 div 3}", "4");
       Check (T, "#{3 % 2}", "1");
       Check (T, "#{3 mod 2}", "1");
+      Check (T, "#{(3 * 2) + (5 * 4) - (2*3)}", "20");
       Check (T, "#{3 <= 2}", "FALSE");
       Check (T, "#{3 < 2}", "FALSE");
       Check (T, "#{3 > 2}", "TRUE");
@@ -94,6 +117,8 @@ package body EL.Expressions.Tests is
       Check (T, "#{3 >= 4 || 2 < 3}", "TRUE");
       Check (T, "#{3 > 4 ? 1 : 2}", "2");
       Check (T, "#{3 < 4 ? 1 : 2}", "1");
+      Check (T, "#{3 == 3}", "TRUE");
+      Check (T, "#{3 != 3}", "FALSE");
       Check (T, "#{true and false}", "FALSE");
       Check (T, "#{true or false}", "TRUE");
       Check (T, "#{- 23}", "-23");
@@ -104,11 +129,13 @@ package body EL.Expressions.Tests is
       Check (T, "\${test}", "${test}");
    end Test_Simple_Evaluation;
 
+   --  ------------------------------
    --  Test evaluation of expression using a bean
+   --  ------------------------------
    procedure Test_Bean_Evaluation (T : in out Test) is
-      P : constant Person_Access := Create_Person ("Joe", "Black", 42);
+      P : Person_Access := Create_Person ("Joe", "Black", 42);
    begin
-      T.Context.Set_Variable ("user", P);
+      T.Context.all.Set_Variable ("user", P);
 
       Check (T, "#{user ne null}", "TRUE");
       Check (T, "#{empty user}", "FALSE");
@@ -133,9 +160,13 @@ package body EL.Expressions.Tests is
       Check (T, "#{user.firstName eq 'Boe' or user.firstName eq 'Joe'}", "TRUE");
       Check (T, "Joe is #{user.age} year#{user.age > 0 ? 's' : ''} old",
              "Joe is 43 years old");
+
+      Free (P);
    end Test_Bean_Evaluation;
 
+   --  ------------------------------
    --  Test evaluation of expression using a bean
+   --  ------------------------------
    procedure Test_Parse_Error (T : in out Test) is
    begin
       Check_Error (T, "#{1 +}");
@@ -154,14 +185,18 @@ package body EL.Expressions.Tests is
       Check_Error (T, "$");
    end Test_Parse_Error;
 
+   --  ------------------------------
    --  Function to format a string
+   --  ------------------------------
    function Format1 (Arg : EL.Objects.Object) return EL.Objects.Object is
       S : constant String := To_String (Arg);
    begin
       return To_Object ("[" & S & "]");
    end Format1;
 
+   --  ------------------------------
    --  Function to format a string
+   --  ------------------------------
    function Format2 (Arg1, Arg2 : EL.Objects.Object) return EL.Objects.Object is
       S1 : constant String := To_String (Arg1);
       S2 : constant String := To_String (Arg2);
@@ -169,7 +204,9 @@ package body EL.Expressions.Tests is
       return To_Object ("[" & S1 & "-" & S2 & "]");
    end Format2;
 
+   --  ------------------------------
    --  Function to format a string
+   --  ------------------------------
    function Format3 (Arg1, Arg2, Arg3 : EL.Objects.Object) return EL.Objects.Object is
       S1 : constant String := To_String (Arg1);
       S2 : constant String := To_String (Arg2);
@@ -178,15 +215,16 @@ package body EL.Expressions.Tests is
       return To_Object ("[" & S1 & "-" & S2 & "-" & S3 & "]");
    end Format3;
 
-   --  Test evaluation of expression using a bean
+   --  ------------------------------
+   --  Test function evaluation
+   --  ------------------------------
    procedure Test_Function_Evaluation (T : in out Test) is
-      P : constant Person_Access := Create_Person ("Joe", "Black", 42);
-      Fn  : constant EL.Functions.Function_Mapper_Access
-        := new EL.Functions.Default.Default_Function_Mapper;
-      E : EL.Expressions.Expression;
+      P  : Person_Access := Create_Person ("Joe", "Black", 42);
+      Fn : aliased EL.Functions.Default.Default_Function_Mapper;
+      E  : EL.Expressions.Expression;
       Result : EL.Objects.Object;
    begin
-      T.Context.Set_Variable ("user", P);
+      T.Context.all.Set_Variable ("user", P);
 
       --  Register the 'format' function.
       Fn.Set_Function (Namespace => "fn",
@@ -198,51 +236,75 @@ package body EL.Expressions.Tests is
       Fn.Set_Function (Namespace => "fn",
                        Name      => "format3",
                        Func      => Format3'Access);
-      T.Context.Set_Function_Mapper (Fn);
+      T.Context.Set_Function_Mapper (Fn'Unchecked_Access);
+
       --  Create the expression
-      E := Create_Expression ("#{fn:format1(10)} #{fn:format2(10,12)}", T.Context);
-      Result := E.Get_Value (T.Context);
+      E := Create_Expression ("#{fn:format1(10)} #{fn:format2(10,12)}", T.Context.all);
+      Result := E.Get_Value (T.Context.all);
       Ada.Text_IO.Put_Line ("Result: " & EL.Objects.To_String (Result));
+
+      Free (P);
    end Test_Function_Evaluation;
 
+   --  ------------------------------
    --  Test evaluation of method expression
+   --  ------------------------------
    procedure Test_Method_Evaluation (T : in out Test) is
       use Action_Bean;
 
-      A1 : constant Action_Access := new Action;
-      A2 : constant Action_Access := new Action;
-      P  : constant Person_Access := Create_Person ("Joe", "Black", 42);
+      A1 : Action_Access := new Action;
+      A2 : Action_Access := new Action;
+      P  : Person_Access := Create_Person ("Joe", "Black", 42);
       M  : EL.Expressions.Method_Expression :=
-        Create_Expression (Context => T.Context,
+        Create_Expression (Context => T.Context.all,
                            Expr    => "#{action.notify}");
    begin
-      T.Context.Set_Variable ("action", A1);
-      Proc_Action.Execute (M, Person (P.all), T.Context);
+      T.Context.all.Set_Variable ("action", A1);
+      A1.Count := 0;
+      A2.Count := 0;
+      Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
       Assert (T, P.Last_Name = A1.Person.Last_Name, "Name was not set");
 
       P.Last_Name := To_Unbounded_String ("John");
-      T.Context.Set_Variable ("action", A2);
-      Proc_Action.Execute (M, Person (P.all), T.Context);
+      T.Context.all.Set_Variable ("action", A2);
+      Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
       Assert (T, "John" = A2.Person.Last_Name, "Name was not set");
+
+      M := Create_Expression (Context => T.Context.all,
+                              Expr    => "#{action.notify2}");
+
+      --  Execute the method expression and check the count value.
+      for I in 1 .. 5 loop
+         Proc2_Action.Execute (M, Person (P.all), I, T.Context.all);
+
+         Assert (T, I = A2.Count, "Count was not set");
+         Assert (T, 0 = A1.Count, "First action modified as side effect");
+      end loop;
+
+      Free (P);
+      Free (A1);
+      Free (A2);
    end Test_Method_Evaluation;
 
-   --  Test evaluation of method expression
+   --  ------------------------------
+   --  Test evaluation of invalid method expression
+   --  ------------------------------
    procedure Test_Invalid_Method (T : in out Test) is
       use Action_Bean;
 
-      A1 : constant Action_Access := new Action;
-      A2 : constant Action_Access := new Action;
-      P  : constant Person_Access := Create_Person ("Joe", "Black", 42);
+      A1 : Action_Access := new Action;
+      A2 : Action_Access := new Action;
+      P  : Person_Access := Create_Person ("Joe", "Black", 42);
       M2 : EL.Expressions.Method_Expression;
       M  : EL.Expressions.Method_Expression :=
-        Create_Expression (Context => T.Context,
+        Create_Expression (Context => T.Context.all,
                            Expr    => "#{action2.bar}");
    begin
       --  Bean is not found
       begin
-         Proc_Action.Execute (M, Person (P.all), T.Context);
+         Proc_Action.Execute (M, Person (P.all), T.Context.all);
          Assert (T, False, "The Invalid_Variable exception was not raised");
 
       exception
@@ -250,9 +312,9 @@ package body EL.Expressions.Tests is
             null;
       end;
 
-      T.Context.Set_Variable ("action2", A1);
+      T.Context.all.Set_Variable ("action2", A1);
       begin
-         Proc_Action.Execute (M, Person (P.all), T.Context);
+         Proc_Action.Execute (M, Person (P.all), T.Context.all);
          Assert (T, False, "The Invalid_Method exception was not raised");
 
       exception
@@ -262,7 +324,7 @@ package body EL.Expressions.Tests is
 
       --  M2 is not initialized, this should raise Invalid_Expression
       begin
-         Proc_Action.Execute (M2, Person (P.all), T.Context);
+         Proc_Action.Execute (M2, Person (P.all), T.Context.all);
          Assert (T, False, "The Invalid_Method exception was not raised");
 
       exception
@@ -272,13 +334,17 @@ package body EL.Expressions.Tests is
 
       --  Create a method expression with an invalid expression
       begin
-         M := Create_Expression ("#{12+13}", T.Context);
+         M := Create_Expression ("#{12+13}", T.Context.all);
          Assert (T, False, "The Invalid_Expression exception was not raised");
 
       exception
          when EL.Expressions.Invalid_Expression =>
             null;
       end;
+
+      Free (P);
+      Free (A1);
+      Free (A2);
    end Test_Invalid_Method;
 
    package Caller is new AUnit.Test_Caller (Test);

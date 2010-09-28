@@ -24,8 +24,14 @@ package EL.Expressions.Tests is
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite);
 
    type Test is new AUnit.Test_Fixtures.Test_Fixture with record
-      Context : EL.Contexts.Default.Default_Context;
+      Context : EL.Contexts.Default.Default_Context_Access;
    end record;
+
+   --  Set up performed before each test case
+   procedure Set_Up (T : in out Test);
+
+   --  Tear down performed after each test case
+   procedure Tear_Down (T : in out Test);
 
    procedure Test_Bean_Evaluation (T : in out Test);
    procedure Test_Parse_Error (T : in out Test);
