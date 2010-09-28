@@ -659,21 +659,50 @@ package body EL.Objects is
                when TYPE_INTEGER | TYPE_BOOLEAN | TYPE_TIME =>
                   return TYPE_INTEGER;
 
-               when TYPE_FLOAT =>
-                  return TYPE_FLOAT;
-
-               when TYPE_STRING | TYPE_WIDE_STRING =>
-                  null;
+               when TYPE_FLOAT | TYPE_STRING | TYPE_WIDE_STRING =>
+                  return Right.Of_Type;
 
                when others =>
                   null;
             end case;
+
+         when TYPE_INTEGER =>
+            case Right.Of_Type is
+               when TYPE_BOOLEAN | TYPE_TIME =>
+                  return TYPE_INTEGER;
+
+               when TYPE_FLOAT =>
+                  return TYPE_FLOAT;
+
+               when others =>
+                  null;
+            end case;
+
+         when TYPE_TIME =>
+            case Right.Of_Type is
+               when TYPE_INTEGER | TYPE_BOOLEAN | TYPE_FLOAT =>
+                  return TYPE_INTEGER;
+
+               when others =>
+                  null;
+
+            end case;
+
+         when TYPE_FLOAT =>
+            case Right.Of_Type is
+               when TYPE_INTEGER | TYPE_BOOLEAN =>
+                  return TYPE_FLOAT;
+
+               when TYPE_TIME =>
+                  return TYPE_INTEGER;
+
+               when others =>
+                  null;
+            end case;
+
          when others =>
             null;
       end case;
-      if Left.Of_Type = TYPE_BOOLEAN and Right.Of_Type = TYPE_INTEGER then
-         return TYPE_INTEGER;
-      end if;
       return TYPE_STRING;
    end Get_Compare_Type;
 
@@ -725,6 +754,7 @@ package body EL.Objects is
    --  ------------------------------
    generic
       with function Int_Comparator (Left, Right : Long_Long_Integer) return Boolean;
+      with function Time_Comparator (Left, Right : Ada.Calendar.Time) return Boolean;
       with function Boolean_Comparator (Left, Right : Boolean) return Boolean;
       with function Float_Comparator (Left, Right : Long_Long_Float) return Boolean;
       with function String_Comparator (Left, Right : String) return Boolean;
@@ -742,7 +772,7 @@ package body EL.Objects is
          when TYPE_BOOLEAN =>
             return Boolean_Comparator (To_Boolean (Left), To_Boolean (Right));
 
-         when TYPE_INTEGER | TYPE_TIME =>
+         when TYPE_INTEGER =>
             return Int_Comparator (To_Long_Long_Integer (Left),
                                    To_Long_Long_Integer (Right));
 
@@ -757,6 +787,10 @@ package body EL.Objects is
             return Wide_String_Comparator (To_Wide_Wide_String (Left),
                                            To_Wide_Wide_String (Right));
 
+         when TYPE_TIME =>
+            return Time_Comparator (To_Time (Left),
+                                    To_Time (Right));
+
          when others =>
             return False;
       end case;
@@ -764,6 +798,7 @@ package body EL.Objects is
 
    function ">" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => ">",
+                                   Time_Comparator => Ada.Calendar.">",
                                    Boolean_Comparator => ">",
                                    Float_Comparator => ">",
                                    String_Comparator => ">",
@@ -774,6 +809,7 @@ package body EL.Objects is
 
    function "<" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "<",
+                                   Time_Comparator => Ada.Calendar."<",
                                    Boolean_Comparator => "<",
                                    Float_Comparator => "<",
                                    String_Comparator => "<",
@@ -784,6 +820,7 @@ package body EL.Objects is
 
    function "<=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "<=",
+                                   Time_Comparator => Ada.Calendar."<=",
                                    Boolean_Comparator => "<=",
                                    Float_Comparator => "<=",
                                    String_Comparator => "<=",
@@ -794,6 +831,7 @@ package body EL.Objects is
 
    function ">=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => ">=",
+                                   Time_Comparator => Ada.Calendar.">=",
                                    Boolean_Comparator => ">=",
                                    Float_Comparator => ">=",
                                    String_Comparator => ">=",
@@ -805,6 +843,7 @@ package body EL.Objects is
 
    function "=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "=",
+                                   Time_Comparator => Ada.Calendar."=",
                                    Boolean_Comparator => "=",
                                    Float_Comparator => "=",
                                    String_Comparator => "=",
