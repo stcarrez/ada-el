@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 with EL.Variables;
 with Ada.Strings.Unbounded;
+with Ada.Finalization;
 
 private with Ada.Strings.Unbounded.Hash;
 private with Ada.Containers.Indefinite_Hashed_Maps;
@@ -26,7 +27,7 @@ package EL.Contexts.Default is
    --  Default Context
    --  ------------------------------
    --  Context information for expression evaluation.
-   type Default_Context is new ELContext with private;
+   type Default_Context is new Ada.Finalization.Controlled and ELContext with private;
    type Default_Context_Access is access all Default_Context'Class;
 
    --  Retrieves the ELResolver associated with this ELcontext.
@@ -95,11 +96,15 @@ package EL.Contexts.Default is
 
 private
 
-   type Default_Context is new ELContext with record
-      Var_Mapper : EL.Variables.VariableMapper_Access; --  access EL.Variables.VariableMapper'Class;
-      Resolver   : ELResolver_Access;
-      Function_Mapper : EL.Functions.Function_Mapper_Access;
+   type Default_Context is new Ada.Finalization.Controlled and ELContext with record
+      Var_Mapper         : EL.Variables.VariableMapper_Access;
+      Resolver           : ELResolver_Access;
+      Function_Mapper    : EL.Functions.Function_Mapper_Access;
+      Var_Mapper_Created : Boolean := False;
    end record;
+
+   overriding
+   procedure Finalize (Obj : in out Default_Context);
 
    use EL.Beans;
 

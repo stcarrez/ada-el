@@ -15,9 +15,12 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Ada.Unchecked_Deallocation;
 with EL.Variables.Default;
 package body EL.Contexts.Default is
+
+   procedure Free is new Ada.Unchecked_Deallocation (Object => EL.Variables.VariableMapper'Class,
+                                                     Name   => EL.Variables.VariableMapper_Access);
 
    --  ------------------------------
    --  Retrieves the ELResolver associated with this ELcontext.
@@ -80,6 +83,9 @@ package body EL.Contexts.Default is
                                   Mapper  : access EL.Variables.VariableMapper'Class) is
       use EL.Variables;
    begin
+      if Context.Var_Mapper_Created then
+         Free (Context.Var_Mapper);
+      end if;
       if Mapper = null then
          Context.Var_Mapper := null;
       else
@@ -94,6 +100,7 @@ package body EL.Contexts.Default is
    begin
       if Context.Var_Mapper = null then
          Context.Var_Mapper := new EL.Variables.Default.Default_Variable_Mapper;
+         Context.Var_Mapper_Created := True;
       end if;
       Context.Var_Mapper.Bind (Name, EL.Objects.To_Object (Value));
    end Set_Variable;
@@ -156,5 +163,14 @@ package body EL.Contexts.Default is
    begin
       Bean_Maps.Include (Resolver.Map, Name, Value);
    end Register;
+
+
+   overriding
+   procedure Finalize (Obj : in out Default_Context) is
+   begin
+     if Obj.Var_Mapper_Created then
+        Free (Obj.Var_Mapper);
+     end if;
+   end Finalize;
 
 end EL.Contexts.Default;
