@@ -18,6 +18,9 @@
 
 with AUnit.Test_Caller;
 with AUnit.Assertions;
+
+with EL.Functions;
+with EL.Functions.Default;
 with EL.Expressions;
 with Test_Bean;
 with Action_Bean;
@@ -95,7 +98,10 @@ package body EL.Expressions.Tests is
       Check (T, "#{true or false}", "TRUE");
       Check (T, "#{- 23}", "-23");
       Check (T, "#{1.0}", "1");
-      Check (T, "#{'a\\'b'}", "'");
+      Check (T, "#{'a\'b'}", "a'b");
+      Check (T, "'a'", "'a'");
+      Check (T, "\#{test}", "#{test}");
+      Check (T, "\${test}", "${test}");
    end Test_Simple_Evaluation;
 
    --  Test evaluation of expression using a bean
@@ -143,8 +149,61 @@ package body EL.Expressions.Tests is
       Check_Error (T, "#{12 > 23 ? 44}");
       Check_Error (T, "#{");
       Check_Error (T, "${(12+1}");
-      Check_Error (T, "#{'\\''}");
+      Check_Error (T, "#{'a\\'b'}");
+      Check_Error (T, "#");
+      Check_Error (T, "$");
    end Test_Parse_Error;
+
+   --  Function to format a string
+   function Format1 (Arg : EL.Objects.Object) return EL.Objects.Object is
+      S : constant String := To_String (Arg);
+   begin
+      return To_Object ("[" & S & "]");
+   end Format1;
+
+   --  Function to format a string
+   function Format2 (Arg1, Arg2 : EL.Objects.Object) return EL.Objects.Object is
+      S1 : constant String := To_String (Arg1);
+      S2 : constant String := To_String (Arg2);
+      begin
+      return To_Object ("[" & S1 & "-" & S2 & "]");
+   end Format2;
+
+   --  Function to format a string
+   function Format3 (Arg1, Arg2, Arg3 : EL.Objects.Object) return EL.Objects.Object is
+      S1 : constant String := To_String (Arg1);
+      S2 : constant String := To_String (Arg2);
+      S3 : constant String := To_String (Arg3);
+   begin
+      return To_Object ("[" & S1 & "-" & S2 & "-" & S3 & "]");
+   end Format3;
+
+   --  Test evaluation of expression using a bean
+   procedure Test_Function_Evaluation (T : in out Test) is
+      P : constant Person_Access := Create_Person ("Joe", "Black", 42);
+      Fn  : constant EL.Functions.Function_Mapper_Access
+        := new EL.Functions.Default.Default_Function_Mapper;
+      E : EL.Expressions.Expression;
+      Result : EL.Objects.Object;
+   begin
+      T.Context.Set_Variable ("user", P);
+
+      --  Register the 'format' function.
+      Fn.Set_Function (Namespace => "fn",
+                       Name      => "format1",
+                       Func      => Format1'Access);
+      Fn.Set_Function (Namespace => "fn",
+                       Name      => "format2",
+                       Func      => Format2'Access);
+      Fn.Set_Function (Namespace => "fn",
+                       Name      => "format3",
+                       Func      => Format3'Access);
+      T.Context.Set_Function_Mapper (Fn);
+      --  Create the expression
+      E := Create_Expression ("#{fn:format1(10)} #{fn:format2(10,12)}", T.Context);
+      Result := E.Get_Value (T.Context);
+      Ada.Text_IO.Put_Line ("Result: " & EL.Objects.To_String (Result));
+   end Test_Function_Evaluation;
 
    --  Test evaluation of method expression
    procedure Test_Method_Evaluation (T : in out Test) is
@@ -179,7 +238,7 @@ package body EL.Expressions.Tests is
       M2 : EL.Expressions.Method_Expression;
       M  : EL.Expressions.Method_Expression :=
         Create_Expression (Context => T.Context,
-                           Expr    => "#{action.bar}");
+                           Expr    => "#{action2.bar}");
    begin
       --  Bean is not found
       begin
@@ -191,7 +250,7 @@ package body EL.Expressions.Tests is
             null;
       end;
 
-      T.Context.Set_Variable ("action", A1);
+      T.Context.Set_Variable ("action2", A1);
       begin
          Proc_Action.Execute (M, Person (P.all), T.Context);
          Assert (T, False, "The Invalid_Method exception was not raised");
@@ -244,6 +303,8 @@ package body EL.Expressions.Tests is
                                      Test_Method_Evaluation'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Expressions.Get_Method_Info (Invalid_method)",
                                      Test_Invalid_Method'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Functions.Set_Function (and evaluation)",
+                                     Test_Function_Evaluation'Access));
    end Add_Tests;
 
 end EL.Expressions.Tests;

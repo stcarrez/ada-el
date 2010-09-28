@@ -32,6 +32,7 @@ package EL.Expressions.Tests is
    procedure Test_Method_Evaluation (T : in out Test);
    procedure Test_Invalid_Method (T : in out Test);
    procedure Test_Simple_Evaluation (T : in out Test);
+   procedure Test_Function_Evaluation (T : in out Test);
 
    procedure Check (T      : in out Test;
                     Expr   : in String;
