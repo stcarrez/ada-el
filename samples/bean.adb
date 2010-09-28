@@ -15,10 +15,14 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with EL.Beans.Factory;
+with EL.Beans.Methods.Func_String;
+with EL.Beans.Methods.Func_Unbounded;
+with Ada.Unchecked_Deallocation;
 package body Bean is
 
    use EL.Objects;
+   use EL.Beans.Methods;
 
    FIRST_NAME : constant String := "firstName";
    LAST_NAME  : constant String := "lastName";
@@ -28,11 +32,11 @@ package body Bean is
 
 
    function Create_Person (First_Name, Last_Name : String;
-			   Age : Natural) return Person_Access is
+                           Age : Natural) return Person_Access is
    begin
       return new Person '(First_Name => To_Unbounded_String (First_Name),
-			  Last_Name => To_Unbounded_String (Last_Name),
-			  Age => Age);
+                          Last_Name => To_Unbounded_String (Last_Name),
+                          Age => Age);
    end Create_Person;
 
    --  Get the value identified by the name.
@@ -63,11 +67,94 @@ package body Bean is
       end if;
    end Set_Value;
 
+   --
+   function Save (P : in Person; Name : in Unbounded_String) return Unbounded_String is
+      Result : Unbounded_String;
+   begin
+      Result := P.Last_Name & Name;
+      return Result;
+   end Save;
+
+   function Compute (B  : EL.Beans.Bean'Class;
+                     P1 : EL.Objects.Object) return EL.Objects.Object is
+      P : Person := Person (B);
+   begin
+      return P1;
+   end Compute;
+
    --  Function to format a string
    function Format (Arg : EL.Objects.Object) return EL.Objects.Object is
       S : constant String := To_String (Arg);
    begin
       return To_Object ("[" & S & "]");
    end Format;
+
+   function Print (P : in Person; Title : in String) return String is
+   begin
+      return Title & " ["
+        & "Name=" & To_String (P.First_Name) & ", "
+        & "Last_name=" & To_String (P.Last_Name) & "]";
+   end Print;
+
+   package Save_Binding is
+     new Func_Unbounded.Bind (Bean        => Person,
+                              Method      => Save,
+                              Name        => "save");
+
+   package Print_Binding is
+     new Func_String.Bind (Bean        => Person,
+                           Method      => Print,
+                           Name        => "print");
+
+   type Bean_Definition is new EL.Beans.Factory.Bean_Definition with null record;
+
+   --  Create a bean.
+   overriding
+   function Create (Def : in Bean_Definition)
+                    return EL.Beans.Readonly_Bean_Access;
+
+   --  Free the bean instance.
+   overriding
+   procedure Destroy (Def  : in Bean_Definition;
+                      Bean : in out EL.Beans.Readonly_Bean_Access);
+
+   --  Create a bean.
+   overriding
+   function Create (Def : in Bean_Definition)
+                    return EL.Beans.Readonly_Bean_Access is
+     Result : Person_Access := new Person;
+   begin
+      return Result.all'Access;
+   end Create;
+
+   --  Free the bean instance.
+   overriding
+   procedure Destroy (Def  : in Bean_Definition;
+                      Bean : in out EL.Beans.Readonly_Bean_Access) is
+   begin
+     null;
+   end Destroy;
+
+   B : aliased Bean_Definition
+     := Bean_Definition '(Method_Count => 2,
+                          Methods => (Save_Binding.Proxy'Access, null)
+                          );
+
+   Binding_Array : aliased constant EL.Beans.Methods.Method_Binding_Array
+     := (Save_Binding.Proxy'Access, Print_Binding.Proxy'Access);
+
+   function Get_Method_Bindings (From : in Person)
+                                 return EL.Beans.Methods.Method_Binding_Array_Access is
+   begin
+      return Binding_Array'Unchecked_Access;
+   end Get_Method_Bindings;
+
+   procedure Free (Object : in out Person_Access) is
+      procedure Free is new Ada.Unchecked_Deallocation (Object => Person'Class,
+                                                        Name   => Person_Access);
+
+   begin
+      Free (Object);
+   end Free;
 
 end Bean;
