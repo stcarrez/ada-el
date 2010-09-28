@@ -35,24 +35,24 @@ package body EL.Beans.Methods.Proc_1 is
    --  the signature.
    --  ------------------------------
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
-		      Param   : in Param1_Type;
-		      Context : in EL.Contexts.ELContext'Class) is
+                      Param   : in Param1_Type;
+                      Context : in EL.Contexts.ELContext'Class) is
       Info   : constant Method_Info := Method.Get_Method_Info (Context);
    begin
       if Info.Binding = null then
-	 raise EL.Expressions.Invalid_Method with "Method not found";
+         raise EL.Expressions.Invalid_Method with "Method not found";
       end if;
 
       --  If the binding has the wrong type, we are trying to invoke
       --  a method with a different signature.
       if not (Info.Binding.all in Binding'Class) then
-	 raise EL.Expressions.Invalid_Method
-	   with "Invalid signature for method '" & Info.Binding.Name.all & "'";
+         raise EL.Expressions.Invalid_Method
+           with "Invalid signature for method '" & Info.Binding.Name.all & "'";
       end if;
       declare
-	 Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
+         Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
       begin
-	 Proxy.Method (Info.Object, Param);
+         Proxy.Method (Info.Object, Param);
       end;
    end Execute;
 
@@ -65,10 +65,10 @@ package body EL.Beans.Methods.Proc_1 is
    --  ------------------------------
    package body Bind is
       procedure Method_Access (O  : access EL.Beans.Readonly_Bean'Class;
-			       P1 : Param1_Type) is
-	 Object : access Bean := Bean (O.all)'Access;
+                               P1 : Param1_Type) is
+         Object : constant access Bean := Bean (O.all)'Access;
       begin
-	 Method (Object.all, P1);
+         Method (Object.all, P1);
       end Method_Access;
    end Bind;
 
