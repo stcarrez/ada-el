@@ -17,7 +17,6 @@
 -----------------------------------------------------------------------
 
 with AUnit.Test_Caller;
-with AUnit.Assertions;
 with EL.Expressions;
 with EL.Objects;
 with EL.Contexts;
@@ -32,7 +31,6 @@ package body EL.Testsuite is
 
    use Interfaces.C;
    use EL.Objects;
-   use AUnit.Assertions;
    use Ada.Calendar;
    use Ada.Calendar.Conversions;
 
@@ -43,33 +41,34 @@ package body EL.Testsuite is
    function "+" (Left, Right : Time) return Time;
    function Time_Value (S : String) return Ada.Calendar.Time;
 
+   --  ------------------------------
    --  Test object integer
+   --  ------------------------------
    procedure Test_To_Object_Integer (T : in out Test) is
-      pragma Unreferenced (T);
    begin
       declare
          Value : constant EL.Objects.Object := To_Object (Integer (1));
       begin
-         Assert (Condition => To_Integer (Value) = 1,
-                 Message => "Object.To_Integer: invalid integer returned");
-         Assert (Condition => To_Long_Integer (Value) = 1,
-                 Message => "Object.To_Long_Integer: invalid integer returned");
-         Assert (Condition => To_Boolean (Value),
-                 Message => "Object.To_Boolean: invalid return");
+         T.Assert (Condition => To_Integer (Value) = 1,
+                   Message => "Object.To_Integer: invalid integer returned");
+         T.Assert (Condition => To_Long_Integer (Value) = 1,
+                   Message => "Object.To_Long_Integer: invalid integer returned");
+         T.Assert (Condition => To_Boolean (Value),
+                   Message => "Object.To_Boolean: invalid return");
 
          declare
             V2 : constant EL.Objects.Object := Value + To_Object (Long_Integer (100));
          begin
-            Assert (Condition => To_Integer (V2) = 101,
-                    Message => "To_Integer invalid after an add");
+            T.Assert (Condition => To_Integer (V2) = 101,
+                      Message => "To_Integer invalid after an add");
          end;
       end;
    end Test_To_Object_Integer;
 
+   --  ------------------------------
    --  Test object integer
+   --  ------------------------------
    procedure Test_Expression (T : in out Test) is
-      pragma Unreferenced (T);
-
       E     : EL.Expressions.Expression;
       Value : Object;
       Ctx   : EL.Contexts.Default.Default_Context;
@@ -77,44 +76,44 @@ package body EL.Testsuite is
       --  Positive number
       E := EL.Expressions.Create_Expression ("12345678901", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_Long_Long_Integer (Value) = Long_Long_Integer (12345678901),
-              Message => "[1] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_Long_Long_Integer (Value) = Long_Long_Integer (12345678901),
+                Message => "[1] Expression result invalid: " & To_String (Value));
 
       --  Negative number
       E := EL.Expressions.Create_Expression ("-10", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_Integer (Value) = -10,
-              Message => "[2] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_Integer (Value) = -10,
+                Message => "[2] Expression result invalid: " & To_String (Value));
 
       --  Simple add
       E := EL.Expressions.Create_Expression ("#{1+1}", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_Integer (Value) = 2,
-              Message => "[2.1] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_Integer (Value) = 2,
+                Message => "[2.1] Expression result invalid: " & To_String (Value));
 
       --  Constant expressions
       E := EL.Expressions.Create_Expression ("#{12 + (123 - 3) * 4}", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_Integer (Value) = 492,
-              Message => "[3] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_Integer (Value) = 492,
+                Message => "[3] Expression result invalid: " & To_String (Value));
 
       --  Constant expressions
       E := EL.Expressions.Create_Expression ("#{12 + (123 - 3) * 4 + (23? 10 : 0)}", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_Integer (Value) = 502,
-              Message => "[4] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_Integer (Value) = 502,
+                Message => "[4] Expression result invalid: " & To_String (Value));
 
       --  Choice expressions
       E := EL.Expressions.Create_Expression ("#{1 > 2 ? 12 + 2 : 3 * 3}", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_Integer (Value) = 9,
-              Message => "[5] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_Integer (Value) = 9,
+                Message => "[5] Expression result invalid: " & To_String (Value));
 
       --  Choice expressions using strings
       E := EL.Expressions.Create_Expression ("#{1 > 2 ? 12 + 2 : 'A string'}", Ctx);
       Value := E.Get_Value (Ctx);
-      Assert (Condition => To_String (Value) = "A string",
-              Message => "[6] Expression result invalid: " & To_String (Value));
+      T.Assert (Condition => To_String (Value) = "A string",
+                Message => "[6] Expression result invalid: " & To_String (Value));
 
    end Test_Expression;
 
@@ -181,7 +180,7 @@ package body EL.Testsuite is
                                 To_Object_Test => EL.Objects.To_Object,
                                 Value          => Time_Value,
                                 Test_Name      => "Time",
-                                Test_Values => "1970-03-04 12:12:00,1980-04-04 13:13:10");
+                                Test_Values => "1970-03-04 12:12:00,1975-05-04 13:13:10");
 
    package Test_Float is new
      EL.Objects.Discrete_Tests (Test_Type      => Float,
@@ -209,8 +208,10 @@ package body EL.Testsuite is
 
    package Caller is new AUnit.Test_Caller (Test);
 
+   Tests : aliased Test_Suite;
+
    function Suite return Access_Test_Suite is
-      Ret : constant Access_Test_Suite := new Test_Suite;
+      Ret : constant Access_Test_Suite := Tests'Access;
    begin
       Ret.Add_Test (Caller.Create ("Test To_Object (Integer)",
                                    Test_To_Object_Integer'Access));

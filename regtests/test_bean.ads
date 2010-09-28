@@ -19,6 +19,7 @@ with EL.Objects;
 with EL.Beans;
 with Ada.Strings.Unbounded;
 with Ada.Calendar;
+with Ada.Unchecked_Deallocation;
 package Test_Bean is
 
    use Ada.Strings.Unbounded;
@@ -45,5 +46,8 @@ package Test_Bean is
 
    --  Function to format a string
    function Format (Arg : EL.Objects.Object) return EL.Objects.Object;
+
+   procedure Free is new Ada.Unchecked_Deallocation (Object => Person'Class,
+                                                     Name   => Person_Access);
 
 end Test_Bean;
