@@ -553,15 +553,53 @@ package body EL.Expressions.Nodes is
                                    Arg1.Node, Arg2.Node);
          return Arg1;
       end if;
---
---        Arg3 := Expr.Arg3.Reduce (Context);
---        if Expr.Func.Of_Type = F_3_ARG then
---              return Expr.Func.Func3 (Arg1, Arg2, Arg3);
---        end if;
---        Arg4 := Expr.Arg4.Get_Value (Context);
---        return Expr.Func.Func4 (Arg1, Arg2, Arg3, Arg4);
---        return Reduction '(Value => Expr.Value,
---                           Node  => null);
+
+      Arg3 := Expr.Arg3.Reduce (Context);
+      if Expr.Func.Of_Type = F_3_ARG then
+         if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null then
+            Arg1.Value := Expr.Func.Func3 (Arg1.Value, Arg2.Value, Arg3.Value);
+            return Arg1;
+         end if;
+         if Arg1.Node = null then
+            Arg1.Node := new ELObject '(Value       => Arg1.Value,
+                                        Ref_Counter => Counters.ONE);
+         end if;
+         if Arg2.Node = null then
+            Arg2.Node := new ELObject '(Value       => Arg2.Value,
+                                        Ref_Counter => Counters.ONE);
+         end if;
+         if Arg3.Node = null then
+            Arg3.Node := new ELObject '(Value       => Arg3.Value,
+                                        Ref_Counter => Counters.ONE);
+         end if;
+         Arg1.Node := Create_Node (Expr.Func,
+                                   Arg1.Node, Arg2.Node, Arg3.Node);
+         return Arg1;
+      end if;
+
+      Arg4 := Expr.Arg4.Reduce (Context);
+      if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null and Arg4.Node = null then
+         Arg1.Value := Expr.Func.Func4 (Arg1.Value, Arg2.Value, Arg3.Value, Arg4.Value);
+         return Arg1;
+      end if;
+      if Arg1.Node = null then
+         Arg1.Node := new ELObject '(Value       => Arg1.Value,
+                                     Ref_Counter => Counters.ONE);
+      end if;
+      if Arg2.Node = null then
+         Arg2.Node := new ELObject '(Value       => Arg2.Value,
+                                     Ref_Counter => Counters.ONE);
+      end if;
+      if Arg3.Node = null then
+         Arg3.Node := new ELObject '(Value       => Arg3.Value,
+                                     Ref_Counter => Counters.ONE);
+      end if;
+      if Arg4.Node = null then
+         Arg4.Node := new ELObject '(Value       => Arg4.Value,
+                                     Ref_Counter => Counters.ONE);
+      end if;
+      Arg1.Node := Create_Node (Expr.Func,
+                                Arg1.Node, Arg2.Node, Arg3.Node, Arg4.Node);
       return Arg1;
    end Reduce;
 
