@@ -280,6 +280,17 @@ package body EL.Expressions.Tests is
       Check (T, "#{fn:format2(10,20)} #{fn:format3(20,32,33)}", "[10-20] [20-32-33]");
       Check (T, "#{fx:format4(10,20,30,40)}", "[10-20-30-40]");
 
+      Check (T, "#{fn:format1(user.age)}", "[42]");
+      Check (T, "#{fn:format2(user.age,10)}", "[42-10]");
+      Check (T, "#{fn:format2(10,user.age)}", "[10-42]");
+      Check (T, "#{fn:format3(user.age,user.age,user.age)}", "[42-42-42]");
+      Check (T, "#{fn:format3(10,user.age,user.age)}", "[10-42-42]");
+      Check (T, "#{fn:format3(10,10,user.age)}", "[10-10-42]");
+      Check (T, "#{fx:format4(user.age,user.age,user.age,user.age)}", "[42-42-42-42]");
+      Check (T, "#{fx:format4(user.age,10,user.age,user.age)}", "[42-10-42-42]");
+      Check (T, "#{fx:format4(user.age,10,10,user.age)}", "[42-10-10-42]");
+      Check (T, "#{fx:format4(user.age,10,10,10)}", "[42-10-10-10]");
+
       Check_Error (T, "#{fx:format4(12(");
       Check_Error (T, "#{fx:format4(12,12(");
       Check_Error (T, "#{fx:format4(12,12,12(");
