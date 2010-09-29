@@ -26,6 +26,7 @@ with Test_Bean;
 with Action_Bean;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
+with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Unchecked_Deallocation;
 package body EL.Expressions.Tests is
 
@@ -60,14 +61,16 @@ package body EL.Expressions.Tests is
                           Expr : in String) is
       E : Expression;
    begin
-      E := Create_Expression (Context => T.Context.all, Expr => Expr);
+      begin
+         E := Create_Expression (Context => T.Context.all, Expr => Expr);
 
-      pragma Unreferenced (E);
-      T.Assert (Condition => False,
-                Message => "Evaludation of '" & Expr & "' should raise an exception");
-   exception
-      when Invalid_Expression =>
-         null;
+         T.Assert (Condition => False,
+                   Message => "Evaludation of '" & Expr & "' should raise an exception");
+      exception
+         when Invalid_Expression =>
+            null;
+      end;
+
    end Check_Error;
 
    --  ------------------------------
@@ -183,6 +186,26 @@ package body EL.Expressions.Tests is
       Check_Error (T, "#{'a\\'b'}");
       Check_Error (T, "#");
       Check_Error (T, "$");
+      Check_Error (T, "#{name");
+      Check_Error (T, "#{name.name");
+      Check_Error (T, "#{name.name.name");
+      Check_Error (T, "#{name:");
+      Check_Error (T, "#{name:name");
+      Check_Error (T, "#{name:name(");
+      Check_Error (T, "#{name:name(12");
+      Check_Error (T, "#{name:name(12,");
+      Check_Error (T, "#{name:name(12,+");
+      Check_Error (T, "#{name:name(12,12");
+      Check_Error (T, "#{name:name(12,12,");
+      Check_Error (T, "#{name:name(12,12,+");
+      Check_Error (T, "#{name:name(12,12,12");
+      Check_Error (T, "#{name:name(12,12,12.12");
+      Check_Error (T, "#{name:name(12,12,12.12,12");
+      Check_Error (T, "#{,}");
+      Check_Error (T, "#{.}");
+      Check_Error (T, "#{:}");
+      Check_Error (T, "#{~}");
+      Check_Error (T, "#{@}");
    end Test_Parse_Error;
 
    --  ------------------------------
@@ -216,12 +239,23 @@ package body EL.Expressions.Tests is
    end Format3;
 
    --  ------------------------------
+   --  Function to format a string
+   --  ------------------------------
+   function Format4 (Arg1, Arg2, Arg3, Arg4 : EL.Objects.Object) return EL.Objects.Object is
+      S1 : constant String := To_String (Arg1);
+      S2 : constant String := To_String (Arg2);
+      S3 : constant String := To_String (Arg3);
+      S4 : constant String := To_String (Arg4);
+   begin
+      return To_Object ("[" & S1 & "-" & S2 & "-" & S3 & "-" & S4 & "]");
+   end Format4;
+
+   --  ------------------------------
    --  Test function evaluation
    --  ------------------------------
    procedure Test_Function_Evaluation (T : in out Test) is
       P  : Person_Access := Create_Person ("Joe", "Black", 42);
       Fn : aliased EL.Functions.Default.Default_Function_Mapper;
-      E  : EL.Expressions.Expression;
       Result : EL.Objects.Object;
    begin
       T.Context.all.Set_Variable ("user", P);
@@ -236,12 +270,20 @@ package body EL.Expressions.Tests is
       Fn.Set_Function (Namespace => "fn",
                        Name      => "format3",
                        Func      => Format3'Access);
+      Fn.Set_Function (Namespace => "fx",
+                       Name      => "format4",
+                       Func      => Format4'Access);
       T.Context.Set_Function_Mapper (Fn'Unchecked_Access);
 
-      --  Create the expression
-      E := Create_Expression ("#{fn:format1(10)} #{fn:format2(10,12)}", T.Context.all);
-      Result := E.Get_Value (T.Context.all);
-      Ada.Text_IO.Put_Line ("Result: " & EL.Objects.To_String (Result));
+      --  Create the expression with function call and check the result
+      Check (T, "#{fn:format1(10)} #{fn:format2(10,12)}", "[10] [10-12]");
+      Check (T, "#{fn:format2(10,20)} #{fn:format3(20,32,33)}", "[10-20] [20-32-33]");
+      Check (T, "#{fx:format4(10,20,30,40)}", "[10-20-30-40]");
+
+      Check_Error (T, "#{fx:format4(12(");
+      Check_Error (T, "#{fx:format4(12,12(");
+      Check_Error (T, "#{fx:format4(12,12,12(");
+      Check_Error (T, "#{fx:format4(12,12,12,12(");
 
       Free (P);
    end Test_Function_Evaluation;
