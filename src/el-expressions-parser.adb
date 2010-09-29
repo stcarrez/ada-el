@@ -955,10 +955,10 @@ package body EL.Expressions.Parser is
       end if;
       Parse_Choice (P, Arg4);
       Peek (P, Token);
-      Result := Create_Node (Func, Arg1, Arg2, Arg3, Arg4);
       if Token /= T_RIGHT_PARENT then
          raise Invalid_Expression with "Missing ')' at end of function call";
       end if;
+      Result := Create_Node (Func, Arg1, Arg2, Arg3, Arg4);
 
    exception
       when others =>
