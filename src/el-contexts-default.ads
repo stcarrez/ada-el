@@ -16,11 +16,9 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with EL.Variables;
-with Ada.Strings.Unbounded;
 with Ada.Finalization;
 
-private with Ada.Strings.Unbounded.Hash;
-private with Ada.Containers.Indefinite_Hashed_Maps;
+private with EL.Objects.Maps;
 package EL.Contexts.Default is
 
    --  ------------------------------
@@ -108,14 +106,8 @@ private
 
    use EL.Beans;
 
-   package Bean_Maps is new
-     Ada.Containers.Indefinite_Hashed_Maps (Key_Type => Unbounded_String,
-                                            Element_Type => EL.Objects.Object,
-                                            Hash => Ada.Strings.Unbounded.Hash,
-                                            Equivalent_Keys => "=");
-
    type Default_ELResolver is new ELResolver with record
-      Map : Bean_Maps.Map;
+      Map : EL.Objects.Maps.Map;
    end record;
 
 end EL.Contexts.Default;

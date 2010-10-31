@@ -122,10 +122,10 @@ package body EL.Contexts.Default is
       end if;
 
       declare
-         Pos : constant Bean_Maps.Cursor := Resolver.Map.Find (Name);
+         Pos : constant Objects.Maps.Cursor := Resolver.Map.Find (Name);
       begin
-         if Bean_Maps.Has_Element (Pos) then
-            return Bean_Maps.Element (Pos);
+         if Objects.Maps.Has_Element (Pos) then
+            return Objects.Maps.Element (Pos);
          end if;
       end;
       return R;
@@ -161,7 +161,7 @@ package body EL.Contexts.Default is
                        Name     : in Unbounded_String;
                        Value    : in EL.Objects.Object) is
    begin
-      Bean_Maps.Include (Resolver.Map, Name, Value);
+      Objects.Maps.Include (Resolver.Map, Name, Value);
    end Register;
 
 
