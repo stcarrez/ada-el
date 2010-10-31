@@ -20,14 +20,16 @@
 --  package EL.Expressions
 --  package EL.Objects
 with Ada.Characters.Conversions;
-with Ada.Calendar.Formatting;
-with Ada.Calendar.Conversions;
+with Ada.Unchecked_Deallocation;
+--  with Ada.Calendar.Formatting;
+--  with Ada.Calendar.Conversions;
 with Interfaces.C;
 with EL.Beans;
 package body EL.Objects is
 
+   use Util.Concurrent.Counters;
    use Ada.Characters.Conversions;
-   use Ada.Calendar.Formatting;
+--     use Ada.Calendar.Formatting;
    use type Interfaces.C.long;
 
    type String_Access is access constant String;
@@ -41,19 +43,12 @@ package body EL.Objects is
    --  Find the best type to be used to compare two operands.
    function Get_Compare_Type (Left, Right : Object) return Data_Type;
 
-   function "+"(Str : in String)
-                return Unbounded_String renames To_Unbounded_String;
-
    type Basic_Type is new Object_Type with record
       Name : String_Access;
    end record;
 
    --  Get the type name
    function Get_Name (Type_Def : Basic_Type) return String;
-
-   --  Translate the object
-   function To_String (Type_Def : Basic_Type;
-                       Value    : in Object) return String;
 
    INTEGER_NAME     : aliased constant String := "Integer";
    BOOLEAN_NAME     : aliased constant String := "Boolean";
@@ -85,7 +80,7 @@ package body EL.Objects is
    --  ------------------------------
    function Is_Null (Value : in Object) return Boolean is
    begin
-      return Value.Of_Type = TYPE_NULL;
+      return Value.V.Of_Type = TYPE_NULL;
    end Is_Null;
 
    --  ------------------------------
@@ -97,26 +92,26 @@ package body EL.Objects is
    --  ------------------------------
    function Is_Empty (Value : in Object) return Boolean is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_NULL =>
             return True;
 
          when TYPE_STRING =>
-            return Value.String_Value = "";
+            return Value.V.Proxy = null or else Value.V.Proxy.String_Value.all = "";
 
          when TYPE_WIDE_STRING  =>
-            return Value.Wide_String_Value = "";
+            return Value.V.Proxy = null or else Value.V.Proxy.Wide_String_Value.all = "";
 
          when TYPE_BEAN =>
-            if Value.Bean = null then
+            if Value.V.Proxy = null or else Value.V.Proxy.Bean = null then
                return True;
             end if;
-            if not (Value.Bean.all in EL.Beans.List_Bean'Class) then
+            if not (Value.V.Proxy.Bean.all in EL.Beans.List_Bean'Class) then
                return False;
             end if;
             declare
                L : constant EL.Beans.List_Bean_Access :=
-                 EL.Beans.List_Bean'Class (Value.Bean.all)'Unchecked_Access;
+                 EL.Beans.List_Bean'Class (Value.V.Proxy.Bean.all)'Unchecked_Access;
             begin
                return L.Get_Count = 0;
             end;
@@ -152,7 +147,7 @@ package body EL.Objects is
    --  ------------------------------
    function Get_Type (Value : in Object) return Data_Type is
    begin
-      return Value.Of_Type;
+      return Value.V.Of_Type;
    end Get_Type;
 
    --  ------------------------------
@@ -168,38 +163,46 @@ package body EL.Objects is
    --  ------------------------------
    function To_String (Value : Object) return String is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_INTEGER =>
-            if Value.Int_Value >= 0 then
+            if Value.V.Int_Value >= 0 then
                declare
-                  S : constant String := Long_Long_Integer'Image (Value.Int_Value);
+                  S : constant String := Long_Long_Integer'Image (Value.V.Int_Value);
                begin
                   return S (S'First + 1 .. S'Last);
                end;
             else
-               return Long_Long_Integer'Image (Value.Int_Value);
+               return Long_Long_Integer'Image (Value.V.Int_Value);
             end if;
 
          when TYPE_BOOLEAN =>
-            return Boolean'Image (Value.Bool_Value);
+            return Boolean'Image (Value.V.Bool_Value);
 
          when TYPE_FLOAT =>
-            return Long_Long_Float'Image (Value.Float_Value);
+            return Long_Long_Float'Image (Value.V.Float_Value);
 
          when TYPE_STRING =>
-            return To_String (Value.String_Value);
+            if Value.V.Proxy = null then
+               return "null";
+            end if;
+            return Value.V.Proxy.String_Value.all;
 
          when TYPE_WIDE_STRING =>
-            return To_String (To_Wide_Wide_String (Value.Wide_String_Value));
+            if Value.V.Proxy = null then
+               return "null";
+            end if;
+            return To_String (Value.V.Proxy.Wide_String_Value.all);
 
          when TYPE_TIME =>
-            return Ada.Calendar.Formatting.Image (Value.Time_Value);
-
-         when TYPE_EXTERNAL =>
-            return Value.Type_Def.To_String (Value);
+            --              return Ada.Calendar.Formatting.Image (Value.V.Time_Value);
+            return Long_Long_Integer'Image (Value.V.Time_Value);
 
          when TYPE_BEAN =>
-            return "<bean>";
+            if Value.V.Proxy = null or else Value.V.Proxy.Bean = null then
+               return "null";
+            else
+               return "<bean>";
+            end if;
 
          when TYPE_NULL =>
             return "null";
@@ -212,9 +215,12 @@ package body EL.Objects is
    --  ------------------------------
    function To_Wide_Wide_String (Value : Object) return Wide_Wide_String is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_WIDE_STRING =>
-            return To_Wide_Wide_String (Value.Wide_String_Value);
+            if Value.V.Proxy = null then
+               return "null";
+            end if;
+            return Value.V.Proxy.Wide_String_Value.all;
 
          when TYPE_NULL =>
             return "null";
@@ -230,9 +236,12 @@ package body EL.Objects is
    --  ------------------------------
    function To_Unbounded_String (Value : Object) return Unbounded_String is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_STRING =>
-            return Value.String_Value;
+            if Value.V.Proxy = null then
+               return To_Unbounded_String ("null");
+            end if;
+            return To_Unbounded_String (Value.V.Proxy.String_Value.all);
 
          when others =>
             return To_Unbounded_String (To_String (Value));
@@ -245,13 +254,19 @@ package body EL.Objects is
    --  ------------------------------
    function To_Unbounded_Wide_Wide_String (Value : Object) return Unbounded_Wide_Wide_String is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_WIDE_STRING =>
-            return Value.Wide_String_Value;
+            if Value.V.Proxy = null then
+               return To_Unbounded_Wide_Wide_String ("null");
+            end if;
+            return To_Unbounded_Wide_Wide_String (Value.V.Proxy.Wide_String_Value.all);
 
          when TYPE_STRING =>
+            if Value.V.Proxy = null then
+               return To_Unbounded_Wide_Wide_String ("null");
+            end if;
             return To_Unbounded_Wide_Wide_String
-              (To_Wide_Wide_String (To_String (Value.String_Value)));
+              (To_Wide_Wide_String (Value.V.Proxy.String_Value.all));
 
          when others =>
             return To_Unbounded_Wide_Wide_String (To_Wide_Wide_String (To_String (Value)));
@@ -280,30 +295,34 @@ package body EL.Objects is
    --  ------------------------------
    function To_Long_Long_Integer (Value : Object) return Long_Long_Integer is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_NULL | TYPE_BEAN =>
             return 0;
 
          when TYPE_INTEGER =>
-            return Value.Int_Value;
+            return Value.V.Int_Value;
 
          when TYPE_BOOLEAN =>
-            return Boolean'Pos (Value.Bool_Value);
+            return Boolean'Pos (Value.V.Bool_Value);
 
          when TYPE_FLOAT =>
-            return Long_Long_Integer (Value.Float_Value);
+            return Long_Long_Integer (Value.V.Float_Value);
 
          when TYPE_STRING =>
-            return Long_Long_Integer'Value (To_String (Value.String_Value));
+            if Value.V.Proxy = null then
+               return 0;
+            end if;
+            return Long_Long_Integer'Value (Value.V.Proxy.String_Value.all);
 
          when TYPE_TIME =>
-            return Long_Long_Integer (Ada.Calendar.Conversions.To_Unix_Time (Value.Time_Value));
+            --              return Long_Long_Integer (Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value));
+            return Value.V.Time_Value;
 
          when TYPE_WIDE_STRING =>
-            return Long_Long_Integer'Value (To_String (Value));
-
-         when TYPE_EXTERNAL =>
-            return Long_Long_Integer'Value (Value.Type_Def.To_String (Value));
+            if Value.V.Proxy = null then
+               return 0;
+            end if;
+            return Long_Long_Integer'Value (To_String (Value.V.Proxy.Wide_String_Value.all));
 
       end case;
 
@@ -315,29 +334,29 @@ package body EL.Objects is
    --  ------------------------------
    --  Convert the object to an integer.
    --  ------------------------------
-   function To_Time (Value : Object) return Ada.Calendar.Time is
-      use Interfaces.C;
-   begin
-      case Value.Of_Type is
-         when TYPE_NULL | TYPE_BEAN =>
-            return Ada.Calendar.Conversions.To_Ada_Time (0);
-
-         when TYPE_INTEGER =>
-            return Ada.Calendar.Conversions.To_Ada_Time (long (Value.Int_Value));
-
-         when TYPE_TIME =>
-            return Value.Time_Value;
-
-         when others =>
-            return Ada.Calendar.Formatting.Value (To_String (Value));
-
-      end case;
-   end To_Time;
+--     function To_Time (Value : Object) return Ada.Calendar.Time is
+--        use Interfaces.C;
+--     begin
+--        case Value.V.Of_Type is
+--           when TYPE_NULL | TYPE_BEAN =>
+--              return Ada.Calendar.Conversions.To_Ada_Time (0);
+--
+--           when TYPE_INTEGER =>
+--              return Ada.Calendar.Conversions.To_Ada_Time (long (Value.V.Int_Value));
+--
+--           when TYPE_TIME =>
+--              return Value.V.Time_Value;
+--
+--           when others =>
+--              return Ada.Calendar.Formatting.Value (To_String (Value));
+--
+--        end case;
+--     end To_Time;
 
    function To_Bean (Value : in Object) return access EL.Beans.Readonly_Bean'Class is
    begin
-      if Value.Of_Type = TYPE_BEAN then
-         return Value.Bean;
+      if Value.V.Of_Type = TYPE_BEAN and then Value.V.Proxy /= null then
+         return Value.V.Proxy.Bean;
       else
          return null;
       end if;
@@ -348,37 +367,35 @@ package body EL.Objects is
    --  ------------------------------
    function To_Boolean (Value : Object) return Boolean is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_NULL =>
             return False;
 
          when TYPE_INTEGER =>
-            return Value.Int_Value /= 0;
+            return Value.V.Int_Value /= 0;
 
          when TYPE_BOOLEAN =>
-            return Value.Bool_Value;
+            return Value.V.Bool_Value;
 
          when TYPE_FLOAT =>
-            return Value.Float_Value /= 0.0;
+            return Value.V.Float_Value /= 0.0;
 
          when TYPE_STRING =>
-            return Value.String_Value = "true" or Value.String_Value = "1";
+            return Value.V.Proxy /= null
+              and then (Value.V.Proxy.String_Value.all = "true"
+                        or Value.V.Proxy.String_Value.all = "1");
 
          when TYPE_WIDE_STRING =>
-            return Value.Wide_String_Value = "true" or Value.Wide_String_Value = "1";
+            return Value.V.Proxy /= null
+              and then (Value.V.Proxy.Wide_String_Value.all = "true"
+                        or Value.V.Proxy.Wide_String_Value.all = "1");
 
          when TYPE_TIME =>
-            return Ada.Calendar.Conversions.To_Unix_Time (Value.Time_Value) /= 0;
+            --              return Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value) /= 0;
+            return Value.V.Time_Value /= 0;
 
          when TYPE_BEAN =>
-            return Value.Bean /= null;
-
-         when TYPE_EXTERNAL =>
-            declare
-               V : constant String := Value.Type_Def.To_String (Value);
-            begin
-               return V = "true" or V = "1";
-            end;
+            return Value.V.Proxy /= null and then Value.V.Proxy.Bean /= null;
 
       end case;
    end To_Boolean;
@@ -388,30 +405,34 @@ package body EL.Objects is
    --  ------------------------------
    function To_Float (Value : Object) return Float is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_NULL | TYPE_BEAN =>
             return 0.0;
 
          when TYPE_INTEGER =>
-            return Float (Value.Int_Value);
+            return Float (Value.V.Int_Value);
 
          when TYPE_BOOLEAN =>
-            return Float (Boolean'Pos (Value.Bool_Value));
+            return Float (Boolean'Pos (Value.V.Bool_Value));
 
          when TYPE_FLOAT =>
-            return Float (Value.Float_Value);
+            return Float (Value.V.Float_Value);
 
          when TYPE_STRING =>
-            return Float'Value (To_String (Value.String_Value));
+            if Value.V.Proxy = null then
+               return 0.0;
+            end if;
+            return Float'Value (Value.V.Proxy.String_Value.all);
 
          when TYPE_WIDE_STRING =>
-            return Float'Value (To_String (Value));
+            if Value.V.Proxy = null then
+               return 0.0;
+            end if;
+            return Float'Value (To_String (Value.V.Proxy.Wide_String_Value.all));
 
          when TYPE_TIME =>
-            return Float (Ada.Calendar.Conversions.To_Unix_Time (Value.Time_Value));
-
-         when TYPE_EXTERNAL =>
-            return Float'Value (Value.Type_Def.To_String (Value));
+            --              return Float (Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value));
+            return Float (Value.V.Time_Value);
 
       end case;
    end To_Float;
@@ -429,30 +450,31 @@ package body EL.Objects is
    --  ------------------------------
    function To_Long_Long_Float (Value : Object) return Long_Long_Float is
    begin
-      case Value.Of_Type is
+      case Value.V.Of_Type is
          when TYPE_NULL | TYPE_BEAN =>
             return 0.0;
 
          when TYPE_INTEGER =>
-            return Long_Long_Float (Value.Int_Value);
+            return Long_Long_Float (Value.V.Int_Value);
 
          when TYPE_BOOLEAN =>
-            return Long_Long_Float (Boolean'Pos (Value.Bool_Value));
+            return Long_Long_Float (Boolean'Pos (Value.V.Bool_Value));
 
          when TYPE_FLOAT =>
-            return Value.Float_Value;
+            return Value.V.Float_Value;
 
          when TYPE_STRING =>
-            return Long_Long_Float'Value (To_String (Value.String_Value));
+            if Value.V.Proxy = null then
+               return 0.0;
+            end if;
+            return Long_Long_Float'Value (Value.V.Proxy.String_Value.all);
 
          when TYPE_WIDE_STRING =>
             return Long_Long_Float'Value (To_String (Value));
 
          when TYPE_TIME =>
-            return Long_Long_Float (Ada.Calendar.Conversions.To_Unix_Time (Value.Time_Value));
-
-         when TYPE_EXTERNAL =>
-            return Long_Long_Float'Value (Value.Type_Def.To_String (Value));
+            --              return Long_Long_Float (Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value));
+            return Long_Long_Float (Value.V.Time_Value);
 
       end case;
    end To_Long_Long_Float;
@@ -462,8 +484,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Integer) return Object is
    begin
-      return Object '(Of_Type   => TYPE_INTEGER,
-                      Int_Value => Long_Long_Integer (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type   => TYPE_INTEGER,
+                                          Int_Value => Long_Long_Integer (Value)),
                       Type_Def  => Integer_Type'Access);
    end To_Object;
 
@@ -472,8 +495,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Long_Integer) return Object is
    begin
-      return Object '(Of_Type   => TYPE_INTEGER,
-                      Int_Value => Long_Long_Integer (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type   => TYPE_INTEGER,
+                                          Int_Value => Long_Long_Integer (Value)),
                       Type_Def  => Integer_Type'Access);
    end To_Object;
 
@@ -482,8 +506,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Long_Long_Integer) return Object is
    begin
-      return Object '(Of_Type   => TYPE_INTEGER,
-                      Int_Value => Value,
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type   => TYPE_INTEGER,
+                                          Int_Value => Value),
                       Type_Def  => Integer_Type'Access);
    end To_Object;
 
@@ -492,8 +517,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Boolean) return Object is
    begin
-      return Object '(Of_Type    => TYPE_BOOLEAN,
-                      Bool_Value => Value,
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type    => TYPE_BOOLEAN,
+                                          Bool_Value => Value),
                       Type_Def   => Boolean_Type'Access);
    end To_Object;
 
@@ -502,8 +528,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Float) return Object is
    begin
-      return Object '(Of_Type     => TYPE_FLOAT,
-                      Float_Value => Long_Long_Float (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type     => TYPE_FLOAT,
+                                          Float_Value => Long_Long_Float (Value)),
                       Type_Def    => Float_Type'Access);
    end To_Object;
 
@@ -512,8 +539,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Long_Float) return Object is
    begin
-      return Object '(Of_Type     => TYPE_FLOAT,
-                      Float_Value => Long_Long_Float (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type     => TYPE_FLOAT,
+                                          Float_Value => Long_Long_Float (Value)),
                       Type_Def    => Float_Type'Access);
    end To_Object;
 
@@ -522,8 +550,9 @@ package body EL.Objects is
    --  ------------------------------
    function To_Object (Value : Long_Long_Float) return Object is
    begin
-      return Object '(Of_Type     => TYPE_FLOAT,
-                      Float_Value => Value,
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type     => TYPE_FLOAT,
+                                          Float_Value => Value),
                       Type_Def    => Float_Type'Access);
    end To_Object;
 
@@ -531,19 +560,27 @@ package body EL.Objects is
    --  Convert a string into a generic typed object.
    --  ------------------------------
    function To_Object (Value : String) return Object is
+      S : constant Ada.Strings.Unbounded.String_Access := new String '(Value);
    begin
-      return Object '(Of_Type => TYPE_STRING,
-                      String_Value => +Value,
-                      Type_Def => String_Type'Access);
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type => TYPE_STRING,
+                                          Proxy   => new Bean_Proxy '(Ref_Counter  => ONE,
+                                                                      Of_Type      => TYPE_STRING,
+                                                                      String_Value => S)),
+                      Type_Def     => String_Type'Access);
    end To_Object;
 
    --  ------------------------------
    --  Convert a wide string into a generic typed object.
    --  ------------------------------
    function To_Object (Value : Wide_Wide_String) return Object is
+      S : constant Wide_Wide_String_Access := new Wide_Wide_String '(Value);
    begin
-      return Object '(Of_Type           => TYPE_WIDE_STRING,
-                      Wide_String_Value => To_Unbounded_Wide_Wide_String (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type => TYPE_WIDE_STRING,
+                                          Proxy   => new Bean_Proxy '(Ref_Counter => ONE,
+                                                                      Of_Type => TYPE_WIDE_STRING,
+                                                                      Wide_String_Value => S)),
                       Type_Def          => Wide_String_Type'Access);
    end To_Object;
 
@@ -551,48 +588,56 @@ package body EL.Objects is
    --  Convert an unbounded string into a generic typed object.
    --  ------------------------------
    function To_Object (Value : Unbounded_String) return Object is
+      S : constant Ada.Strings.Unbounded.String_Access := new String '(To_String (Value));
    begin
-      return Object '(Of_Type      => TYPE_STRING,
-                      String_Value => Value,
-                      Type_Def     => String_Type'Access);
+      return Object '(Controlled with
+        V => Object_Value '(Of_Type => TYPE_STRING,
+                            Proxy   => new Bean_Proxy '(Ref_Counter  => ONE,
+                                                        Of_Type      => TYPE_STRING,
+                                                        String_Value => S)),
+        Type_Def     => String_Type'Access);
    end To_Object;
 
    --  ------------------------------
    --  Convert a unbounded wide string into a generic typed object.
    --  ------------------------------
    function To_Object (Value : Unbounded_Wide_Wide_String) return Object is
+      S : constant Wide_Wide_String_Access := new Wide_Wide_String '(To_Wide_Wide_String (Value));
    begin
-      return Object '(Of_Type           => TYPE_WIDE_STRING,
-                      Wide_String_Value => Value,
-                      Type_Def          => Wide_String_Type'Access);
+      return Object '(Controlled with
+        V => Object_Value '(Of_Type => TYPE_WIDE_STRING,
+                            Proxy   => new Bean_Proxy '(Ref_Counter => ONE,
+                                                        Of_Type => TYPE_WIDE_STRING,
+                                                        Wide_String_Value => S)),
+        Type_Def          => Wide_String_Type'Access);
    end To_Object;
 
    --  ------------------------------
    --  Convert a time into a generic typed object.
    --  ------------------------------
-   function To_Object (Value : Ada.Calendar.Time) return Object is
-   begin
-      return Object '(Of_Type    => TYPE_TIME,
-                      Time_Value => Value,
-                      Type_Def   => Time_Type'Access);
-   end To_Object;
+--     function To_Object (Value : Ada.Calendar.Time) return Object is
+--     begin
+--        return Object '(Controlled with
+--                        Of_Type    => TYPE_TIME,
+--                        Time_Value => Value,
+--                        Type_Def   => Time_Type'Access);
+--     end To_Object;
 
    function To_Object (Value : access EL.Beans.Readonly_Bean'Class) return Object is
    begin
-      return Object '(Of_Type    => TYPE_BEAN,
-                      Bean       => Value,
-                      Type_Def   => Bean_Type'Access);
-   end To_Object;
-
-   --  ------------------------------
-   --  Convert a generic data into a generic typed object.
-   --  ------------------------------
-   function To_Object (Type_Def : Object_Type_Access;
-                       Value    : System.Address) return Object is
-   begin
-      return Object '(Of_Type  => TYPE_EXTERNAL,
-                      Addr     => Value,
-                      Type_Def => Type_Def);
+      if Value = null then
+         return Object '(Controlled with
+                         V => Object_Value '(Of_Type    => TYPE_BEAN,
+                                             Proxy      => null),
+                         Type_Def   => Bean_Type'Access);
+      else
+         return Object '(Controlled with
+                         V => Object_Value '(Of_Type => TYPE_BEAN,
+                                             Proxy   => new Bean_Proxy '(Of_Type => TYPE_BEAN,
+                                                                         Ref_Counter => ONE,
+                                                                         Bean => Value)),
+                         Type_Def   => Bean_Type'Access);
+      end if;
    end To_Object;
 
    --  ------------------------------
@@ -601,8 +646,9 @@ package body EL.Objects is
    --  ------------------------------
    function Cast_Integer (Value : Object) return Object is
    begin
-      return Object '(Of_Type   => TYPE_INTEGER,
-                      Int_Value => To_Long_Long_Integer (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type   => TYPE_INTEGER,
+                                          Int_Value => To_Long_Long_Integer (Value)),
                       Type_Def  => Integer_Type'Access);
    end Cast_Integer;
 
@@ -611,8 +657,9 @@ package body EL.Objects is
    --  ------------------------------
    function Cast_Float (Value : Object) return Object is
    begin
-      return Object '(Of_Type     => TYPE_FLOAT,
-                      Float_Value => To_Long_Long_Float (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type     => TYPE_FLOAT,
+                                          Float_Value => To_Long_Long_Float (Value)),
                       Type_Def    => Float_Type'Access);
    end Cast_Float;
 
@@ -621,8 +668,9 @@ package body EL.Objects is
    --  ------------------------------
    function Cast_Time (Value : Object) return Object is
    begin
-      return Object '(Of_Type    => TYPE_TIME,
-                      Time_Value => To_Time (Value),
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type    => TYPE_TIME,
+                                          Time_Value => To_Long_Long_Integer (Value)),
                       Type_Def   => Time_Type'Access);
    end Cast_Time;
 
@@ -631,9 +679,10 @@ package body EL.Objects is
    --  ------------------------------
    function Cast_String (Value : Object) return Object is
    begin
-      return Object '(Of_Type           => TYPE_WIDE_STRING,
-                      Wide_String_Value => To_Unbounded_Wide_Wide_String (Value),
-                      Type_Def          => Wide_String_Type'Access);
+      if Value.V.Of_Type = TYPE_STRING or Value.V.Of_Type = TYPE_WIDE_STRING then
+         return Value;
+      end if;
+      return To_Object (To_Wide_Wide_String (Value));
    end Cast_String;
 
    --  ------------------------------
@@ -643,31 +692,27 @@ package body EL.Objects is
    function Get_Compare_Type (Left, Right : Object) return Data_Type is
    begin
       --  Operands are of the same type.
-      if Left.Of_Type = Right.Of_Type then
-         return Left.Of_Type;
+      if Left.V.Of_Type = Right.V.Of_Type then
+         return Left.V.Of_Type;
       end if;
 
-      --  Promote unknown types to a string
-      if Right.Of_Type = TYPE_EXTERNAL then
-         return Left.Of_Type;
-      end if;
       --  12 >= "23"
       --  if Left.Of_Type = TYPE_STRING or
-      case Left.Of_Type is
+      case Left.V.Of_Type is
          when TYPE_BOOLEAN =>
-            case Right.Of_Type is
+            case Right.V.Of_Type is
                when TYPE_INTEGER | TYPE_BOOLEAN | TYPE_TIME =>
                   return TYPE_INTEGER;
 
                when TYPE_FLOAT | TYPE_STRING | TYPE_WIDE_STRING =>
-                  return Right.Of_Type;
+                  return Right.V.Of_Type;
 
                when others =>
                   null;
             end case;
 
          when TYPE_INTEGER =>
-            case Right.Of_Type is
+            case Right.V.Of_Type is
                when TYPE_BOOLEAN | TYPE_TIME =>
                   return TYPE_INTEGER;
 
@@ -679,7 +724,7 @@ package body EL.Objects is
             end case;
 
          when TYPE_TIME =>
-            case Right.Of_Type is
+            case Right.V.Of_Type is
                when TYPE_INTEGER | TYPE_BOOLEAN | TYPE_FLOAT =>
                   return TYPE_INTEGER;
 
@@ -689,7 +734,7 @@ package body EL.Objects is
             end case;
 
          when TYPE_FLOAT =>
-            case Right.Of_Type is
+            case Right.V.Of_Type is
                when TYPE_INTEGER | TYPE_BOOLEAN =>
                   return TYPE_FLOAT;
 
@@ -711,16 +756,16 @@ package body EL.Objects is
    --  ------------------------------
    function Get_Arithmetic_Type (Left, Right : Object) return Data_Type is
    begin
-      if Left.Of_Type = TYPE_FLOAT or Right.Of_Type = TYPE_FLOAT then
+      if Left.V.Of_Type = TYPE_FLOAT or Right.V.Of_Type = TYPE_FLOAT then
          return TYPE_FLOAT;
       end if;
-      if Left.Of_Type = TYPE_INTEGER or Right.Of_Type = TYPE_INTEGER then
+      if Left.V.Of_Type = TYPE_INTEGER or Right.V.Of_Type = TYPE_INTEGER then
          return TYPE_INTEGER;
       end if;
-      if Left.Of_Type = TYPE_TIME or Right.Of_Type = TYPE_TIME then
+      if Left.V.Of_Type = TYPE_TIME or Right.V.Of_Type = TYPE_TIME then
          return TYPE_TIME;
       end if;
-      if Left.Of_Type = TYPE_BOOLEAN and Right.Of_Type = TYPE_BOOLEAN then
+      if Left.V.Of_Type = TYPE_BOOLEAN and Right.V.Of_Type = TYPE_BOOLEAN then
          return TYPE_BOOLEAN;
       end if;
       return TYPE_FLOAT;
@@ -731,19 +776,19 @@ package body EL.Objects is
    --  ------------------------------
    function Get_Compose_Type (Left, Right : Object) return Data_Type is
    begin
-      if Left.Of_Type = Right.Of_Type then
-         return Left.Of_Type;
+      if Left.V.Of_Type = Right.V.Of_Type then
+         return Left.V.Of_Type;
       end if;
-      if Left.Of_Type = TYPE_FLOAT or Right.Of_Type = TYPE_FLOAT then
+      if Left.V.Of_Type = TYPE_FLOAT or Right.V.Of_Type = TYPE_FLOAT then
          return TYPE_FLOAT;
       end if;
-      if Left.Of_Type = TYPE_INTEGER or Right.Of_Type = TYPE_INTEGER then
+      if Left.V.Of_Type = TYPE_INTEGER or Right.V.Of_Type = TYPE_INTEGER then
          return TYPE_INTEGER;
       end if;
-      if Left.Of_Type = TYPE_TIME or Right.Of_Type = TYPE_TIME then
+      if Left.V.Of_Type = TYPE_TIME or Right.V.Of_Type = TYPE_TIME then
          return TYPE_TIME;
       end if;
-      if Left.Of_Type = TYPE_BOOLEAN and Right.Of_Type = TYPE_BOOLEAN then
+      if Left.V.Of_Type = TYPE_BOOLEAN and Right.V.Of_Type = TYPE_BOOLEAN then
          return TYPE_BOOLEAN;
       end if;
       return TYPE_FLOAT;
@@ -754,7 +799,7 @@ package body EL.Objects is
    --  ------------------------------
    generic
       with function Int_Comparator (Left, Right : Long_Long_Integer) return Boolean;
-      with function Time_Comparator (Left, Right : Ada.Calendar.Time) return Boolean;
+--        with function Time_Comparator (Left, Right : Ada.Calendar.Time) return Boolean;
       with function Boolean_Comparator (Left, Right : Boolean) return Boolean;
       with function Float_Comparator (Left, Right : Long_Long_Float) return Boolean;
       with function String_Comparator (Left, Right : String) return Boolean;
@@ -787,9 +832,9 @@ package body EL.Objects is
             return Wide_String_Comparator (To_Wide_Wide_String (Left),
                                            To_Wide_Wide_String (Right));
 
-         when TYPE_TIME =>
-            return Time_Comparator (To_Time (Left),
-                                    To_Time (Right));
+--           when TYPE_TIME =>
+--              return Time_Comparator (To_Time (Left),
+--                                      To_Time (Right));
 
          when others =>
             return False;
@@ -798,7 +843,7 @@ package body EL.Objects is
 
    function ">" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => ">",
-                                   Time_Comparator => Ada.Calendar.">",
+--                                     Time_Comparator => Ada.Calendar.">",
                                    Boolean_Comparator => ">",
                                    Float_Comparator => ">",
                                    String_Comparator => ">",
@@ -809,7 +854,7 @@ package body EL.Objects is
 
    function "<" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "<",
-                                   Time_Comparator => Ada.Calendar."<",
+--                                     Time_Comparator => Ada.Calendar."<",
                                    Boolean_Comparator => "<",
                                    Float_Comparator => "<",
                                    String_Comparator => "<",
@@ -820,7 +865,7 @@ package body EL.Objects is
 
    function "<=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "<=",
-                                   Time_Comparator => Ada.Calendar."<=",
+--                                     Time_Comparator => Ada.Calendar."<=",
                                    Boolean_Comparator => "<=",
                                    Float_Comparator => "<=",
                                    String_Comparator => "<=",
@@ -831,7 +876,7 @@ package body EL.Objects is
 
    function ">=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => ">=",
-                                   Time_Comparator => Ada.Calendar.">=",
+--                                     Time_Comparator => Ada.Calendar.">=",
                                    Boolean_Comparator => ">=",
                                    Float_Comparator => ">=",
                                    String_Comparator => ">=",
@@ -843,7 +888,7 @@ package body EL.Objects is
 
    function "=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "=",
-                                   Time_Comparator => Ada.Calendar."=",
+--                                     Time_Comparator => Ada.Calendar."=",
                                    Boolean_Comparator => "=",
                                    Float_Comparator => "=",
                                    String_Comparator => "=",
@@ -897,7 +942,7 @@ package body EL.Objects is
 
    function "-" (Left : Object) return Object is
    begin
-      case Left.Of_Type is
+      case Left.V.Of_Type is
          when TYPE_INTEGER | TYPE_TIME =>
             return To_Object (-To_Long_Long_Integer (Left));
 
@@ -952,5 +997,55 @@ package body EL.Objects is
 
       end case;
    end "&";
+
+   overriding
+   procedure Adjust (Obj : in out Object) is
+   begin
+      case Obj.V.Of_Type is
+         when TYPE_BEAN | TYPE_STRING | TYPE_WIDE_STRING =>
+            if Obj.V.Proxy /= null then
+               Util.Concurrent.Counters.Increment (Obj.V.Proxy.Ref_Counter);
+            end if;
+
+         when others =>
+            null;
+
+      end case;
+   end Adjust;
+
+   procedure Free is
+     new Ada.Unchecked_Deallocation (Object => Bean_Proxy,
+                                     Name   => Bean_Proxy_Access);
+
+   overriding
+   procedure Finalize (Obj : in out Object) is
+      Release : Boolean;
+   begin
+      case Obj.V.Of_Type is
+         when TYPE_BEAN | TYPE_STRING | TYPE_WIDE_STRING =>
+            if Obj.V.Proxy /= null then
+               Util.Concurrent.Counters.Decrement (Obj.V.Proxy.Ref_Counter, Release);
+               if Release then
+                  case Obj.V.Proxy.Of_Type is
+                     when TYPE_STRING =>
+                        Free (Obj.V.Proxy.String_Value);
+
+                     when TYPE_WIDE_STRING =>
+                        Free (Obj.V.Proxy.Wide_String_Value);
+
+                     when others =>
+                        null;
+
+                  end case;
+
+                  Free (Obj.V.Proxy);
+               end if;
+            end if;
+
+         when others =>
+            null;
+
+      end case;
+   end Finalize;
 
 end EL.Objects;

@@ -31,18 +31,37 @@
 --  Value : Object := To_Object ("something");
 --  Value := Value + To_Object ("12");
 --
-with System;
-with Ada.Calendar;
+--  with Ada.Calendar;
 with Ada.Strings.Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Finalization;
+private with Util.Concurrent.Counters;
 limited with EL.Beans;
 package EL.Objects is
+
+   pragma Preelaborate;
 
    use Ada.Strings.Unbounded;
    use Ada.Strings.Wide_Wide_Unbounded;
 
    --  Exception raised when an object cannot be converted to a given type.
    Conversion_Error : exception;
+
+   type Data_Type is (TYPE_NULL,
+                      --  The object holds a boolean value.
+                      TYPE_BOOLEAN,
+                      --  The object holds an integer value (64-bits).
+                      TYPE_INTEGER,
+                      --  The object holds a floating point value.
+                      TYPE_FLOAT,
+                      --  The object holds a date and time
+                      TYPE_TIME,
+                      --  The object holds a string
+                      TYPE_STRING,
+                      --  The object holds a wide wide string
+                      TYPE_WIDE_STRING,
+                      --  The object holds a generic bean
+                      TYPE_BEAN);
 
    --  ------------------------------
    --  Generic Object holding a value
@@ -54,25 +73,6 @@ package EL.Objects is
 
    --  The null object.
    Null_Object : constant Object;
-
-   type Data_Type is (TYPE_NULL,
-                      --  The object holds a boolean value.
-                      TYPE_BOOLEAN,
-                      --  The object holds an integer value (64-bits).
-                      TYPE_INTEGER,
-                      --  The object holds a floating point value.
-                      TYPE_FLOAT,
-                      --  The object holds a string
-                      TYPE_STRING,
-                      --  The object holds a wide wide string
-                      TYPE_WIDE_STRING,
-                      --  The object holds a date and time
-                      TYPE_TIME,
-                      --  The object holds a generic bean
-                      TYPE_BEAN,
-                      --  Something else, unknown
-                      TYPE_EXTERNAL);
-
 
    --  ------------------------------
    --  Type definition
@@ -86,8 +86,8 @@ package EL.Objects is
    function Get_Name (Type_Def : Object_Type) return String is abstract;
 
    --  Translate the object
-   function To_String (Type_Def : Object_Type;
-                       Value    : in Object) return String is abstract;
+--     function To_String (Type_Def : Object_Type;
+--                         Value    : in Object) return String is abstract;
 
 --   generic
 --      with type T is (<>);
@@ -130,7 +130,7 @@ package EL.Objects is
    function To_Float (Value : in Object) return Float;
    function To_Long_Float (Value : in Object) return Long_Float;
    function To_Long_Long_Float (Value : in Object) return Long_Long_Float;
-   function To_Time (Value : in Object) return Ada.Calendar.Time;
+--     function To_Time (Value : in Object) return Ada.Calendar.Time;
 
    function To_Bean (Value : in Object) return access EL.Beans.Readonly_Bean'Class;
 
@@ -159,11 +159,8 @@ package EL.Objects is
    function To_Object (Value : in Unbounded_String) return Object;
    function To_Object (Value : in Unbounded_Wide_Wide_String) return Object;
    function To_Object (Value : in Boolean) return Object;
-   function To_Object (Value : in Ada.Calendar.Time) return Object;
+--     function To_Object (Value : in Ada.Calendar.Time) return Object;
    function To_Object (Value : access EL.Beans.Readonly_Bean'Class) return Object;
-
-   function To_Object (Type_Def : in Object_Type_Access;
-                       Value    : in System.Address) return Object;
 
    --  Comparison of objects
    function "<" (Left, Right : Object) return Boolean;
@@ -183,8 +180,27 @@ package EL.Objects is
 
 private
 
-   type Object (Of_Type : Data_Type := TYPE_NULL) is record
-      Type_Def : Object_Type_Access := null;
+   use Ada.Finalization;
+
+   subtype Proxy_Data_Type is Data_Type range TYPE_STRING .. TYPE_BEAN;
+
+   type Bean_Proxy (Of_Type : Proxy_Data_Type) is record
+      Ref_Counter : Util.Concurrent.Counters.Counter;
+      case Of_Type is
+         when TYPE_STRING =>
+            String_Value : String_Access;
+
+         when TYPE_WIDE_STRING =>
+            Wide_String_Value : Wide_Wide_String_Access;
+
+         when TYPE_BEAN =>
+            Bean        : access EL.Beans.Readonly_Bean'Class;
+      end case;
+   end record;
+
+   type Bean_Proxy_Access is access all Bean_Proxy;
+
+   type Object_Value (Of_Type : Data_Type := TYPE_NULL) is record
       case Of_Type is
          when TYPE_NULL =>
             null;
@@ -198,24 +214,37 @@ private
          when TYPE_FLOAT =>
             Float_Value : Long_Long_Float;
 
-         when TYPE_STRING =>
-            String_Value : Unbounded_String;
+--           when TYPE_STRING =>
+--              String_Value : Unbounded_String;
 
-         when TYPE_WIDE_STRING =>
-            Wide_String_Value : Unbounded_Wide_Wide_String;
+--           when TYPE_WIDE_STRING =>
+--              Wide_String_Value : Unbounded_Wide_Wide_String;
 
          when TYPE_TIME =>
-            Time_Value : Ada.Calendar.Time;
+            --              Time_Value : Ada.Calendar.Time;
+            Time_Value : Long_Long_Integer;
 
-         when TYPE_EXTERNAL =>
-            Addr : System.Address;
-
-         when TYPE_BEAN =>
-            Bean : access EL.Beans.Readonly_Bean'Class;
+         when TYPE_BEAN | TYPE_STRING | TYPE_WIDE_STRING =>
+            Proxy : Bean_Proxy_Access;
 
       end case;
    end record;
 
-   Null_Object : constant Object := Object '(Of_Type => TYPE_NULL, Type_Def => null);
+   Null_Value  : constant Object_Value := Object_Value '(Of_Type => TYPE_NULL);
+
+   type Object is new Controlled with record
+      Type_Def : Object_Type_Access := null;
+      V        : Object_Value := Null_Value;
+   end record;
+
+   overriding
+   procedure Adjust (Obj : in out Object);
+
+   overriding
+   procedure Finalize (Obj : in out Object);
+
+   Null_Object : constant Object := Object '(Controlled with
+                                             V        => Object_Value '(Of_Type => TYPE_NULL),
+                                             Type_Def => null);
 
 end EL.Objects;
