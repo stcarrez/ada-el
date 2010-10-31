@@ -20,6 +20,8 @@ with EL.Objects;
 
 package EL.Beans is
 
+   pragma Preelaborate;
+
    --  Exception raised when the value identified by a name is not
    --  recognized.
    No_Value : exception;
