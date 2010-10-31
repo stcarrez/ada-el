@@ -47,8 +47,8 @@ package body Test_Bean is
          return To_Object (From.Age);
       elsif Name = WEIGHT then
          return To_Object (From.Weight);
-      elsif Name = DATE then
-         return To_Object (From.Date);
+--        elsif Name = DATE then
+--           return To_Object (From.Date);
       else
          return EL.Objects.Null_Object;
       end if;
@@ -67,8 +67,8 @@ package body Test_Bean is
          From.Age := Natural (To_Integer (Value));
       elsif Name = WEIGHT then
          From.Weight := To_Long_Long_Float (Value);
-      elsif Name = DATE then
-         From.Date := To_Time (Value);
+--        elsif Name = DATE then
+--           From.Date := To_Time (Value);
       else
          raise EL.Beans.No_Value;
       end if;
