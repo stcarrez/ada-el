@@ -214,12 +214,6 @@ private
          when TYPE_FLOAT =>
             Float_Value : Long_Long_Float;
 
---           when TYPE_STRING =>
---              String_Value : Unbounded_String;
-
---           when TYPE_WIDE_STRING =>
---              Wide_String_Value : Unbounded_Wide_Wide_String;
-
          when TYPE_TIME =>
             --              Time_Value : Ada.Calendar.Time;
             Time_Value : Long_Long_Integer;

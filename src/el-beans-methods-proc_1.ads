@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 
 with EL.Expressions;
+with EL.Contexts;
 generic
    type Param1_Type (<>) is private;
 package EL.Beans.Methods.Proc_1 is

@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 
 with EL.Expressions;
+with EL.Contexts;
 generic
    type Param1_Type (<>) is private;
    type Param2_Type (<>) is private;
