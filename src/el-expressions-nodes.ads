@@ -151,6 +151,10 @@ private package EL.Expressions.Nodes is
    type ELValue is new ELNode with private;
    type ELValue_Access is access all ELValue'Class;
 
+   --  Check if the target bean is a readonly bean.
+   function Is_Readonly (Node    : in ELValue;
+                         Context : in ELContext'Class) return Boolean;
+
    --  Evaluate the node and return a method info with
    --  the bean object and the method binding.
    function Get_Method_Info (Node    : in ELValue;
@@ -160,6 +164,13 @@ private package EL.Expressions.Nodes is
    overriding
    function Get_Value (Expr    : ELValue;
                        Context : ELContext'Class) return Object;
+
+   --  Evaluate the node and set the value on the associated bean.
+   --  Raises Invalid_Variable if the target object is not a bean.
+   --  Raises Invalid_Expression if the target bean is not writeable.
+   procedure Set_Value (Node    : in ELValue;
+                        Context : in ELContext'Class;
+                        Value   : in Objects.Object);
 
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression

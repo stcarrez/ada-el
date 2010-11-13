@@ -90,19 +90,14 @@ package EL.Expressions is
    type ValueExpression is new Expression with private;
    type ValueExpression_Access is access all ValueExpression'Class;
 
-   --  Get the value of the expression using the given expression context.
-   --  Returns an object that holds a typed result.
-   overriding
-   function Get_Value (Expr    : in ValueExpression;
-                       Context : in ELContext'Class) return Object;
-
    --  Set the value of the expression to the given object value.
-   procedure Set_Value (Expr    : in out ValueExpression;
+   procedure Set_Value (Expr    : in ValueExpression;
                         Context : in ELContext'Class;
                         Value   : in Object);
 
    --  Returns true if the expression is read-only.
-   function Is_Readonly (Expr : in ValueExpression) return Boolean;
+   function Is_Readonly (Expr    : in ValueExpression;
+                         Context : in ELContext'Class) return Boolean;
 
    overriding
    function Reduce_Expression (Expr    : ValueExpression;
@@ -114,11 +109,13 @@ package EL.Expressions is
                                Context : ELContext'Class)
                                return ValueExpression;
 
-   function Create_ValueExpression (Bean : access EL.Beans.Readonly_Bean'Class)
-                                    return ValueExpression;
-
    function Create_ValueExpression (Bean : EL.Objects.Object)
                                     return ValueExpression;
+
+   --  Create a Value_Expression from an expression.
+   --  Raises Invalid_Expression if the expression in not an lvalue.
+   function Create_Expression (Expr    : Expression'Class)
+                               return ValueExpression;
 
    --  ------------------------------
    --  Method Expression
@@ -171,9 +168,7 @@ private
       Value : EL.Objects.Object := EL.Objects.Null_Object;
    end record;
 
-   type ValueExpression is new Expression with record
-      Bean : access EL.Beans.Readonly_Bean'Class;
-   end record;
+   type ValueExpression is new Expression with null record;
 
    type Method_Expression is new EL.Expressions.Expression with null record;
 

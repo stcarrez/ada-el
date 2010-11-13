@@ -42,40 +42,38 @@ package body EL.Expressions is
    end Get_Value;
 
    --  ------------------------------
-   --  Get the value of the expression using the given expression context.
-   --  ------------------------------
-   function Get_Value (Expr    : ValueExpression;
-                       Context : ELContext'Class) return Object is
-   begin
-      if Expr.Bean = null then
-         if Expr.Node = null then
-            return Expr.Value;
-         else
-            return EL.Expressions.Nodes.Get_Value (Expr.Node.all, Context);
-         end if;
-      end if;
-      return To_Object (Expr.Bean);
-   end Get_Value;
-
-   --  ------------------------------
    --  Set the value of the expression to the given object value.
    --  ------------------------------
-   procedure Set_Value (Expr    : in out ValueExpression;
+   procedure Set_Value (Expr    : in ValueExpression;
                         Context : in ELContext'Class;
                         Value   : in Object) is
+      use EL.Expressions.Nodes;
    begin
-      Expr.Value := Value;
+      if Expr.Node = null then
+         raise Invalid_Expression with "Value expression is empty";
+      end if;
+      declare
+         Node : constant ELValue_Access := ELValue'Class (Expr.Node.all)'Access;
+      begin
+         Node.Set_Value (Context, Value);
+      end;
    end Set_Value;
 
    --  ------------------------------
    --  Returns true if the expression is read-only.
    --  ------------------------------
-   function Is_Readonly (Expr : in ValueExpression) return Boolean is
+   function Is_Readonly (Expr    : in ValueExpression;
+                         Context : in ELContext'Class) return Boolean is
+      use EL.Expressions.Nodes;
    begin
-      if Expr.Bean = null then
+      if Expr.Node = null then
          return True;
       end if;
-      return not (Expr.Bean.all in EL.Beans.Bean'Class);
+      declare
+         Node : constant ELValue_Access := ELValue'Class (Expr.Node.all)'Access;
+      begin
+         return Node.Is_Readonly (Context);
+      end;
    end Is_Readonly;
 
    --  ------------------------------
@@ -118,14 +116,6 @@ package body EL.Expressions is
       end;
    end Reduce_Expression;
 
-   function Create_ValueExpression (Bean : access EL.Beans.Readonly_Bean'Class)
-                                    return ValueExpression is
-      Result : ValueExpression;
-   begin
-      Result.Bean := Bean;
-      return Result;
-   end Create_ValueExpression;
-
    function Create_ValueExpression (Bean : EL.Objects.Object)
                                     return ValueExpression is
       Result : ValueExpression;
@@ -140,11 +130,39 @@ package body EL.Expressions is
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
                                return ValueExpression is
+      use type EL.Expressions.Nodes.ELNode_Access;
+
       Result : ValueExpression;
       Node   : EL.Expressions.Nodes.ELNode_Access;
    begin
       EL.Expressions.Parser.Parse (Expr => Expr, Context => Context, Result => Node);
+
+      --  The root of the method expression must be an ELValue node.
+      if Node = null or else not (Node.all in Nodes.ELValue'Class) then
+         EL.Expressions.Nodes.Delete (Node);
+         raise Invalid_Expression with "Expression is not a value expression";
+      end if;
       Result.Node := Node.all'Access;
+      return Result;
+   end Create_Expression;
+
+   --  ------------------------------
+   --  Create a Value_Expression from an expression.
+   --  Raises Invalid_Expression if the expression in not an lvalue.
+   --  ------------------------------
+   function Create_Expression (Expr : Expression'Class)
+                               return ValueExpression is
+      use type EL.Expressions.Nodes.ELNode_Access;
+
+      Result : ValueExpression;
+      Node   : constant access EL.Expressions.Nodes.ELNode'Class := Expr.Node;
+   begin
+      --  The root of the method expression must be an ELValue node.
+      if Node = null or else not (Node.all in Nodes.ELValue'Class) then
+         raise Invalid_Expression with "Expression is not a value expression";
+      end if;
+      Util.Concurrent.Counters.Increment (Node.Ref_Counter);
+      Result.Node := Node.all'Unchecked_Access;
       return Result;
    end Create_Expression;
 

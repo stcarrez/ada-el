@@ -376,6 +376,7 @@ package body EL.Expressions.Nodes is
       null;
    end Delete;
 
+   overriding
    function Get_Value (Expr    : ELValue;
                        Context : ELContext'Class) return Object is
       Var  : constant Object := Expr.Variable.Get_Value (Context);
@@ -388,40 +389,16 @@ package body EL.Expressions.Nodes is
       end if;
    end Get_Value;
 
-   --  Reduce the expression by eliminating variables which are known
-   --  and computing constant expressions.  Returns either a new expression
-   --  tree or a constant value.
-   overriding
-   function Reduce (Expr    : ELValue;
-                    Context : ELContext'Class) return Reduction is
-      Var : Reduction := Expr.Variable.Reduce (Context);
-   begin
-      if Var.Node = null then
-         declare
-            Bean : constant access EL.Beans.Readonly_Bean'Class
-              := To_Bean (Var.Value);
-         begin
-            if Bean /= null then
-               Var.Value := Bean.Get_Value (To_String (Expr.Name));
-               Var.Node  := null;
-               return Var;
-            end if;
-         end;
-      end if;
-      return Reduction '(Node => new ELValue '(Variable => Var.Node,
-                                               Name => Expr.Name,
-                                               Ref_Counter => Counters.ONE),
-                        Value => EL.Objects.Null_Object);
-   end Reduce;
-
    --  ------------------------------
-   --  Delete the expression tree (calls Delete (ELNode_Access) recursively).
+   --  Check if the target bean is a readonly bean.
    --  ------------------------------
-   overriding
-   procedure Delete (Node : in out ELValue) is
+   function Is_Readonly (Node    : in ELValue;
+                         Context : in ELContext'Class) return Boolean is
+      Var  : constant Object := Node.Variable.Get_Value (Context);
+      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
    begin
-      Delete (Node.Variable);
-   end Delete;
+      return Bean = null or else not (Bean.all in Beans.Bean'Class);
+   end Is_Readonly;
 
    --  ------------------------------
    --  Evaluate the node and return a method info with
@@ -460,6 +437,72 @@ package body EL.Expressions.Nodes is
       end if;
       raise Invalid_Method with "Method '" & Name & "' not found";
    end Get_Method_Info;
+
+   --  ------------------------------
+   --  Evaluate the node and set the value on the associated bean.
+   --  Raises Invalid_Variable if the target object is not a bean.
+   --  Raises Invalid_Expression if the target bean is not writeable.
+   --  ------------------------------
+   procedure Set_Value (Node    : in ELValue;
+                        Context : in ELContext'Class;
+                        Value   : in Objects.Object) is
+      use EL.Beans;
+      use type Util.Strings.Name_Access;
+
+      Var  : constant Object := Node.Variable.Get_Value (Context);
+      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
+      Name : constant String := To_String (Node.Name);
+   begin
+      if Bean = null then
+         raise Invalid_Variable;
+      end if;
+
+      --  If the bean is a method bean, get the methods that it exposes
+      --  and look for the binding that matches our method name.
+      if not (Bean.all in EL.Beans.Bean'Class) then
+         raise Invalid_Method with "Method '" & Name & "' not found";
+      end if;
+      declare
+         VBean : constant access Beans.Bean'Class := Beans.Bean'Class (Bean.all)'Unchecked_Access;
+      begin
+         VBean.Set_Value (Name, Value);
+      end;
+   end Set_Value;
+
+   --  Reduce the expression by eliminating variables which are known
+   --  and computing constant expressions.  Returns either a new expression
+   --  tree or a constant value.
+   overriding
+   function Reduce (Expr    : ELValue;
+                    Context : ELContext'Class) return Reduction is
+      Var : Reduction := Expr.Variable.Reduce (Context);
+   begin
+      if Var.Node = null then
+         declare
+            Bean : constant access EL.Beans.Readonly_Bean'Class
+              := To_Bean (Var.Value);
+         begin
+            if Bean /= null then
+               Var.Value := Bean.Get_Value (To_String (Expr.Name));
+               Var.Node  := null;
+               return Var;
+            end if;
+         end;
+      end if;
+      return Reduction '(Node => new ELValue '(Variable => Var.Node,
+                                               Name => Expr.Name,
+                                               Ref_Counter => Counters.ONE),
+                        Value => EL.Objects.Null_Object);
+   end Reduce;
+
+   --  ------------------------------
+   --  Delete the expression tree (calls Delete (ELNode_Access) recursively).
+   --  ------------------------------
+   overriding
+   procedure Delete (Node : in out ELValue) is
+   begin
+      Delete (Node.Variable);
+   end Delete;
 
    --  ------------------------------
    --  Literal object (integer, boolean, float, string)
