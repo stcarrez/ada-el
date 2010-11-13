@@ -313,7 +313,7 @@ package body EL.Expressions.Nodes is
    begin
       if Mapper /= null then
          declare
-            Value : constant ValueExpression := Mapper.Get_Variable (Expr.Name);
+            Value : constant Value_Expression := Mapper.Get_Variable (Expr.Name);
          begin
             return Value.Get_Value (Context);
          end;
@@ -347,7 +347,7 @@ package body EL.Expressions.Nodes is
    begin
       if Mapper /= null then
          declare
-            Value : constant ValueExpression := Mapper.Get_Variable (Expr.Name);
+            Value : constant Value_Expression := Mapper.Get_Variable (Expr.Name);
          begin
             return Reduction '(Value => Value.Get_Value (Context),
                                Node  => null);

@@ -44,7 +44,7 @@ package body EL.Expressions is
    --  ------------------------------
    --  Set the value of the expression to the given object value.
    --  ------------------------------
-   procedure Set_Value (Expr    : in ValueExpression;
+   procedure Set_Value (Expr    : in Value_Expression;
                         Context : in ELContext'Class;
                         Value   : in Object) is
       use EL.Expressions.Nodes;
@@ -62,7 +62,7 @@ package body EL.Expressions is
    --  ------------------------------
    --  Returns true if the expression is read-only.
    --  ------------------------------
-   function Is_Readonly (Expr    : in ValueExpression;
+   function Is_Readonly (Expr    : in Value_Expression;
                          Context : in ELContext'Class) return Boolean is
       use EL.Expressions.Nodes;
    begin
@@ -117,8 +117,8 @@ package body EL.Expressions is
    end Reduce_Expression;
 
    function Create_ValueExpression (Bean : EL.Objects.Object)
-                                    return ValueExpression is
-      Result : ValueExpression;
+                                    return Value_Expression is
+      Result : Value_Expression;
    begin
       Result.Value := Bean;
       return Result;
@@ -129,10 +129,10 @@ package body EL.Expressions is
    --  ------------------------------
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
-                               return ValueExpression is
+                               return Value_Expression is
       use type EL.Expressions.Nodes.ELNode_Access;
 
-      Result : ValueExpression;
+      Result : Value_Expression;
       Node   : EL.Expressions.Nodes.ELNode_Access;
    begin
       EL.Expressions.Parser.Parse (Expr => Expr, Context => Context, Result => Node);
@@ -151,10 +151,10 @@ package body EL.Expressions is
    --  Raises Invalid_Expression if the expression in not an lvalue.
    --  ------------------------------
    function Create_Expression (Expr : Expression'Class)
-                               return ValueExpression is
+                               return Value_Expression is
       use type EL.Expressions.Nodes.ELNode_Access;
 
-      Result : ValueExpression;
+      Result : Value_Expression;
       Node   : constant access EL.Expressions.Nodes.ELNode'Class := Expr.Node;
    begin
       --  The root of the method expression must be an ELValue node.
@@ -167,9 +167,9 @@ package body EL.Expressions is
    end Create_Expression;
 
    overriding
-   function Reduce_Expression (Expr    : ValueExpression;
+   function Reduce_Expression (Expr    : Value_Expression;
                                Context : ELContext'Class)
-                               return ValueExpression is
+                               return Value_Expression is
       pragma Unreferenced (Context);
    begin
       return Expr;

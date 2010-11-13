@@ -22,7 +22,7 @@ package body EL.Variables.Default is
    procedure Bind (Mapper : in out Default_Variable_Mapper;
                    Name   : in String;
                    Value  : in EL.Objects.Object) is
-      Expr : constant EL.Expressions.ValueExpression
+      Expr : constant EL.Expressions.Value_Expression
         := EL.Expressions.Create_ValueExpression (Value);
    begin
       Mapper.Map.Include (Key      => To_Unbounded_String (Name),
@@ -32,7 +32,7 @@ package body EL.Variables.Default is
    overriding
    function Get_Variable (Mapper : Default_Variable_Mapper;
                           Name   : Unbounded_String)
-                          return EL.Expressions.ValueExpression is
+                          return EL.Expressions.Value_Expression is
       C : constant Variable_Maps.Cursor := Mapper.Map.Find (Name);
    begin
       if not Variable_Maps.Has_Element (C) then
@@ -48,7 +48,7 @@ package body EL.Variables.Default is
    overriding
    procedure Set_Variable (Mapper : in out Default_Variable_Mapper;
                            Name   : in Unbounded_String;
-                           Value  : in EL.Expressions.ValueExpression) is
+                           Value  : in EL.Expressions.Value_Expression) is
    begin
       Mapper.Map.Include (Key      => Name,
                           New_Item => Value);

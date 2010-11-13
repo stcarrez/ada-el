@@ -39,10 +39,10 @@ package EL.Variables is
 
    function Get_Variable (Mapper : VariableMapper;
                           Name   : Unbounded_String)
-                          return EL.Expressions.ValueExpression is abstract;
+                          return EL.Expressions.Value_Expression is abstract;
 
    procedure Set_Variable (Mapper : in out VariableMapper;
                            Name   : in Unbounded_String;
-                           Value  : in EL.Expressions.ValueExpression) is abstract;
+                           Value  : in EL.Expressions.Value_Expression) is abstract;
 
 end EL.Variables;

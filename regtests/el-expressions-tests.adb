@@ -416,7 +416,7 @@ package body EL.Expressions.Tests is
       T.Context.all.Set_Variable ("user", P);
       for I in 1 .. 30 loop
          declare
-            VE : constant ValueExpression := Create_Expression (V1);
+            VE : constant Value_Expression := Create_Expression (V1);
          begin
             VE.Set_Value (Context => T.Context.all,
                           Value   => EL.Objects.To_Object (I));
@@ -442,7 +442,7 @@ package body EL.Expressions.Tests is
       --  Check that an exception is raised when the expression is not a value expression.
       begin
          declare
-            VE : constant ValueExpression := Create_Expression (V1);
+            VE : constant Value_Expression := Create_Expression (V1);
          begin
             Assert (T, False, "No exception raised for an invalid value expression");
             VE.Set_Value (Context => T.Context.all, Value => EL.Objects.Null_Object);
@@ -454,7 +454,7 @@ package body EL.Expressions.Tests is
 
       --  Check that an exception is raised when the bean is not found.
       declare
-         VE : constant ValueExpression := Create_Expression (V2);
+         VE : constant Value_Expression := Create_Expression (V2);
       begin
          VE.Set_Value (Context => T.Context.all,
                        Value   => EL.Objects.To_Object (Integer (2)));
