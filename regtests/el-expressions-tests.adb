@@ -17,7 +17,6 @@
 -----------------------------------------------------------------------
 
 with AUnit.Test_Caller;
-with AUnit.Assertions;
 
 with EL.Functions;
 with EL.Functions.Default;
@@ -26,20 +25,20 @@ with Test_Bean;
 with Action_Bean;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
-with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Unchecked_Deallocation;
 with Util.Log.Loggers;
+with Util.Tests;
 package body EL.Expressions.Tests is
 
    use Test_Bean;
    use EL.Expressions;
-   use AUnit.Assertions;
    use AUnit.Test_Fixtures;
    use Ada.Strings.Unbounded;
 
    use Util.Log;
+   use Util.Tests;
 
-   LOG : Util.Log.Loggers.Logger := Loggers.Create ("Tests");
+   LOG : constant Util.Log.Loggers.Logger := Loggers.Create ("Tests");
 
    procedure Free is new Ada.Unchecked_Deallocation (Object => EL.Contexts.Default.Default_Context'Class,
                                                      Name   => EL.Contexts.Default.Default_Context_Access);
@@ -71,9 +70,11 @@ package body EL.Expressions.Tests is
 
          T.Assert (Condition => False,
                    Message => "Evaludation of '" & Expr & "' should raise an exception");
+
       exception
          when Invalid_Expression =>
-            null;
+            T.Assert (Condition => E.Is_Constant,
+                      Message   => "Invalid expression value");
       end;
 
    end Check_Error;
@@ -261,7 +262,6 @@ package body EL.Expressions.Tests is
    procedure Test_Function_Evaluation (T : in out Test) is
       P  : Person_Access := Create_Person ("Joe", "Black", 42);
       Fn : aliased EL.Functions.Default.Default_Function_Mapper;
-      Result : EL.Objects.Object;
    begin
       T.Context.all.Set_Variable ("user", P);
 
@@ -406,9 +406,72 @@ package body EL.Expressions.Tests is
    end Test_Invalid_Method;
 
    --  ------------------------------
+   --  Test the use of a value expression.
+   --  ------------------------------
+   procedure Test_Value_Expression (T : in out Test) is
+      P  : Person_Access := Create_Person ("Joe", "Black", 42);
+      V1 : constant Expression := Create_Expression (Context => T.Context.all,
+                                                     Expr => "#{user.age}");
+   begin
+      T.Context.all.Set_Variable ("user", P);
+      for I in 1 .. 30 loop
+         declare
+            VE : constant ValueExpression := Create_Expression (V1);
+         begin
+            VE.Set_Value (Context => T.Context.all,
+                          Value   => EL.Objects.To_Object (I));
+
+            Assert_Equals (T, I, P.Age, "The value expression did not set the age");
+
+            Assert (T, not VE.Is_Readonly (T.Context.all),
+                    "Value expression should not be readonly");
+         end;
+      end loop;
+      Free (P);
+   end Test_Value_Expression;
+
+   --  ------------------------------
+   --  Test the invalid value expression
+   --  ------------------------------
+   procedure Test_Invalid_Value_Expression (T : in out Test) is
+      V1 : constant Expression := Create_Expression (Context => T.Context.all,
+                                                     Expr => "#{12 + 3}");
+      V2 : constant Expression := Create_Expression (Context => T.Context.all,
+                                                     Expr => "#{user.firstName}");
+   begin
+      --  Check that an exception is raised when the expression is not a value expression.
+      begin
+         declare
+            VE : constant ValueExpression := Create_Expression (V1);
+         begin
+            Assert (T, False, "No exception raised for an invalid value expression");
+            VE.Set_Value (Context => T.Context.all, Value => EL.Objects.Null_Object);
+         end;
+      exception
+         when Invalid_Expression =>
+            null;
+      end;
+
+      --  Check that an exception is raised when the bean is not found.
+      declare
+         VE : constant ValueExpression := Create_Expression (V2);
+      begin
+         VE.Set_Value (Context => T.Context.all,
+                       Value   => EL.Objects.To_Object (Integer (2)));
+         Assert (T, False, "No exception raised when setting the value expression");
+
+      exception
+         when Invalid_Variable =>
+            null;
+      end;
+   end Test_Invalid_Value_Expression;
+
+   --  ------------------------------
    --  Info about object sizes
    --  ------------------------------
    procedure Test_Object_Sizes (T : in out Test) is
+      pragma Unreferenced (T);
+
       V    : EL.Objects.Object;
       Expr : EL.Expressions.Expression;
    begin
@@ -442,6 +505,10 @@ package body EL.Expressions.Tests is
                                      Test_Invalid_Method'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Functions.Set_Function (and evaluation)",
                                      Test_Function_Evaluation'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Set_Value",
+                                      Test_Value_Expression'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Set_Value (raise Invalid_Variable)",
+                                      Test_Invalid_Value_Expression'Access));
    end Add_Tests;
 
 end EL.Expressions.Tests;

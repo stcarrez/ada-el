@@ -24,7 +24,7 @@ package body Action_Bean is
    function Get_Value (From : Action; Name : String) return EL.Objects.Object is
    begin
       if Name = "count" then
-	 return EL.Objects.To_Object (From.Count);
+         return EL.Objects.To_Object (From.Count);
       end if;
       return From.Person.Get_Value (Name);
    end Get_Value;
