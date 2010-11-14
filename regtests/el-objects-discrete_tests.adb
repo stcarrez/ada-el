@@ -16,14 +16,17 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
+with Ada.Containers;
 with AUnit.Test_Caller;
 with Ada.Strings.Fixed;
 with Ada.Text_IO;
 with Ada.Calendar;
+with EL.Objects.Hash;
 package body EL.Objects.Discrete_Tests is
 
    use EL.Objects;
    use Ada.Strings.Fixed;
+   use Ada.Containers;
 
    procedure Test_Eq (T : Test; V : String; N : Test_Type);
    procedure Test_Conversion (T : Test; V : String; N : Test_Type);
@@ -74,6 +77,46 @@ package body EL.Objects.Discrete_Tests is
                 & To_String (Value) & " when we expected: " & V);
    end Test_Conversion;
    procedure Test_To_Object is new Test_Basic_Object (Basic_Test => Test_Conversion);
+
+   --  ------------------------------
+   --  Test EL.Objects.Hash
+   --  ------------------------------
+    procedure Test_Hash (T : in out Test) is
+      pragma Unmodified (T);
+
+      Pos, Next   : Natural;
+      Hash_Values : array (Test_Values'Range) of Hash_Type;
+      Nb_Hash     : Natural := 0;
+   begin
+      Pos := Test_Values'First;
+      while Pos <= Test_Values'Last loop
+         Next := Index (Test_Values, ",", Pos);
+         if Next < Pos then
+            Next := Test_Values'Last + 1;
+         end if;
+         declare
+            V     : constant String := Test_Values (Pos .. Next - 1);
+            N     : constant Test_Type := Value (V);
+            Value : constant EL.Objects.Object := To_Object_Test (N);
+            H     : constant Hash_Type := EL.Objects.Hash (Value);
+            Found : Boolean := False;
+         begin
+            for J in 1 .. Nb_Hash loop
+               if Hash_Values (J) = H then
+                  Found := True;
+               end if;
+            end loop;
+            if not Found then
+               Nb_Hash := Nb_Hash + 1;
+               Hash_Values (Nb_Hash) := H;
+            end if;
+         end;
+         Pos := Next + 1;
+      end loop;
+
+      Ada.Text_IO.Put_Line ("Found " & Natural'Image (Nb_Hash) & " hash values");
+      Assert (T, Nb_Hash > 1, "Only one hash value found");
+   end Test_Hash;
 
    --  ------------------------------
    --  Test EL.Objects."+"
@@ -216,7 +259,9 @@ package body EL.Objects.Discrete_Tests is
       Suite.Add_Test (Caller.Create ("Test EL.Objects.'>'." & Test_Name,
                                      Test_Lt_Gt'Access));
       Suite.Add_Test (Caller.Create ("Performance EL.Objects.'>'." & Test_Name,
-        Test_Perf'Access));
+                                     Test_Perf'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.Hash." & Test_Name,
+                                     Test_Hash'Access));
    end Add_Tests;
 
 end EL.Objects.Discrete_Tests;

@@ -23,7 +23,6 @@ with EL.Functions.Default;
 with EL.Expressions;
 with Test_Bean;
 with Action_Bean;
-with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.Unchecked_Deallocation;
 with Util.Log.Loggers;
@@ -49,14 +48,14 @@ package body EL.Expressions.Tests is
    --  Set up performed before each test case
    procedure Set_Up (T : in out Test) is
    begin
-      Ada.Text_IO.Put_Line ("Allocate context");
+--        Ada.Text_IO.Put_Line ("Allocate context");
       T.Context := new EL.Contexts.Default.Default_Context;
    end Set_Up;
 
    --  Tear down performed after each test case
    procedure Tear_Down (T : in out Test) is
    begin
-      Ada.Text_IO.Put_Line ("Free context");
+--        Ada.Text_IO.Put_Line ("Free context");
       Free (T.Context);
    end Tear_Down;
 
