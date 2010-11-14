@@ -27,6 +27,8 @@ with EL.Functions;
 limited with EL.Variables;
 package EL.Contexts is
 
+   pragma Preelaborate;
+
    use EL.Objects;
    use Ada.Strings.Unbounded;
 

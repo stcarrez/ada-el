@@ -43,6 +43,8 @@ with EL.Beans;
 with EL.Beans.Methods;
 package EL.Expressions is
 
+   pragma Preelaborate;
+
    use EL.Objects;
    use EL.Contexts;
 

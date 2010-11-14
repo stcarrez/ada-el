@@ -26,6 +26,8 @@ with Ada.Strings.Unbounded;
 with Util.Concurrent.Counters;
 private package EL.Expressions.Nodes is
 
+   pragma Preelaborate;
+
    use EL.Functions;
    use Ada.Strings.Wide_Wide_Unbounded;
    use Ada.Strings.Unbounded;

@@ -25,6 +25,8 @@ with EL.Objects;
 
 package EL.Functions is
 
+   pragma Preelaborate;
+
    use EL.Objects;
 
    No_Function : exception;

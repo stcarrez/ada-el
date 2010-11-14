@@ -18,3 +18,4 @@
 
 with Ada.Containers;
 function EL.Objects.Hash (Key : in Object) return Ada.Containers.Hash_Type;
+pragma Preelaborate (EL.Objects.Hash);

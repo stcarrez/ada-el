@@ -22,6 +22,8 @@
 with EL.Expressions.Nodes;
 private package EL.Expressions.Parser is
 
+   pragma Preelaborate;
+
    procedure Parse (Expr    : in String;
                     Context : in ELContext'Class;
                     Result  : out EL.Expressions.Nodes.ELNode_Access);

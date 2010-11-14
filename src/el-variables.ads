@@ -26,6 +26,8 @@ with EL.Expressions;
 with EL.Objects;
 package EL.Variables is
 
+   pragma Preelaborate;
+
    use Ada.Strings.Unbounded;
 
    No_Variable : exception;
