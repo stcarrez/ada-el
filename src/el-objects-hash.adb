@@ -48,7 +48,6 @@ function EL.Objects.Hash (Key : in Object) return Ada.Containers.Hash_Type is
    function To_U32_For_Access is new Ada.Unchecked_Conversion (Source => Readonly_Bean_Access,
                                                                Target => U32_For_Access);
 
-   Value : Unsigned_64 := 0;
 begin
    case key.V.Of_Type is
       when TYPE_NULL =>
@@ -126,8 +125,4 @@ begin
          end;
 
    end case;
-
-   --  Hash the 64-bit value into a 32-bit result that fits in Hash_Type.
-   Value := (Value and 16#0ffffffff#) xor (Shift_Right (Value, 32));
-   return Hash_Type (Value);
 end EL.Objects.Hash;
