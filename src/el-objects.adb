@@ -32,8 +32,6 @@ package body EL.Objects is
 --     use Ada.Calendar.Formatting;
    use type Interfaces.C.long;
 
-   type String_Access is access constant String;
-
    --  Find the data type to be used for an arithmetic operation between two objects.
    function Get_Arithmetic_Type (Left, Right : Object) return Data_Type;
 
@@ -42,13 +40,6 @@ package body EL.Objects is
 
    --  Find the best type to be used to compare two operands.
    function Get_Compare_Type (Left, Right : Object) return Data_Type;
-
-   type Basic_Type is new Object_Type with record
-      Name : String_Access;
-   end record;
-
-   --  Get the type name
-   function Get_Name (Type_Def : Basic_Type) return String;
 
    INTEGER_NAME     : aliased constant String := "Integer";
    BOOLEAN_NAME     : aliased constant String := "Boolean";

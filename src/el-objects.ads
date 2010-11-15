@@ -182,6 +182,15 @@ private
 
    use Ada.Finalization;
 
+   type Name_Access is access constant String;
+
+   type Basic_Type is new Object_Type with record
+      Name : Name_Access;
+   end record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : Basic_Type) return String;
+
    subtype Proxy_Data_Type is Data_Type range TYPE_STRING .. TYPE_BEAN;
 
    type Bean_Proxy (Of_Type : Proxy_Data_Type) is record
