@@ -19,6 +19,7 @@
 with AUnit.Test_Caller;
 with EL.Expressions;
 with EL.Objects;
+with EL.Objects.Enums;
 with EL.Contexts;
 with EL.Contexts.Default;
 with Ada.Calendar;
@@ -159,6 +160,34 @@ package body EL.Testsuite is
                                 Test_Name      => "Boolean",
                                 Test_Values    => "false,true");
 
+   type Color is (WHITE, BLACK, RED, GREEN, BLUE, YELLOW);
+
+   package Color_Object is new EL.Objects.Enums (Color, ROUND_VALUE => True);
+
+   function "-" (Left, Right : Color) return Color is
+      N : constant Integer := Color'Pos (Left) - Color'Pos (Right);
+   begin
+      if N >= 0 then
+         return Color'Val ((Color'Pos (WHITE) + N) mod 6);
+      else
+         return Color'Val ((Color'Pos (WHITE) - N) mod 6);
+      end if;
+   end "-";
+
+   function "+" (Left, Right : Color) return Color is
+      N : constant Integer := Color'Pos (Left) + Color'Pos (Right);
+   begin
+      return Color'Val ((Color'Pos (WHITE) + N) mod 6);
+   end "+";
+
+   package Test_Enum is new
+     EL.Objects.Discrete_Tests (Test_Type      => Color,
+                                To_Type        => Color_Object.To_Value,
+                                To_Object_Test => Color_Object.To_Object,
+                                Value          => Color'Value,
+                                Test_Name      => "Color",
+                                Test_Values    => "BLACK,RED,GREEN,BLUE,YELLOW");
+
    function Time_Value (S : String) return Ada.Calendar.Time is
    begin
       return Ada.Calendar.Formatting.Value (S);
@@ -224,6 +253,7 @@ package body EL.Testsuite is
       Test_Float.Add_Tests (Ret);
       Test_Long_Float.Add_Tests (Ret);
       Test_Long_Long_Float.Add_Tests (Ret);
+      Test_Enum.Add_Tests (Ret);
       EL.Expressions.Tests.Add_Tests (Ret);
       return Ret;
    end Suite;

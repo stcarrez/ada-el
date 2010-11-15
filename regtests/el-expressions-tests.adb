@@ -68,7 +68,7 @@ package body EL.Expressions.Tests is
          E := Create_Expression (Context => T.Context.all, Expr => Expr);
 
          T.Assert (Condition => False,
-                   Message => "Evaludation of '" & Expr & "' should raise an exception");
+                   Message => "Evaluation of '" & Expr & "' should raise an exception");
 
       exception
          when Invalid_Expression =>
