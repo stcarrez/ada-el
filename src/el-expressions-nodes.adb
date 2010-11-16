@@ -30,21 +30,34 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    function Get_Value (Expr    : ELUnary;
                        Context : ELContext'Class) return Object is
-      Value : constant Object := Expr.Node.Get_Value (Context);
    begin
-      case Expr.Kind is
-      when EL_NOT =>
-         return To_Object (not To_Boolean (Value));
+      declare
+         Value : constant Object := Expr.Node.Get_Value (Context);
+      begin
+         case Expr.Kind is
+         when EL_NOT =>
+            return To_Object (not To_Boolean (Value));
 
-      when EL_MINUS =>
-         return -Value;
+         when EL_MINUS =>
+            return -Value;
 
-      when EL_EMPTY =>
-         return To_Object (Is_Empty (Value));
+         when EL_EMPTY =>
+            return To_Object (Is_Empty (Value));
 
-      when others =>
-         return Value;
-      end case;
+         when others =>
+            return Value;
+         end case;
+      end;
+
+   exception
+      when EL.Variables.No_Variable =>
+         --  If we can't find the variable, empty predicate must return true.
+         if Expr.Kind = EL_EMPTY then
+            return To_Object (True);
+         end if;
+
+         --  For others, this is an error.
+         raise;
    end Get_Value;
 
    --  ------------------------------
