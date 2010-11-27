@@ -41,29 +41,518 @@ package body EL.Objects is
    --  Find the best type to be used to compare two operands.
    function Get_Compare_Type (Left, Right : Object) return Data_Type;
 
-   INTEGER_NAME     : aliased constant String := "Integer";
-   BOOLEAN_NAME     : aliased constant String := "Boolean";
-   STRING_NAME      : aliased constant String := "String";
-   WIDE_STRING_NAME : aliased constant String := "Wide_Wide_String";
-   FLOAT_NAME       : aliased constant String := "Float";
-   TIME_NAME        : aliased constant String := "Time";
-   BEAN_NAME        : aliased constant String := "Bean";
+   Integer_Type  : aliased constant Int_Type         := Int_Type '(others => <>);
+   Bool_Type     : aliased constant Boolean_Type     := Boolean_Type '(others => <>);
+   Str_Type      : aliased constant String_Type      := String_Type '(others => <>);
+   WString_Type  : aliased constant Wide_String_Type := Wide_String_Type '(others => <>);
+   Flt_Type      : aliased constant Float_Type       := Float_Type '(others => <>);
+   Time_Type     : aliased constant Int_Type         := Int_Type '(others => <>);
+   Bn_Type       : aliased constant Bean_Type        := Bean_Type '(others => <>);
 
-   Integer_Type     : aliased constant Basic_Type := Basic_Type '(Name => INTEGER_NAME'Access);
-   Boolean_Type     : aliased constant Basic_Type := Basic_Type '(Name => BOOLEAN_NAME'Access);
-   String_Type      : aliased constant Basic_Type := Basic_Type '(Name => STRING_NAME'Access);
-   Wide_String_Type : aliased constant Basic_Type := Basic_Type '(Name => WIDE_STRING_NAME'Access);
-   Float_Type       : aliased constant Basic_Type := Basic_Type '(Name => FLOAT_NAME'Access);
-   Time_Type        : aliased constant Basic_Type := Basic_Type '(Name => TIME_NAME'Access);
-   Bean_Type        : aliased constant Basic_Type := Basic_Type '(Name => BEAN_NAME'Access);
+   --  ------------------------------
+   --  Convert the value into a wide string.
+   --  ------------------------------
+   function To_Wide_Wide_String (Type_Def : in Basic_Type;
+                                 Value    : in Object_Value) return Wide_Wide_String is
+   begin
+      return To_Wide_Wide_String (Object_Type'Class (Type_Def).To_String (Value));
+   end To_Wide_Wide_String;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Basic_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return 0.0;
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Basic_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return False;
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Null Type
+   --  ------------------------------
 
    --  ------------------------------
    --  Get the type name
    --  ------------------------------
-   function Get_Name (Type_Def : Basic_Type) return String is
+   function Get_Name (Type_Def : Null_Type) return String is
+      pragma Unreferenced (Type_Def);
    begin
-      return Type_Def.Name.all;
+      return "Null";
    end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : Null_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_NULL;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Null_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return "null";
+   end To_String;
+
+   --  ------------------------------
+   --  Integer Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : Int_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "Integer";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : Int_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_INTEGER;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Int_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+
+      S : constant String := Long_Long_Integer'Image (Value.Int_Value);
+   begin
+      if Value.Int_Value >= 0 then
+         return S (S'First + 1 .. S'Last);
+      else
+         return S;
+      end if;
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Int_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Int_Value;
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Int_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Long_Long_Float (Value.Int_Value);
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Int_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Int_Value /= 0;
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Float Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : in Float_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "Float";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : in Float_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_FLOAT;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Float_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Long_Long_Float'Image (Value.Float_Value);
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Float_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Long_Long_Integer (Value.Float_Value);
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Float_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Float_Value;
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Float_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Float_Value /= 0.0;
+   end To_Boolean;
+
+   --  ------------------------------
+   --  String Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : in String_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "String";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : in String_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_STRING;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in String_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return "null";
+      else
+         return Value.Proxy.String_Value.all;
+      end if;
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in String_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return 0;
+      else
+         return Long_Long_Integer'Value (Value.Proxy.String_Value.all);
+      end if;
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in String_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return 0.0;
+      else
+         return Long_Long_Float'Value (Value.Proxy.String_Value.all);
+      end if;
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in String_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Proxy /= null
+        and then (Value.Proxy.String_Value.all = "true"
+                  or Value.Proxy.String_Value.all = "TRUE"
+                  or Value.Proxy.String_Value.all = "1");
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Wide String Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : in Wide_String_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "WideString";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : in Wide_String_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_WIDE_STRING;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Wide_String_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return "null";
+      else
+         return To_String (Value.Proxy.Wide_String_Value.all);
+      end if;
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into a wide string.
+   --  ------------------------------
+   function To_Wide_Wide_String (Type_Def : in Wide_String_Type;
+                                 Value    : in Object_Value) return Wide_Wide_String is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return "null";
+      else
+         return Value.Proxy.Wide_String_Value.all;
+      end if;
+   end To_Wide_Wide_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Wide_String_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return 0;
+      else
+         return Long_Long_Integer'Value (To_String (Value.Proxy.Wide_String_Value.all));
+      end if;
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Wide_String_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return 0.0;
+      else
+         return Long_Long_Float'Value (To_String (Value.Proxy.Wide_String_Value.all));
+      end if;
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Wide_String_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Proxy /= null
+        and then (Value.Proxy.Wide_String_Value.all = "true"
+                  or Value.Proxy.Wide_String_Value.all = "TRUE"
+                  or Value.Proxy.Wide_String_Value.all = "1");
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Boolean Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : in Boolean_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "Boolean";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : in Boolean_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_BOOLEAN;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Boolean_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Bool_Value then
+         return "TRUE";
+      else
+         return "FALSE";
+      end if;
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Boolean_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Bool_Value then
+         return 1;
+      else
+         return 0;
+      end if;
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Boolean_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Bool_Value then
+         return 1.0;
+      else
+         return 0.0;
+      end if;
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Boolean_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Bool_Value;
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Bean Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : in Bean_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "Bean";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : in Bean_Type) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_BEAN;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Bean_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return "<bean>";
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Bean_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return 0;
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Bean_Type;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return 0.0;
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Bean_Type;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Proxy /= null and then Value.Proxy.Bean /= null;
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Basic_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced(Type_Def, Value);
+   begin
+      return 0;
+   end To_Long_Long;
 
    --  ------------------------------
    --  Check whether the object contains a value.
@@ -114,16 +603,6 @@ package body EL.Objects is
    end Is_Empty;
 
    --  ------------------------------
-   --  Translate the object
-   --  ------------------------------
-   function To_String (Type_Def : Basic_Type;
-                       Value    : in Object) return String is
-      pragma Unreferenced (Type_Def);
-   begin
-      return To_String (Value);
-   end To_String;
-
-   --  ------------------------------
    --  Generic Object holding a value
    --  ------------------------------
 
@@ -144,9 +623,9 @@ package body EL.Objects is
    --  ------------------------------
    --  Get the type definition of the object value.
    --  ------------------------------
-   function Get_Type (Value : Object) return Object_Type'Class is
+   function Get_Type (Value : Object) return Object_Type_Access is
    begin
-      return Value.Type_Def.all;
+      return Value.Type_Def;
    end Get_Type;
 
    --  ------------------------------
@@ -154,51 +633,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_String (Value : Object) return String is
    begin
-      case Value.V.Of_Type is
-         when TYPE_INTEGER =>
-            if Value.V.Int_Value >= 0 then
-               declare
-                  S : constant String := Long_Long_Integer'Image (Value.V.Int_Value);
-               begin
-                  return S (S'First + 1 .. S'Last);
-               end;
-            else
-               return Long_Long_Integer'Image (Value.V.Int_Value);
-            end if;
-
-         when TYPE_BOOLEAN =>
-            return Boolean'Image (Value.V.Bool_Value);
-
-         when TYPE_FLOAT =>
-            return Long_Long_Float'Image (Value.V.Float_Value);
-
-         when TYPE_STRING =>
-            if Value.V.Proxy = null then
-               return "null";
-            end if;
-            return Value.V.Proxy.String_Value.all;
-
-         when TYPE_WIDE_STRING =>
-            if Value.V.Proxy = null then
-               return "null";
-            end if;
-            return To_String (Value.V.Proxy.Wide_String_Value.all);
-
-         when TYPE_TIME =>
-            --              return Ada.Calendar.Formatting.Image (Value.V.Time_Value);
-            return Long_Long_Integer'Image (Value.V.Time_Value);
-
-         when TYPE_BEAN =>
-            if Value.V.Proxy = null or else Value.V.Proxy.Bean = null then
-               return "null";
-            else
-               return "<bean>";
-            end if;
-
-         when TYPE_NULL =>
-            return "null";
-
-      end case;
+      return Value.Type_Def.To_String (Value.V);
    end To_String;
 
    --  ------------------------------
@@ -206,20 +641,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Wide_Wide_String (Value : Object) return Wide_Wide_String is
    begin
-      case Value.V.Of_Type is
-         when TYPE_WIDE_STRING =>
-            if Value.V.Proxy = null then
-               return "null";
-            end if;
-            return Value.V.Proxy.Wide_String_Value.all;
-
-         when TYPE_NULL =>
-            return "null";
-
-         when others =>
-            return To_Wide_Wide_String (To_String (Value));
-
-      end case;
+      return Value.Type_Def.To_Wide_Wide_String (Value.V);
    end To_Wide_Wide_String;
 
    --  ------------------------------
@@ -270,7 +692,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Integer (Value : Object) return Integer is
    begin
-      return Integer (To_Long_Long_Integer (Value));
+      return Integer (Value.Type_Def.To_Long_Long (Value.V));
    end To_Integer;
 
    --  ------------------------------
@@ -278,7 +700,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Long_Integer (Value : Object) return Long_Integer is
    begin
-      return Long_Integer (To_Long_Long_Integer (Value));
+      return Long_Integer (Value.Type_Def.To_Long_Long (Value.V));
    end To_Long_Integer;
 
    --  ------------------------------
@@ -286,40 +708,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Long_Long_Integer (Value : Object) return Long_Long_Integer is
    begin
-      case Value.V.Of_Type is
-         when TYPE_NULL | TYPE_BEAN =>
-            return 0;
-
-         when TYPE_INTEGER =>
-            return Value.V.Int_Value;
-
-         when TYPE_BOOLEAN =>
-            return Boolean'Pos (Value.V.Bool_Value);
-
-         when TYPE_FLOAT =>
-            return Long_Long_Integer (Value.V.Float_Value);
-
-         when TYPE_STRING =>
-            if Value.V.Proxy = null then
-               return 0;
-            end if;
-            return Long_Long_Integer'Value (Value.V.Proxy.String_Value.all);
-
-         when TYPE_TIME =>
-            --              return Long_Long_Integer (Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value));
-            return Value.V.Time_Value;
-
-         when TYPE_WIDE_STRING =>
-            if Value.V.Proxy = null then
-               return 0;
-            end if;
-            return Long_Long_Integer'Value (To_String (Value.V.Proxy.Wide_String_Value.all));
-
-      end case;
-
-   exception
-      when Constraint_Error =>
-         return 0;
+      return Value.Type_Def.To_Long_Long (Value.V);
    end To_Long_Long_Integer;
 
    --  ------------------------------
@@ -358,37 +747,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Boolean (Value : Object) return Boolean is
    begin
-      case Value.V.Of_Type is
-         when TYPE_NULL =>
-            return False;
-
-         when TYPE_INTEGER =>
-            return Value.V.Int_Value /= 0;
-
-         when TYPE_BOOLEAN =>
-            return Value.V.Bool_Value;
-
-         when TYPE_FLOAT =>
-            return Value.V.Float_Value /= 0.0;
-
-         when TYPE_STRING =>
-            return Value.V.Proxy /= null
-              and then (Value.V.Proxy.String_Value.all = "true"
-                        or Value.V.Proxy.String_Value.all = "1");
-
-         when TYPE_WIDE_STRING =>
-            return Value.V.Proxy /= null
-              and then (Value.V.Proxy.Wide_String_Value.all = "true"
-                        or Value.V.Proxy.Wide_String_Value.all = "1");
-
-         when TYPE_TIME =>
-            --              return Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value) /= 0;
-            return Value.V.Time_Value /= 0;
-
-         when TYPE_BEAN =>
-            return Value.V.Proxy /= null and then Value.V.Proxy.Bean /= null;
-
-      end case;
+      return Value.Type_Def.To_Boolean (Value.V);
    end To_Boolean;
 
    --  ------------------------------
@@ -396,36 +755,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Float (Value : Object) return Float is
    begin
-      case Value.V.Of_Type is
-         when TYPE_NULL | TYPE_BEAN =>
-            return 0.0;
-
-         when TYPE_INTEGER =>
-            return Float (Value.V.Int_Value);
-
-         when TYPE_BOOLEAN =>
-            return Float (Boolean'Pos (Value.V.Bool_Value));
-
-         when TYPE_FLOAT =>
-            return Float (Value.V.Float_Value);
-
-         when TYPE_STRING =>
-            if Value.V.Proxy = null then
-               return 0.0;
-            end if;
-            return Float'Value (Value.V.Proxy.String_Value.all);
-
-         when TYPE_WIDE_STRING =>
-            if Value.V.Proxy = null then
-               return 0.0;
-            end if;
-            return Float'Value (To_String (Value.V.Proxy.Wide_String_Value.all));
-
-         when TYPE_TIME =>
-            --              return Float (Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value));
-            return Float (Value.V.Time_Value);
-
-      end case;
+      return Float (Value.Type_Def.To_Long_Float (Value.V));
    end To_Float;
 
    --  ------------------------------
@@ -433,7 +763,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Long_Float (Value : Object) return Long_Float is
    begin
-      return Long_Float (To_Long_Long_Float (Value));
+      return Long_Float (Value.Type_Def.To_Long_Float (Value.V));
    end To_Long_Float;
 
    --  ------------------------------
@@ -441,33 +771,7 @@ package body EL.Objects is
    --  ------------------------------
    function To_Long_Long_Float (Value : Object) return Long_Long_Float is
    begin
-      case Value.V.Of_Type is
-         when TYPE_NULL | TYPE_BEAN =>
-            return 0.0;
-
-         when TYPE_INTEGER =>
-            return Long_Long_Float (Value.V.Int_Value);
-
-         when TYPE_BOOLEAN =>
-            return Long_Long_Float (Boolean'Pos (Value.V.Bool_Value));
-
-         when TYPE_FLOAT =>
-            return Value.V.Float_Value;
-
-         when TYPE_STRING =>
-            if Value.V.Proxy = null then
-               return 0.0;
-            end if;
-            return Long_Long_Float'Value (Value.V.Proxy.String_Value.all);
-
-         when TYPE_WIDE_STRING =>
-            return Long_Long_Float'Value (To_String (Value));
-
-         when TYPE_TIME =>
-            --              return Long_Long_Float (Ada.Calendar.Conversions.To_Unix_Time (Value.V.Time_Value));
-            return Long_Long_Float (Value.V.Time_Value);
-
-      end case;
+      return Value.Type_Def.To_Long_Float (Value.V);
    end To_Long_Long_Float;
 
    --  ------------------------------
@@ -511,7 +815,7 @@ package body EL.Objects is
       return Object '(Controlled with
                       V => Object_Value '(Of_Type    => TYPE_BOOLEAN,
                                           Bool_Value => Value),
-                      Type_Def   => Boolean_Type'Access);
+                      Type_Def   => Bool_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -522,7 +826,7 @@ package body EL.Objects is
       return Object '(Controlled with
                       V => Object_Value '(Of_Type     => TYPE_FLOAT,
                                           Float_Value => Long_Long_Float (Value)),
-                      Type_Def    => Float_Type'Access);
+                      Type_Def    => Flt_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -533,7 +837,7 @@ package body EL.Objects is
       return Object '(Controlled with
                       V => Object_Value '(Of_Type     => TYPE_FLOAT,
                                           Float_Value => Long_Long_Float (Value)),
-                      Type_Def    => Float_Type'Access);
+                      Type_Def    => Flt_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -544,7 +848,7 @@ package body EL.Objects is
       return Object '(Controlled with
                       V => Object_Value '(Of_Type     => TYPE_FLOAT,
                                           Float_Value => Value),
-                      Type_Def    => Float_Type'Access);
+                      Type_Def    => Flt_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -558,7 +862,7 @@ package body EL.Objects is
                                           Proxy   => new Bean_Proxy '(Ref_Counter  => ONE,
                                                                       Of_Type      => TYPE_STRING,
                                                                       String_Value => S)),
-                      Type_Def     => String_Type'Access);
+                      Type_Def     => Str_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -572,7 +876,7 @@ package body EL.Objects is
                                           Proxy   => new Bean_Proxy '(Ref_Counter => ONE,
                                                                       Of_Type => TYPE_WIDE_STRING,
                                                                       Wide_String_Value => S)),
-                      Type_Def          => Wide_String_Type'Access);
+                      Type_Def          => WString_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -586,7 +890,7 @@ package body EL.Objects is
                             Proxy   => new Bean_Proxy '(Ref_Counter  => ONE,
                                                         Of_Type      => TYPE_STRING,
                                                         String_Value => S)),
-        Type_Def     => String_Type'Access);
+        Type_Def     => Str_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -600,19 +904,8 @@ package body EL.Objects is
                             Proxy   => new Bean_Proxy '(Ref_Counter => ONE,
                                                         Of_Type => TYPE_WIDE_STRING,
                                                         Wide_String_Value => S)),
-        Type_Def          => Wide_String_Type'Access);
+        Type_Def          => WString_Type'Access);
    end To_Object;
-
-   --  ------------------------------
-   --  Convert a time into a generic typed object.
-   --  ------------------------------
---     function To_Object (Value : Ada.Calendar.Time) return Object is
---     begin
---        return Object '(Controlled with
---                        Of_Type    => TYPE_TIME,
---                        Time_Value => Value,
---                        Type_Def   => Time_Type'Access);
---     end To_Object;
 
    function To_Object (Value : access EL.Beans.Readonly_Bean'Class) return Object is
    begin
@@ -620,14 +913,14 @@ package body EL.Objects is
          return Object '(Controlled with
                          V => Object_Value '(Of_Type    => TYPE_BEAN,
                                              Proxy      => null),
-                         Type_Def   => Bean_Type'Access);
+                         Type_Def   => Bn_Type'Access);
       else
          return Object '(Controlled with
                          V => Object_Value '(Of_Type => TYPE_BEAN,
                                              Proxy   => new Bean_Proxy '(Of_Type => TYPE_BEAN,
                                                                          Ref_Counter => ONE,
                                                                          Bean => Value)),
-                         Type_Def   => Bean_Type'Access);
+                         Type_Def   => Bn_Type'Access);
       end if;
    end To_Object;
 
@@ -639,7 +932,7 @@ package body EL.Objects is
    begin
       return Object '(Controlled with
                       V => Object_Value '(Of_Type   => TYPE_INTEGER,
-                                          Int_Value => To_Long_Long_Integer (Value)),
+                                          Int_Value => Value.Type_Def.To_Long_Long (Value.V)),
                       Type_Def  => Integer_Type'Access);
    end Cast_Integer;
 
@@ -651,7 +944,7 @@ package body EL.Objects is
       return Object '(Controlled with
                       V => Object_Value '(Of_Type     => TYPE_FLOAT,
                                           Float_Value => To_Long_Long_Float (Value)),
-                      Type_Def    => Float_Type'Access);
+                      Type_Def    => Flt_Type'Access);
    end Cast_Float;
 
    --  ------------------------------
@@ -806,15 +1099,16 @@ package body EL.Objects is
    begin
       case T is
          when TYPE_BOOLEAN =>
-            return Boolean_Comparator (To_Boolean (Left), To_Boolean (Right));
+            return Boolean_Comparator (Left.Type_Def.To_Boolean (Left.V),
+                                       Right.Type_Def.To_Boolean (Right.V));
 
          when TYPE_INTEGER =>
-            return Int_Comparator (To_Long_Long_Integer (Left),
-                                   To_Long_Long_Integer (Right));
+            return Int_Comparator (Left.Type_Def.To_Long_Long (Left.V),
+                                   Right.Type_Def.To_Long_Long (Right.V));
 
          when TYPE_FLOAT =>
-            return Float_Comparator (To_Long_Long_Float (Left),
-                                     To_Long_Long_Float (Right));
+            return Float_Comparator (Left.Type_Def.To_Long_Float (Left.V),
+                                     Right.Type_Def.To_Long_Float (Right.V));
 
          when TYPE_STRING =>
             return String_Comparator (To_String (Left), To_String (Right));

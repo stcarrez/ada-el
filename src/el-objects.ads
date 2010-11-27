@@ -70,6 +70,7 @@ package EL.Objects is
    --  It can hold any value while being tightly coupled with a type.
    --  The object can be converted to standard Ada types.
    type Object is private;
+   type Object_Value is private;
 
    --  The null object.
    Null_Object : constant Object;
@@ -79,11 +80,34 @@ package EL.Objects is
    --  ------------------------------
    --  The Object_Type describes a type.  It serves as a basis
    --  for type conversion.
-   type Object_Type is interface;
-   type Object_Type_Access is access constant Object_Type'Class;
+   type Object_Type is limited interface;
+   type Object_Type_Access is not null access constant Object_Type'Class;
 
    --  Get the type name
    function Get_Name (Type_Def : Object_Type) return String is abstract;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : Object_Type) return Data_Type is abstract;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in Object_Type;
+                       Value    : in Object_Value) return String is abstract;
+
+   --  Convert the value into a wide string.
+   function To_Wide_Wide_String (Type_Def : in Object_Type;
+                                 Value    : in Object_Value) return Wide_Wide_String is abstract;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Object_Type;
+                          Value    : in Object_Value) return Long_Long_Integer is abstract;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Object_Type;
+                           Value    : in Object_Value) return Long_Long_Float is abstract;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Object_Type;
+                        Value    : in Object_Value) return Boolean is abstract;
 
    --  Translate the object
 --     function To_String (Type_Def : Object_Type;
@@ -113,7 +137,7 @@ package EL.Objects is
    function Get_Type (Value : in Object) return Data_Type;
 
    --  Get the type definition of the object value.
-   function Get_Type (Value : in Object) return Object_Type'Class;
+   function Get_Type (Value : in Object) return Object_Type_Access;
 
    --  Get the type name of this object.
    function Get_Type_Name (Value : Object) return String;
@@ -184,12 +208,206 @@ private
 
    type Name_Access is access constant String;
 
-   type Basic_Type is new Object_Type with record
-      Name : Name_Access;
-   end record;
+   type Basic_Type is abstract limited new Object_Type with null record;
+--
+--     function To_String (Type_Def : in Basic_Type;
+--                         Value    : in Object_Value) return String;
+
+   --  Convert the value into a wide string.
+   function To_Wide_Wide_String (Type_Def : in Basic_Type;
+                                 Value    : in Object_Value) return Wide_Wide_String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Basic_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Basic_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Basic_Type;
+                        Value    : in Object_Value) return Boolean;
+
+   --  ------------------------------
+   --  Null Type
+   --  ------------------------------
+   type Null_Type is new Basic_Type with null record;
 
    --  Get the type name
-   function Get_Name (Type_Def : Basic_Type) return String;
+   function Get_Name (Type_Def : Null_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : Null_Type) return Data_Type;
+
+   function To_String (Type_Def : in Null_Type;
+                       Value    : in Object_Value) return String;
+
+   --  ------------------------------
+   --  Integer Type
+   --  ------------------------------
+   type Int_Type is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : Int_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : Int_Type) return Data_Type;
+
+   function To_String (Type_Def : in Int_Type;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Int_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Int_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Int_Type;
+                        Value    : in Object_Value) return Boolean;
+
+
+   --  ------------------------------
+   --  Float Type
+   --  ------------------------------
+   type Float_Type is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : in Float_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : in Float_Type) return Data_Type;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in Float_Type;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Float_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Float_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Float_Type;
+                        Value    : in Object_Value) return Boolean;
+
+   --  ------------------------------
+   --  String Type
+   --  ------------------------------
+   type String_Type is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : in String_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : in String_Type) return Data_Type;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in String_Type;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in String_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in String_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in String_Type;
+                        Value    : in Object_Value) return Boolean;
+
+   --  ------------------------------
+   --  Wide String Type
+   --  ------------------------------
+   type Wide_String_Type is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : in Wide_String_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : in Wide_String_Type) return Data_Type;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in Wide_String_Type;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into a wide string.
+   function To_Wide_Wide_String (Type_Def : in Wide_String_Type;
+                                 Value    : in Object_Value) return Wide_Wide_String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Wide_String_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Wide_String_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Wide_String_Type;
+                        Value    : in Object_Value) return Boolean;
+
+   --  ------------------------------
+   --  Boolean Type
+   --  ------------------------------
+   type Boolean_Type is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : in Boolean_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : in Boolean_Type) return Data_Type;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in Boolean_Type;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Boolean_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Boolean_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Boolean_Type;
+                        Value    : in Object_Value) return Boolean;
+
+   --  ------------------------------
+   --  Bean Type
+   --  ------------------------------
+   type Bean_Type is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : in Bean_Type) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : in Bean_Type) return Data_Type;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in Bean_Type;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Bean_Type;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Bean_Type;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Bean_Type;
+                        Value    : in Object_Value) return Boolean;
 
    subtype Proxy_Data_Type is Data_Type range TYPE_STRING .. TYPE_BEAN;
 
@@ -214,6 +432,7 @@ private
          when TYPE_NULL =>
             null;
 
+            --  Integers and enums are stored as 64-bit integer.
          when TYPE_INTEGER =>
             Int_Value : Long_Long_Integer;
 
@@ -224,7 +443,6 @@ private
             Float_Value : Long_Long_Float;
 
          when TYPE_TIME =>
-            --              Time_Value : Ada.Calendar.Time;
             Time_Value : Long_Long_Integer;
 
          when TYPE_BEAN | TYPE_STRING | TYPE_WIDE_STRING =>
@@ -233,10 +451,12 @@ private
       end case;
    end record;
 
+   No_Type        : aliased constant Null_Type := Null_Type '(others => <>);
+
    Null_Value  : constant Object_Value := Object_Value '(Of_Type => TYPE_NULL);
 
    type Object is new Controlled with record
-      Type_Def : Object_Type_Access := null;
+      Type_Def : Object_Type_Access := No_Type'Access;
       V        : Object_Value := Null_Value;
    end record;
 
@@ -248,6 +468,6 @@ private
 
    Null_Object : constant Object := Object '(Controlled with
                                              V        => Object_Value '(Of_Type => TYPE_NULL),
-                                             Type_Def => null);
+                                             Type_Def => No_Type'Access);
 
 end EL.Objects;
