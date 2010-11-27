@@ -31,7 +31,6 @@
 --  Value : Object := To_Object ("something");
 --  Value := Value + To_Object ("12");
 --
---  with Ada.Calendar;
 with Ada.Strings.Unbounded;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Finalization;
@@ -109,14 +108,6 @@ package EL.Objects is
    function To_Boolean (Type_Def : in Object_Type;
                         Value    : in Object_Value) return Boolean is abstract;
 
-   --  Translate the object
---     function To_String (Type_Def : Object_Type;
---                         Value    : in Object) return String is abstract;
-
---   generic
---      with type T is (<>);
---   function To_Enum (Value : in Object) return T;
-
    --  ------------------------------
    --  Generic Object holding a value
    --  ------------------------------
@@ -154,7 +145,6 @@ package EL.Objects is
    function To_Float (Value : in Object) return Float;
    function To_Long_Float (Value : in Object) return Long_Float;
    function To_Long_Long_Float (Value : in Object) return Long_Long_Float;
---     function To_Time (Value : in Object) return Ada.Calendar.Time;
 
    function To_Bean (Value : in Object) return access EL.Beans.Readonly_Bean'Class;
 
@@ -164,9 +154,6 @@ package EL.Objects is
 
    --  Force the object to be a float.
    function Cast_Float (Value : Object) return Object;
-
-   --  Force the object to be a time.
-   function Cast_Time (Value : Object) return Object;
 
    --  Force the object to be a string.
    function Cast_String (Value : Object) return Object;
@@ -183,7 +170,6 @@ package EL.Objects is
    function To_Object (Value : in Unbounded_String) return Object;
    function To_Object (Value : in Unbounded_Wide_Wide_String) return Object;
    function To_Object (Value : in Boolean) return Object;
---     function To_Object (Value : in Ada.Calendar.Time) return Object;
    function To_Object (Value : access EL.Beans.Readonly_Bean'Class) return Object;
 
    --  Comparison of objects
@@ -209,9 +195,6 @@ private
    type Name_Access is access constant String;
 
    type Basic_Type is abstract limited new Object_Type with null record;
---
---     function To_String (Type_Def : in Basic_Type;
---                         Value    : in Object_Value) return String;
 
    --  Convert the value into a wide string.
    function To_Wide_Wide_String (Type_Def : in Basic_Type;
@@ -240,6 +223,7 @@ private
    --  Get the base data type.
    function Get_Data_Type (Type_Def : Null_Type) return Data_Type;
 
+   --  Convert the value into a string.
    function To_String (Type_Def : in Null_Type;
                        Value    : in Object_Value) return String;
 
@@ -443,7 +427,7 @@ private
             Float_Value : Long_Long_Float;
 
          when TYPE_TIME =>
-            Time_Value : Long_Long_Integer;
+            Time_Value  : Duration;
 
          when TYPE_BEAN | TYPE_STRING | TYPE_WIDE_STRING =>
             Proxy : Bean_Proxy_Access;

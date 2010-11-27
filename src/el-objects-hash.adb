@@ -32,6 +32,8 @@ function EL.Objects.Hash (Key : in Object) return Ada.Containers.Hash_Type is
 
    subtype U32_For_Float is Unsigned_32_Array (1 .. Long_Long_Float'Size / 32);
 
+   subtype U32_For_Duration is Unsigned_32_Array (1 .. Duration'Size / 32);
+
    subtype U32_For_Long is Unsigned_32_Array (1 .. Long_Long_Integer'Size / 32);
 
    subtype U32_For_Access is Unsigned_32_Array (1 .. Readonly_Bean_Access'Size / 32);
@@ -43,6 +45,10 @@ function EL.Objects.Hash (Key : in Object) return Ada.Containers.Hash_Type is
    --  Likewise for floats.
    function To_U32_For_Float is new Ada.Unchecked_Conversion (Source => Long_Long_Float,
                                                               Target => U32_For_Float);
+
+   --  Likewise for duration.
+   function To_U32_For_Duration is new Ada.Unchecked_Conversion (Source => Duration,
+                                                                 Target => U32_For_Duration);
 
    --  Likewise for the bean pointer
    function To_U32_For_Access is new Ada.Unchecked_Conversion (Source => Readonly_Bean_Access,
@@ -91,7 +97,7 @@ begin
 
       when TYPE_TIME =>
          declare
-            U32 : constant U32_For_Long :=  To_U32_For_Long (Key.V.Time_Value);
+            U32 : constant U32_For_Duration :=  To_U32_For_Duration (Key.V.Time_Value);
             Val : Unsigned_32 := U32 (U32'First);
          begin
             for I in U32'First + 1 .. U32'Last loop
@@ -99,6 +105,7 @@ begin
             end loop;
             return Hash_Type (Val);
          end;
+         return 0;
 
       when TYPE_WIDE_STRING =>
          if Key.V.Proxy = null then

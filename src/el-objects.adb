@@ -46,7 +46,6 @@ package body EL.Objects is
    Str_Type      : aliased constant String_Type      := String_Type '(others => <>);
    WString_Type  : aliased constant Wide_String_Type := Wide_String_Type '(others => <>);
    Flt_Type      : aliased constant Float_Type       := Float_Type '(others => <>);
-   Time_Type     : aliased constant Int_Type         := Int_Type '(others => <>);
    Bn_Type       : aliased constant Bean_Type        := Bean_Type '(others => <>);
 
    --  ------------------------------
@@ -606,8 +605,10 @@ package body EL.Objects is
    --  Generic Object holding a value
    --  ------------------------------
 
+   --  ------------------------------
    --  Get the type name
-   function Get_Type_Name (Value : Object) return String is
+   --  ------------------------------
+   function Get_Type_Name (Value : in Object) return String is
    begin
       return Value.Type_Def.Get_Name;
    end Get_Type_Name;
@@ -710,28 +711,6 @@ package body EL.Objects is
    begin
       return Value.Type_Def.To_Long_Long (Value.V);
    end To_Long_Long_Integer;
-
-   --  ------------------------------
-   --  Convert the object to an integer.
-   --  ------------------------------
---     function To_Time (Value : Object) return Ada.Calendar.Time is
---        use Interfaces.C;
---     begin
---        case Value.V.Of_Type is
---           when TYPE_NULL | TYPE_BEAN =>
---              return Ada.Calendar.Conversions.To_Ada_Time (0);
---
---           when TYPE_INTEGER =>
---              return Ada.Calendar.Conversions.To_Ada_Time (long (Value.V.Int_Value));
---
---           when TYPE_TIME =>
---              return Value.V.Time_Value;
---
---           when others =>
---              return Ada.Calendar.Formatting.Value (To_String (Value));
---
---        end case;
---     end To_Time;
 
    function To_Bean (Value : in Object) return access EL.Beans.Readonly_Bean'Class is
    begin
@@ -886,11 +865,11 @@ package body EL.Objects is
       S : constant Ada.Strings.Unbounded.String_Access := new String '(To_String (Value));
    begin
       return Object '(Controlled with
-        V => Object_Value '(Of_Type => TYPE_STRING,
-                            Proxy   => new Bean_Proxy '(Ref_Counter  => ONE,
-                                                        Of_Type      => TYPE_STRING,
-                                                        String_Value => S)),
-        Type_Def     => Str_Type'Access);
+                      V => Object_Value '(Of_Type => TYPE_STRING,
+                                          Proxy   => new Bean_Proxy '(Ref_Counter  => ONE,
+                                                                      Of_Type      => TYPE_STRING,
+                                                                      String_Value => S)),
+                      Type_Def => Str_Type'Access);
    end To_Object;
 
    --  ------------------------------
@@ -943,20 +922,9 @@ package body EL.Objects is
    begin
       return Object '(Controlled with
                       V => Object_Value '(Of_Type     => TYPE_FLOAT,
-                                          Float_Value => To_Long_Long_Float (Value)),
+                                          Float_Value => Value.Type_Def.To_Long_Float (Value.V)),
                       Type_Def    => Flt_Type'Access);
    end Cast_Float;
-
-   --  ------------------------------
-   --  Force the object to be a time.
-   --  ------------------------------
-   function Cast_Time (Value : Object) return Object is
-   begin
-      return Object '(Controlled with
-                      V => Object_Value '(Of_Type    => TYPE_TIME,
-                                          Time_Value => To_Long_Long_Integer (Value)),
-                      Type_Def   => Time_Type'Access);
-   end Cast_Time;
 
    --  ------------------------------
    --  Force the object to be a string.
@@ -965,8 +933,9 @@ package body EL.Objects is
    begin
       if Value.V.Of_Type = TYPE_STRING or Value.V.Of_Type = TYPE_WIDE_STRING then
          return Value;
+      else
+         return To_Object (To_Wide_Wide_String (Value));
       end if;
-      return To_Object (To_Wide_Wide_String (Value));
    end Cast_String;
 
    --  ------------------------------
@@ -1117,10 +1086,6 @@ package body EL.Objects is
             return Wide_String_Comparator (To_Wide_Wide_String (Left),
                                            To_Wide_Wide_String (Right));
 
---           when TYPE_TIME =>
---              return Time_Comparator (To_Time (Left),
---                                      To_Time (Right));
-
          when others =>
             return False;
       end case;
@@ -1198,12 +1163,12 @@ package body EL.Objects is
    begin
       case T is
          when TYPE_INTEGER | TYPE_TIME =>
-            return To_Object (Int_Operation (To_Long_Long_Integer (Left),
-                                             To_Long_Long_Integer (Right)));
+            return To_Object (Int_Operation (Left.Type_Def.To_Long_Long (Left.V),
+                                             Right.Type_Def.To_Long_Long (Right.V)));
 
          when TYPE_FLOAT =>
-            return To_Object (Float_Operation (To_Long_Long_Float (Left),
-                                               To_Long_Long_Float (Right)));
+            return To_Object (Float_Operation (Left.Type_Def.To_Long_Float (Left.V),
+                                               Right.Type_Def.To_Long_Float (Right.V)));
 
          when others =>
             return Left;
@@ -1229,10 +1194,10 @@ package body EL.Objects is
    begin
       case Left.V.Of_Type is
          when TYPE_INTEGER | TYPE_TIME =>
-            return To_Object (-To_Long_Long_Integer (Left));
+            return To_Object (-Left.Type_Def.To_Long_Long (Left.V));
 
          when TYPE_FLOAT =>
-            return To_Object (-(To_Long_Long_Float (Left)));
+            return To_Object (-(Left.Type_Def.To_Long_Float (Left.V)));
 
          when others =>
             return Left;
