@@ -22,9 +22,42 @@ package body EL.Objects.Enums is
 
    Value_Range : constant Long_Long_Integer := T'Pos (T'Last) - T'Pos (T'First) + 1;
 
-   NAME        : aliased constant String := "Enum";
+   --  ------------------------------
+   --  Integer Type
+   --  ------------------------------
+   type Enum_Type is new Int_Type with null record;
 
-   Value_Type  : aliased constant Basic_Type := Basic_Type '(Name => NAME'Access);
+   --  Get the type name
+   overriding
+   function Get_Name (Type_Def : in Enum_Type) return String;
+
+   overriding
+   function To_String (Type_Def : in Enum_Type;
+                       Value    : in Object_Value) return String;
+
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   overriding
+   function Get_Name (Type_Def : Enum_Type) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "Enum";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   overriding
+   function To_String (Type_Def : in Enum_Type;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return T'Image (T'Val (Value.Int_Value));
+   end To_String;
+
+   Value_Type  : aliased constant Enum_Type := Enum_Type '(others => <>);
 
    --  ------------------------------
    --  Create an object from the given value.
