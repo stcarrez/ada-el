@@ -73,8 +73,8 @@ package body EL.Functions is
    begin
       Mapper.Set_Function ("", "int", EL.Objects.Cast_Integer'Access);
       Mapper.Set_Function ("", "float", EL.Objects.Cast_Float'Access);
-      Mapper.Set_Function ("", "time", EL.Objects.Cast_Time'Access);
-      Mapper.Set_Function ("", "date", EL.Objects.Cast_Time'Access);
+--        Mapper.Set_Function ("", "time", EL.Objects.Time.Cast_Time'Access);
+--        Mapper.Set_Function ("", "date", EL.Objects.Time.Cast_Time'Access);
       Mapper.Set_Function ("", "string", EL.Objects.Cast_String'Access);
    end Register_Predefined;
 
