@@ -23,7 +23,10 @@ package body EL.Objects.Time is
    use Ada.Calendar;
 
    Epoch : constant Ada.Calendar.Time :=
-     Ada.Calendar.Time_Of (Year => Year_Number'First, Month => 1, Day => 1);
+     Ada.Calendar.Time_Of (Year    => Year_Number'First,
+                           Month   => 1,
+                           Day     => 1,
+                           Seconds => 12 * 3600.0);
 
    --  ------------------------------
    --  Time Type
@@ -55,7 +58,7 @@ package body EL.Objects.Time is
                        Value    : in Object_Value) return String is
       pragma Unreferenced (Type_Def);
    begin
-      return Ada.Calendar.Formatting.Image (Value.Time_Value + Epoch);
+      return Ada.Calendar.Formatting.Image (Epoch + Value.Time_Value);
    end To_String;
 
    --  ------------------------------

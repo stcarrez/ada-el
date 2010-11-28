@@ -1171,9 +1171,6 @@ package body EL.Objects is
    --  ------------------------------
    function Get_Arithmetic_Type (Left, Right : Object) return Data_Type is
    begin
-      if Left.V.Of_Type = TYPE_TIME or Right.V.Of_Type = TYPE_TIME then
-         return TYPE_TIME;
-      end if;
       if Left.V.Of_Type = TYPE_FLOAT or Right.V.Of_Type = TYPE_FLOAT then
          return TYPE_FLOAT;
       end if;
@@ -1327,24 +1324,43 @@ package body EL.Objects is
 
    --  Comparison of objects
    function Arith (Left, Right : Object) return Object is
-      T : constant Data_Type := Get_Arithmetic_Type (Left, Right);
    begin
-      case T is
+      --  If we have a time object, keep the time definition.
+      if Left.V.Of_Type = TYPE_TIME then
+         return Result : Object do
+            Result.Type_Def := Left.Type_Def;
+            Result.V := Object_Value
+              '(Of_Type    => TYPE_TIME,
+                Time_Value => Duration_Operation
+                  (Left.Type_Def.To_Duration (Left.V),
+                   Right.Type_Def.To_Duration (Right.V)));
+         end return;
+      end if;
+      if Right.V.Of_Type = TYPE_TIME then
+         return Result : Object do
+            Result.Type_Def := Right.Type_Def;
+            Result.V := Object_Value
+              '(Of_Type    => TYPE_TIME,
+                Time_Value => Duration_Operation (Left.Type_Def.To_Duration (Left.V),
+                  Right.Type_Def.To_Duration (Right.V)));
+         end return;
+      end if;
+      declare
+         T : constant Data_Type := Get_Arithmetic_Type (Left, Right);
+      begin
+         case T is
          when TYPE_INTEGER =>
             return To_Object (Int_Operation (Left.Type_Def.To_Long_Long (Left.V),
-                                             Right.Type_Def.To_Long_Long (Right.V)));
-
-         when TYPE_TIME =>
-            return To_Object (Duration_Operation (Left.Type_Def.To_Duration (Left.V),
-                                                  Right.Type_Def.To_Duration (Right.V)));
+              Right.Type_Def.To_Long_Long (Right.V)));
 
          when TYPE_FLOAT =>
             return To_Object (Float_Operation (Left.Type_Def.To_Long_Float (Left.V),
-                                               Right.Type_Def.To_Long_Float (Right.V)));
+              Right.Type_Def.To_Long_Float (Right.V)));
 
          when others =>
             return Left;
-      end case;
+         end case;
+      end;
    end Arith;
 
    --  Arithmetic operations on objects
