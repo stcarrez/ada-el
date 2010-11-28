@@ -28,13 +28,10 @@ package body EL.Objects.Time is
    --  ------------------------------
    --  Time Type
    --  ------------------------------
-   type Time_Type_Def is new Basic_Type with null record;
+   type Time_Type_Def is new Duration_Type_Def with null record;
 
    --  Get the type name
    function Get_Name (Type_Def : Time_Type_Def) return String;
-
-   --  Get the base data type.
-   function Get_Data_Type (Type_Def : Time_Type_Def) return Data_Type;
 
    --  Convert the value into a string.
    function To_String (Type_Def : in Time_Type_Def;
@@ -50,15 +47,6 @@ package body EL.Objects.Time is
    begin
       return "Time";
    end Get_Name;
-
-   --  ------------------------------
-   --  Get the base data type.
-   --  ------------------------------
-   function Get_Data_Type (Type_Def : Time_Type_Def) return Data_Type is
-      pragma Unreferenced (Type_Def);
-   begin
-      return TYPE_TIME;
-   end Get_Data_Type;
 
    --  ------------------------------
    --  Convert the value into a string.
@@ -109,7 +97,7 @@ package body EL.Objects.Time is
             return Value;
 
          when TYPE_STRING | TYPE_WIDE_STRING =>
-            return To_Object (Ada.Calendar.Formatting.Value (Value.Type_Def.To_String (Value.V)));
+            return EL.Objects.Time.To_Object (Ada.Calendar.Formatting.Value (Value.Type_Def.To_String (Value.V)));
 
          when others =>
             raise Constraint_Error with "Conversion to a date is not possible";

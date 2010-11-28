@@ -46,6 +46,7 @@ package body EL.Objects is
    Str_Type      : aliased constant String_Type      := String_Type '(others => <>);
    WString_Type  : aliased constant Wide_String_Type := Wide_String_Type '(others => <>);
    Flt_Type      : aliased constant Float_Type       := Float_Type '(others => <>);
+   Duration_Type : aliased constant Duration_Type_Def := Duration_Type_Def '(others => <>);
    Bn_Type       : aliased constant Bean_Type        := Bean_Type '(others => <>);
 
    --  ------------------------------
@@ -76,6 +77,16 @@ package body EL.Objects is
    begin
       return False;
    end To_Boolean;
+
+   --  ------------------------------
+   --  Convert the value into a duration.
+   --  ------------------------------
+   function To_Duration (Type_Def : in Basic_Type;
+                         Value    : in Object_Value) return Duration is
+      pragma Unreferenced (Type_Def, Value);
+   begin
+      return 0.0;
+   end To_Duration;
 
    --  ------------------------------
    --  Null Type
@@ -178,6 +189,16 @@ package body EL.Objects is
    end To_Boolean;
 
    --  ------------------------------
+   --  Convert the value into a duration.
+   --  ------------------------------
+   function To_Duration (Type_Def : in Int_Type;
+                         Value    : in Object_Value) return Duration is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Duration (Value.Int_Value);
+   end To_Duration;
+
+   --  ------------------------------
    --  Float Type
    --  ------------------------------
 
@@ -238,6 +259,16 @@ package body EL.Objects is
    begin
       return Value.Float_Value /= 0.0;
    end To_Boolean;
+
+   --  ------------------------------
+   --  Convert the value into a duration.
+   --  ------------------------------
+   function To_Duration (Type_Def : in Float_Type;
+                         Value    : in Object_Value) return Duration is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Duration (Value.Float_Value);
+   end To_Duration;
 
    --  ------------------------------
    --  String Type
@@ -315,6 +346,20 @@ package body EL.Objects is
                   or Value.Proxy.String_Value.all = "TRUE"
                   or Value.Proxy.String_Value.all = "1");
    end To_Boolean;
+
+   --  ------------------------------
+   --  Convert the value into a duration.
+   --  ------------------------------
+   function To_Duration (Type_Def : in String_Type;
+                         Value    : in Object_Value) return Duration is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return 0.0;
+      else
+         return Duration'Value (Value.Proxy.String_Value.all);
+      end if;
+   end To_Duration;
 
    --  ------------------------------
    --  Wide String Type
@@ -408,6 +453,20 @@ package body EL.Objects is
    end To_Boolean;
 
    --  ------------------------------
+   --  Convert the value into a duration.
+   --  ------------------------------
+   function To_Duration (Type_Def : in Wide_String_Type;
+                         Value    : in Object_Value) return Duration is
+      pragma Unreferenced (Type_Def);
+   begin
+      if Value.Proxy = null then
+         return 0.0;
+      else
+         return Duration'Value (To_String (Value.Proxy.Wide_String_Value.all));
+      end if;
+   end To_Duration;
+
+   --  ------------------------------
    --  Boolean Type
    --  ------------------------------
 
@@ -480,6 +539,78 @@ package body EL.Objects is
    begin
       return Value.Bool_Value;
    end To_Boolean;
+
+   --  ------------------------------
+   --  Duration Type
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Get the type name
+   --  ------------------------------
+   function Get_Name (Type_Def : in Duration_Type_Def) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return "Duration";
+   end Get_Name;
+
+   --  ------------------------------
+   --  Get the base data type.
+   --  ------------------------------
+   function Get_Data_Type (Type_Def : in Duration_Type_Def) return Data_Type is
+      pragma Unreferenced (Type_Def);
+   begin
+      return TYPE_TIME;
+   end Get_Data_Type;
+
+   --  ------------------------------
+   --  Convert the value into a string.
+   --  ------------------------------
+   function To_String (Type_Def : in Duration_Type_Def;
+                       Value    : in Object_Value) return String is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Duration'Image (Value.Time_Value);
+   end To_String;
+
+   --  ------------------------------
+   --  Convert the value into an integer.
+   --  ------------------------------
+   function To_Long_Long (Type_Def : in Duration_Type_Def;
+                          Value    : in Object_Value) return Long_Long_Integer is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Long_Long_Integer (Value.Time_Value);
+   end To_Long_Long;
+
+   --  ------------------------------
+   --  Convert the value into a float.
+   --  ------------------------------
+   function To_Long_Float (Type_Def : in Duration_Type_Def;
+                           Value    : in Object_Value) return Long_Long_Float is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Long_Long_Float (Value.Time_Value);
+   end To_Long_Float;
+
+   --  ------------------------------
+   --  Convert the value into a boolean.
+   --  ------------------------------
+   function To_Boolean (Type_Def : in Duration_Type_Def;
+                        Value    : in Object_Value) return Boolean is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Time_Value > 0.0;
+   end To_Boolean;
+
+   --  ------------------------------
+   --  Convert the value into a duration.
+   --  ------------------------------
+   function To_Duration (Type_Def : in Duration_Type_Def;
+                         Value    : in Object_Value) return Duration is
+      pragma Unreferenced (Type_Def);
+   begin
+      return Value.Time_Value;
+   end To_Duration;
 
    --  ------------------------------
    --  Bean Type
@@ -712,6 +843,14 @@ package body EL.Objects is
       return Value.Type_Def.To_Long_Long (Value.V);
    end To_Long_Long_Integer;
 
+   --  ------------------------------
+   --  Convert the object to a duration.
+   --  ------------------------------
+   function To_Duration (Value : in Object) return Duration is
+   begin
+      return Value.Type_Def.To_Duration (Value.V);
+   end To_Duration;
+
    function To_Bean (Value : in Object) return access EL.Beans.Readonly_Bean'Class is
    begin
       if Value.V.Of_Type = TYPE_BEAN and then Value.V.Proxy /= null then
@@ -831,6 +970,17 @@ package body EL.Objects is
    end To_Object;
 
    --  ------------------------------
+   --  Convert a duration into a generic typed object.
+   --  ------------------------------
+   function To_Object (Value : in Duration) return Object is
+   begin
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type    => TYPE_TIME,
+                                          Time_Value => Value),
+                      Type_Def    => Duration_Type'Access);
+   end To_Object;
+
+   --  ------------------------------
    --  Convert a string into a generic typed object.
    --  ------------------------------
    function To_Object (Value : String) return Object is
@@ -927,6 +1077,18 @@ package body EL.Objects is
    end Cast_Float;
 
    --  ------------------------------
+   --  Convert the object to an object of another time.
+   --  Force the object to be a duration.
+   --  ------------------------------
+   function Cast_Duration (Value : Object) return Object is
+   begin
+      return Object '(Controlled with
+                      V => Object_Value '(Of_Type   => TYPE_TIME,
+                                          Time_Value => Value.Type_Def.To_Duration (Value.V)),
+                      Type_Def  => Duration_Type'Access);
+   end Cast_Duration;
+
+   --  ------------------------------
    --  Force the object to be a string.
    --  ------------------------------
    function Cast_String (Value : Object) return Object is
@@ -1009,16 +1171,16 @@ package body EL.Objects is
    --  ------------------------------
    function Get_Arithmetic_Type (Left, Right : Object) return Data_Type is
    begin
+      if Left.V.Of_Type = TYPE_TIME or Right.V.Of_Type = TYPE_TIME then
+         return TYPE_TIME;
+      end if;
       if Left.V.Of_Type = TYPE_FLOAT or Right.V.Of_Type = TYPE_FLOAT then
          return TYPE_FLOAT;
       end if;
       if Left.V.Of_Type = TYPE_INTEGER or Right.V.Of_Type = TYPE_INTEGER then
          return TYPE_INTEGER;
       end if;
-      if Left.V.Of_Type = TYPE_TIME or Right.V.Of_Type = TYPE_TIME then
-         return TYPE_TIME;
-      end if;
-      if Left.V.Of_Type = TYPE_BOOLEAN and Right.V.Of_Type = TYPE_BOOLEAN then
+       if Left.V.Of_Type = TYPE_BOOLEAN and Right.V.Of_Type = TYPE_BOOLEAN then
          return TYPE_BOOLEAN;
       end if;
       return TYPE_FLOAT;
@@ -1052,7 +1214,7 @@ package body EL.Objects is
    --  ------------------------------
    generic
       with function Int_Comparator (Left, Right : Long_Long_Integer) return Boolean;
---        with function Time_Comparator (Left, Right : Ada.Calendar.Time) return Boolean;
+      with function Time_Comparator (Left, Right : Duration) return Boolean;
       with function Boolean_Comparator (Left, Right : Boolean) return Boolean;
       with function Float_Comparator (Left, Right : Long_Long_Float) return Boolean;
       with function String_Comparator (Left, Right : String) return Boolean;
@@ -1075,6 +1237,10 @@ package body EL.Objects is
             return Int_Comparator (Left.Type_Def.To_Long_Long (Left.V),
                                    Right.Type_Def.To_Long_Long (Right.V));
 
+         when TYPE_TIME =>
+            return Time_Comparator (Left.Type_Def.To_Duration (Left.V),
+                                    Right.Type_Def.To_Duration (Right.V));
+
          when TYPE_FLOAT =>
             return Float_Comparator (Left.Type_Def.To_Long_Float (Left.V),
                                      Right.Type_Def.To_Long_Float (Right.V));
@@ -1093,7 +1259,7 @@ package body EL.Objects is
 
    function ">" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => ">",
---                                     Time_Comparator => Ada.Calendar.">",
+                                   Time_Comparator => ">",
                                    Boolean_Comparator => ">",
                                    Float_Comparator => ">",
                                    String_Comparator => ">",
@@ -1104,7 +1270,7 @@ package body EL.Objects is
 
    function "<" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "<",
---                                     Time_Comparator => Ada.Calendar."<",
+                                   Time_Comparator => "<",
                                    Boolean_Comparator => "<",
                                    Float_Comparator => "<",
                                    String_Comparator => "<",
@@ -1115,7 +1281,7 @@ package body EL.Objects is
 
    function "<=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "<=",
---                                     Time_Comparator => Ada.Calendar."<=",
+                                   Time_Comparator => "<=",
                                    Boolean_Comparator => "<=",
                                    Float_Comparator => "<=",
                                    String_Comparator => "<=",
@@ -1126,7 +1292,7 @@ package body EL.Objects is
 
    function ">=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => ">=",
---                                     Time_Comparator => Ada.Calendar.">=",
+                                   Time_Comparator => ">=",
                                    Boolean_Comparator => ">=",
                                    Float_Comparator => ">=",
                                    String_Comparator => ">=",
@@ -1138,7 +1304,7 @@ package body EL.Objects is
 
    function "=" (Left, Right : Object) return Boolean is
       function Cmp is new Compare (Int_Comparator => "=",
---                                     Time_Comparator => Ada.Calendar."=",
+                                   Time_Comparator => "=",
                                    Boolean_Comparator => "=",
                                    Float_Comparator => "=",
                                    String_Comparator => "=",
@@ -1153,6 +1319,8 @@ package body EL.Objects is
    generic
       with function Int_Operation (Left, Right : Long_Long_Integer)
                                     return Long_Long_Integer;
+      with function Duration_Operation (Left, Right : Duration)
+                                    return Duration;
       with function Float_Operation (Left, Right : Long_Long_Float)
                                     return Long_Long_Float;
    function Arith (Left, Right : Object) return Object;
@@ -1162,9 +1330,13 @@ package body EL.Objects is
       T : constant Data_Type := Get_Arithmetic_Type (Left, Right);
    begin
       case T is
-         when TYPE_INTEGER | TYPE_TIME =>
+         when TYPE_INTEGER =>
             return To_Object (Int_Operation (Left.Type_Def.To_Long_Long (Left.V),
                                              Right.Type_Def.To_Long_Long (Right.V)));
+
+         when TYPE_TIME =>
+            return To_Object (Duration_Operation (Left.Type_Def.To_Duration (Left.V),
+                                                  Right.Type_Def.To_Duration (Right.V)));
 
          when TYPE_FLOAT =>
             return To_Object (Float_Operation (Left.Type_Def.To_Long_Float (Left.V),
@@ -1178,6 +1350,7 @@ package body EL.Objects is
    --  Arithmetic operations on objects
    function "+" (Left, Right : Object) return Object is
       function Operation is new Arith (Int_Operation => "+",
+                                       Duration_Operation => "+",
                                        Float_Operation => "+");
    begin
       return Operation (Left, Right);
@@ -1185,6 +1358,7 @@ package body EL.Objects is
 
    function "-" (Left, Right : Object) return Object is
       function Operation is new Arith (Int_Operation => "-",
+                                       Duration_Operation => "-",
                                        Float_Operation => "-");
    begin
       return Operation (Left, Right);
@@ -1193,8 +1367,11 @@ package body EL.Objects is
    function "-" (Left : Object) return Object is
    begin
       case Left.V.Of_Type is
-         when TYPE_INTEGER | TYPE_TIME =>
+         when TYPE_INTEGER =>
             return To_Object (-Left.Type_Def.To_Long_Long (Left.V));
+
+         when TYPE_TIME =>
+            return To_Object (-Left.Type_Def.To_Duration (Left.V));
 
          when TYPE_FLOAT =>
             return To_Object (-(Left.Type_Def.To_Long_Float (Left.V)));
@@ -1207,6 +1384,7 @@ package body EL.Objects is
 
    function "*" (Left, Right : Object) return Object is
       function Operation is new Arith (Int_Operation => "*",
+                                       Duration_Operation => "+",
                                        Float_Operation => "*");
    begin
       return Operation (Left, Right);
@@ -1214,6 +1392,7 @@ package body EL.Objects is
 
    function "/" (Left, Right : Object) return Object is
       function Operation is new Arith (Int_Operation => "/",
+                                       Duration_Operation => "-",
                                        Float_Operation => "/");
    begin
       return Operation (Left, Right);
@@ -1230,6 +1409,7 @@ package body EL.Objects is
       end "mod";
 
       function Operation is new Arith (Int_Operation => "mod",
+                                       Duration_Operation => "-",
                                        Float_Operation => "mod");
    begin
       return Operation (Left, Right);

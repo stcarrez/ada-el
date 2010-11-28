@@ -108,6 +108,10 @@ package EL.Objects is
    function To_Boolean (Type_Def : in Object_Type;
                         Value    : in Object_Value) return Boolean is abstract;
 
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in Object_Type;
+                         Value    : in Object_Value) return Duration is abstract;
+
    --  ------------------------------
    --  Generic Object holding a value
    --  ------------------------------
@@ -145,6 +149,7 @@ package EL.Objects is
    function To_Float (Value : in Object) return Float;
    function To_Long_Float (Value : in Object) return Long_Float;
    function To_Long_Long_Float (Value : in Object) return Long_Long_Float;
+   function To_Duration (Value : in Object) return Duration;
 
    function To_Bean (Value : in Object) return access EL.Beans.Readonly_Bean'Class;
 
@@ -154,6 +159,9 @@ package EL.Objects is
 
    --  Force the object to be a float.
    function Cast_Float (Value : Object) return Object;
+
+   --  Force the object to be a duration.
+   function Cast_Duration (Value : Object) return Object;
 
    --  Force the object to be a string.
    function Cast_String (Value : Object) return Object;
@@ -170,6 +178,7 @@ package EL.Objects is
    function To_Object (Value : in Unbounded_String) return Object;
    function To_Object (Value : in Unbounded_Wide_Wide_String) return Object;
    function To_Object (Value : in Boolean) return Object;
+   function To_Object (Value : in Duration) return Object;
    function To_Object (Value : access EL.Beans.Readonly_Bean'Class) return Object;
 
    --  Comparison of objects
@@ -212,6 +221,10 @@ private
    function To_Boolean (Type_Def : in Basic_Type;
                         Value    : in Object_Value) return Boolean;
 
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in Basic_Type;
+                         Value    : in Object_Value) return Duration;
+
    --  ------------------------------
    --  Null Type
    --  ------------------------------
@@ -253,6 +266,9 @@ private
    function To_Boolean (Type_Def : in Int_Type;
                         Value    : in Object_Value) return Boolean;
 
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in Int_Type;
+                         Value    : in Object_Value) return Duration;
 
    --  ------------------------------
    --  Float Type
@@ -281,6 +297,10 @@ private
    function To_Boolean (Type_Def : in Float_Type;
                         Value    : in Object_Value) return Boolean;
 
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in Float_Type;
+                         Value    : in Object_Value) return Duration;
+
    --  ------------------------------
    --  String Type
    --  ------------------------------
@@ -307,6 +327,10 @@ private
    --  Convert the value into a boolean.
    function To_Boolean (Type_Def : in String_Type;
                         Value    : in Object_Value) return Boolean;
+
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in String_Type;
+                         Value    : in Object_Value) return Duration;
 
    --  ------------------------------
    --  Wide String Type
@@ -339,6 +363,10 @@ private
    function To_Boolean (Type_Def : in Wide_String_Type;
                         Value    : in Object_Value) return Boolean;
 
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in Wide_String_Type;
+                         Value    : in Object_Value) return Duration;
+
    --  ------------------------------
    --  Boolean Type
    --  ------------------------------
@@ -365,6 +393,37 @@ private
    --  Convert the value into a boolean.
    function To_Boolean (Type_Def : in Boolean_Type;
                         Value    : in Object_Value) return Boolean;
+
+   --  ------------------------------
+   --  Duration Type
+   --  ------------------------------
+   type Duration_Type_Def is new Basic_Type with null record;
+
+   --  Get the type name
+   function Get_Name (Type_Def : in Duration_Type_Def) return String;
+
+   --  Get the base data type.
+   function Get_Data_Type (Type_Def : in Duration_Type_Def) return Data_Type;
+
+   --  Convert the value into a string.
+   function To_String (Type_Def : in Duration_Type_Def;
+                       Value    : in Object_Value) return String;
+
+   --  Convert the value into an integer.
+   function To_Long_Long (Type_Def : in Duration_Type_Def;
+                          Value    : in Object_Value) return Long_Long_Integer;
+
+   --  Convert the value into a float.
+   function To_Long_Float (Type_Def : in Duration_Type_Def;
+                           Value    : in Object_Value) return Long_Long_Float;
+
+   --  Convert the value into a boolean.
+   function To_Boolean (Type_Def : in Duration_Type_Def;
+                        Value    : in Object_Value) return Boolean;
+
+   --  Convert the value into a duration.
+   function To_Duration (Type_Def : in Duration_Type_Def;
+                         Value    : in Object_Value) return Duration;
 
    --  ------------------------------
    --  Bean Type
