@@ -20,10 +20,12 @@ with AUnit.Test_Caller;
 with EL.Expressions;
 with EL.Objects;
 with EL.Objects.Enums;
+with EL.Objects.Time;
 with EL.Contexts;
 with EL.Contexts.Default;
 with Ada.Calendar;
 with EL.Objects.Discrete_Tests;
+with EL.Objects.Time.Tests;
 with Ada.Calendar.Formatting;
 with Ada.Calendar.Conversions;
 with Interfaces.C;
@@ -38,8 +40,8 @@ package body EL.Testsuite is
    function "+" (Left, Right : Boolean) return Boolean;
    function "-" (Left, Right : Boolean) return Boolean;
 
-   function "-" (Left, Right : Time) return Time;
-   function "+" (Left, Right : Time) return Time;
+   function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
+   function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
    function Time_Value (S : String) return Ada.Calendar.Time;
 
    --  ------------------------------
@@ -193,23 +195,23 @@ package body EL.Testsuite is
       return Ada.Calendar.Formatting.Value (S);
    end Time_Value;
 
-   function "+" (Left, Right : Time) return Time is
+   function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
    begin
       return To_Ada_Time (To_Unix_Time (Left) + To_Unix_Time (Right));
    end "+";
 
-   function "-" (Left, Right : Time) return Time is
+   function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
    begin
       return To_Ada_Time (To_Unix_Time (Left) - To_Unix_Time (Right));
    end "-";
 
---     package Test_Time is new
---       EL.Objects.Discrete_Tests (Test_Type      => Ada.Calendar.Time,
---                                  To_Type        => EL.Objects.To_Time,
---                                  To_Object_Test => EL.Objects.To_Object,
---                                  Value          => Time_Value,
---                                  Test_Name      => "Time",
---                                  Test_Values => "1970-03-04 12:12:00,1975-05-04 13:13:10");
+   package Test_Time is new
+     EL.Objects.Discrete_Tests (Test_Type      => Ada.Calendar.Time,
+                                To_Type        => EL.Objects.Time.To_Time,
+                                To_Object_Test => EL.Objects.Time.To_Object,
+                                Value          => Time_Value,
+                                Test_Name      => "Time",
+                                Test_Values => "1970-03-04 12:12:00,1975-05-04 13:13:10");
 
    package Test_Float is new
      EL.Objects.Discrete_Tests (Test_Type      => Float,
@@ -249,11 +251,12 @@ package body EL.Testsuite is
       Test_Integer.Add_Tests (Ret);
       Test_Long_Integer.Add_Tests (Ret);
       Test_Long_Long_Integer.Add_Tests (Ret);
---        Test_Time.Add_Tests (Ret);
+      Test_Time.Add_Tests (Ret);
       Test_Float.Add_Tests (Ret);
       Test_Long_Float.Add_Tests (Ret);
       Test_Long_Long_Float.Add_Tests (Ret);
       Test_Enum.Add_Tests (Ret);
+      EL.Objects.Time.Tests.Add_Tests (Ret);
       EL.Expressions.Tests.Add_Tests (Ret);
       return Ret;
    end Suite;
