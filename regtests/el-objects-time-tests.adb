@@ -17,7 +17,7 @@
 -----------------------------------------------------------------------
 
 with AUnit.Test_Caller;
-
+with Ada.Calendar.Formatting;
 with Util.Log.Loggers;
 with Util.Tests;
 package body EL.Objects.Time.Tests is
@@ -69,6 +69,21 @@ package body EL.Objects.Time.Tests is
       T.Assert (C < To_Time (V2) + 1.0, "Invalid time returned by To_Time (T + 1 < expected)");
    end Test_Time_To_String;
 
+   --  ------------------------------
+   --  Test time add and subtract
+   --  ------------------------------
+   procedure Test_Time_Add (T : in out Test) is
+      C  : constant Ada.Calendar.Time := Ada.Calendar.Clock;
+      V  : constant EL.Objects.Object := To_Object (C);
+      Dt : constant EL.Objects.Object := To_Object (Integer (10));
+      V2 : constant EL.Objects.Object := V + Dt;
+      V3 : constant EL.Objects.Object := V2 - Dt;
+   begin
+      T.Assert (V3 = V, "Adding and substracting 10 seconds should result in the same time");
+      T.Assert (V2 > V, "Invalid comparison for time");
+      T.Assert (V3 < V2, "Invalid comparison for time");
+   end Test_Time_Add;
+
    package Caller is new AUnit.Test_Caller (Test);
 
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite) is
@@ -80,7 +95,9 @@ package body EL.Objects.Time.Tests is
       Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_Object - To_Time",
                                       Test_Time_Object'Access));
       Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_String - Cast_Time",
-                                      Test_Time_To_String'Access));
+        Test_Time_To_String'Access));
+      Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_String - Cast_Time",
+        Test_Time_Add'Access));
    end Add_Tests;
 
 end EL.Objects.Time.Tests;

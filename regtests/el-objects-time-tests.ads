@@ -26,5 +26,6 @@ package EL.Objects.Time.Tests is
 
    procedure Test_Time_Object (T : in out Test);
    procedure Test_Time_To_String (T : in out Test);
+   procedure Test_Time_Add (T : in out Test);
 
 end EL.Objects.Time.Tests;

@@ -190,19 +190,29 @@ package body EL.Testsuite is
                                 Test_Name      => "Color",
                                 Test_Values    => "BLACK,RED,GREEN,BLUE,YELLOW");
 
+   Epoch : constant Ada.Calendar.Time :=
+     Ada.Calendar.Time_Of (Year    => Year_Number'First,
+                           Month   => 1,
+                           Day     => 1,
+                           Seconds => 12 * 3600.0);
+
    function Time_Value (S : String) return Ada.Calendar.Time is
    begin
       return Ada.Calendar.Formatting.Value (S);
    end Time_Value;
 
    function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
+      T1 : constant Duration := Left - Epoch;
+      T2 : constant Duration := Right - Epoch;
    begin
-      return To_Ada_Time (To_Unix_Time (Left) + To_Unix_Time (Right));
+      return (T1 + T2) + Epoch;
    end "+";
 
    function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
+      T1 : constant Duration := Left - Epoch;
+      T2 : constant Duration := Right - Epoch;
    begin
-      return To_Ada_Time (To_Unix_Time (Left) - To_Unix_Time (Right));
+      return (T1 - T2) + Epoch;
    end "-";
 
    package Test_Time is new
