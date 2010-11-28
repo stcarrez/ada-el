@@ -201,6 +201,8 @@ package body EL.Testsuite is
       return Ada.Calendar.Formatting.Value (S);
    end Time_Value;
 
+   --  For the purpose of the time unit test, we need Time + Time operation even
+   --  if this does not really makes sense.
    function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
       T1 : constant Duration := Left - Epoch;
       T2 : constant Duration := Right - Epoch;
