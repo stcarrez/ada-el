@@ -315,6 +315,9 @@ package body EL.Expressions.Tests is
       M  : EL.Expressions.Method_Expression :=
         Create_Expression (Context => T.Context.all,
                            Expr    => "#{action.notify}");
+      E  : constant EL.Expressions.Expression :=
+        Create_Expression (Context => T.Context.all,
+                           Expr    => "#{action.notify}");
    begin
       T.Context.all.Set_Variable ("action", A1);
       A1.Count := 0;
@@ -328,6 +331,14 @@ package body EL.Expressions.Tests is
       Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
       Assert (T, "John" = A2.Person.Last_Name, "Name was not set");
+
+      --  Build the method expression from the expression
+      M := Create_Expression (Expr => E);
+
+      P.Last_Name := To_Unbounded_String ("Harry");
+      Proc_Action.Execute (M, Person (P.all), T.Context.all);
+
+      Assert (T, "Harry" = A2.Person.Last_Name, "Name was not set");
 
       M := Create_Expression (Context => T.Context.all,
                               Expr    => "#{action.notify2}");
@@ -392,6 +403,19 @@ package body EL.Expressions.Tests is
       --  Create a method expression with an invalid expression
       begin
          M := Create_Expression ("#{12+13}", T.Context.all);
+         Assert (T, False, "The Invalid_Expression exception was not raised");
+
+      exception
+         when EL.Expressions.Invalid_Expression =>
+            null;
+      end;
+
+      --  Create a method expression from a valid expression
+      declare
+         D : constant Expression := Create_Expression ("#{12+13}", T.Context.all);
+      begin
+         --  This should raise an Invalid_Expression exception
+         M := Create_Expression (D);
          Assert (T, False, "The Invalid_Expression exception was not raised");
 
       exception
