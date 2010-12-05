@@ -35,7 +35,7 @@ package body EL.Beans.Methods.Proc_1 is
    --  the signature.
    --  ------------------------------
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
-                      Param   : in Param1_Type;
+                      Param   : in out Param1_Type;
                       Context : in EL.Contexts.ELContext'Class) is
       Info   : constant Method_Info := Method.Get_Method_Info (Context);
    begin
@@ -65,7 +65,7 @@ package body EL.Beans.Methods.Proc_1 is
    --  ------------------------------
    package body Bind is
       procedure Method_Access (O  : access EL.Beans.Readonly_Bean'Class;
-                               P1 : Param1_Type) is
+                               P1 : in out Param1_Type) is
          Object : constant access Bean := Bean (O.all)'Access;
       begin
          Method (Object.all, P1);

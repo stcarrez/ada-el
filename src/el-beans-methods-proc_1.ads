@@ -26,7 +26,7 @@ package EL.Beans.Methods.Proc_1 is
    --  and with the given context.  The method signature is:
    --
    --   procedure F (Obj   : in out <Bean>;
-   --                Param : in Param1_Type);
+   --                Param : in out Param1_Type);
    --
    --  where <Bean> inherits from <b>Readonly_Bean</b>
    --  (See <b>Bind</b> package)
@@ -35,13 +35,13 @@ package EL.Beans.Methods.Proc_1 is
    --  the method expression does not exist or does not match
    --  the signature.
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
-		      Param   : in Param1_Type;
+		      Param   : in out Param1_Type;
 		      Context : in EL.Contexts.ELContext'Class);
 
    --  Function access to the proxy.
    type Proxy_Access is
       access procedure (O : access EL.Beans.Readonly_Bean'Class;
-			P : in Param1_Type);
+                        P : in out Param1_Type);
 
    --  The binding record which links the method name
    --  to the proxy function.
@@ -64,12 +64,12 @@ package EL.Beans.Methods.Proc_1 is
 
       --  The bean method to invoke
       with procedure Method (O  : in out Bean;
-			     P1 : in Param1_Type);
+                             P1 : in out Param1_Type);
    package Bind is
 
       --  Method that <b>Execute</b> will invoke.
       procedure Method_Access (O  : access EL.Beans.Readonly_Bean'Class;
-			       P1 : in Param1_Type);
+                               P1 : in out Param1_Type);
 
       F_NAME : aliased constant String := Name;
 
