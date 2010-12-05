@@ -160,6 +160,11 @@ package EL.Expressions is
                                Context : EL.Contexts.ELContext'Class)
                                return Method_Expression;
 
+   --  Create a Method_Expression from an expression.
+   --  Raises Invalid_Expression if the expression in not an lvalue.
+   function Create_Expression (Expr    : Expression'Class)
+                               return Method_Expression;
+
 private
 
    overriding

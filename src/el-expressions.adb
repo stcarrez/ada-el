@@ -260,4 +260,24 @@ package body EL.Expressions is
       return Expr;
    end Reduce_Expression;
 
+   --  ------------------------------
+   --  Create a Method_Expression from an expression.
+   --  Raises Invalid_Expression if the expression in not an lvalue.
+   --  ------------------------------
+   function Create_Expression (Expr    : Expression'Class)
+                               return Method_Expression is
+      use type EL.Expressions.Nodes.ELNode_Access;
+
+      Result : Method_Expression;
+      Node   : constant access EL.Expressions.Nodes.ELNode'Class := Expr.Node;
+   begin
+      --  The root of the method expression must be an ELValue node.
+      if Node = null or else not (Node.all in Nodes.ELValue'Class) then
+         raise Invalid_Expression with "Expression is not a method expression";
+      end if;
+      Util.Concurrent.Counters.Increment (Node.Ref_Counter);
+      Result.Node := Node.all'Unchecked_Access;
+      return Result;
+   end Create_Expression;
+
 end EL.Expressions;
