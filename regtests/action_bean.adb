@@ -44,7 +44,7 @@ package body Action_Bean is
    --  Sets the person.
    --  ------------------------------
    procedure Notify (Target : in out Action;
-		     Param  : in Test_Bean.Person) is
+                     Param  : in out Test_Bean.Person) is
    begin
       Target.Person := Param;
    end Notify;
@@ -65,7 +65,7 @@ package body Action_Bean is
    --  Action with one parameter
    --  ------------------------------
    procedure Print (Target : in out Action;
-		    Param  : in Test_Bean.Person) is
+                    Param  : in out Test_Bean.Person) is
    begin
       Target.Person := Param;
    end Print;

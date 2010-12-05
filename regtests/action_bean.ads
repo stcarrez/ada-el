@@ -45,7 +45,7 @@ package Action_Bean is
    --  Action with one parameter.
    --  Sets the person.
    procedure Notify (Target : in out Action;
-                     Param  : in Test_Bean.Person);
+                     Param  : in out Test_Bean.Person);
 
    --  Action with two parameters.
    --  Sets the person object and the counter.
@@ -55,7 +55,7 @@ package Action_Bean is
 
    --  Action with one parameter
    procedure Print (Target : in out Action;
-                    Param  : in Test_Bean.Person);
+                    Param  : in out Test_Bean.Person);
 
    --  Package to invoke an EL method with one <b>Person</b> as parameter.
    package Proc_Action is new EL.Beans.Methods.Proc_1 (Param1_Type => Test_Bean.Person);
