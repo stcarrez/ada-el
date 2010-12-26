@@ -53,8 +53,8 @@ AC_SUBST(EL_MICRO_VERSION)
 ##########################################
 
 AC_MSG_CHECKING([Ada Utility library (code.google.com/p/ada-util)])
-AC_ARG_WITH(util,
-AS_HELP_STRING([--with-util=x], [Path for the Ada Utility library (code.google.com/p/ada-util)]),
+AC_ARG_WITH(ada-util,
+AS_HELP_STRING([--with-ada-util=x], [Path for the Ada Utility library (code.google.com/p/ada-util)]),
 [
   UTIL_DIR=${withval}/
 ],

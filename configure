@@ -628,7 +628,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-with_util
+with_ada_util
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1250,7 +1250,7 @@ if test -n "$ac_init_help"; then
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-util=x           Path for the Ada Utility library
+  --with-ada-util=x       Path for the Ada Utility library
                           (code.google.com/p/ada-util)
 
 Some influential environment variables:
@@ -2899,9 +2899,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking Ada Utility library (code.google.com/p/ada-util)" >&5
 $as_echo_n "checking Ada Utility library (code.google.com/p/ada-util)... " >&6; }
 
-# Check whether --with-util was given.
-if test "${with_util+set}" = set; then :
-  withval=$with_util;
+# Check whether --with-ada-util was given.
+if test "${with_ada_util+set}" = set; then :
+  withval=$with_ada_util;
   UTIL_DIR=${withval}/
 
 else
