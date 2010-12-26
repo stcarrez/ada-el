@@ -74,5 +74,5 @@ EL_LIBDIR="lib"
 AC_SUBST(EL_LIBDIR)
 
 AC_OUTPUT(
-Makefile el.gpr
+Makefile el.gpr tests.gpr
 )

@@ -1,6 +1,8 @@
 with "config";
 with "aunit";
-with "el.gpr";
+with "@UTIL_DIR@util";
+with "@UTIL_DIR@testutil";
+with "el";
 
 project Tests is
 

@@ -85,7 +85,7 @@ package body EL.Objects.Discrete_Tests is
       pragma Unmodified (T);
 
       Pos, Next   : Natural;
-      Hash_Values : array (Test_Values'Range) of Hash_Type;
+      Hash_Values : array (Test_Values'Range) of Hash_Type := (others => 0);
       Nb_Hash     : Natural := 0;
    begin
       Pos := Test_Values'First;
