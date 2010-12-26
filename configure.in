@@ -47,6 +47,26 @@ AC_SUBST(EL_MAJOR_VERSION)
 AC_SUBST(EL_MINOR_VERSION)
 AC_SUBST(EL_MICRO_VERSION)
 
+
+##########################################
+# Ada Util library
+##########################################
+
+AC_MSG_CHECKING([Ada Utility library (code.google.com/p/ada-util)])
+AC_ARG_WITH(util,
+AS_HELP_STRING([--with-util=x], [Path for the Ada Utility library (code.google.com/p/ada-util)]),
+[
+  UTIL_DIR=${withval}/
+],
+[
+  UTIL_DIR=../util/
+])
+if test ! -f ${UTIL_DIR}/util.gpr; then
+   AC_MSG_ERROR([Ada Utility library not found in ${UTIL_DIR}])
+fi
+AC_MSG_RESULT(${UTIL_DIR})
+AC_SUBST(UTIL_DIR)
+
 EXEC_PREFIX="$prefix"
 AC_SUBST(EXEC_PREFIX)
 
