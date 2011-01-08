@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Beans.Methods.Proc_1 -- Procedure Binding with 1 argument
+--  EL.Methods.Func_1 -- Function Bindings with 1 argument
 --  Copyright (C) 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -18,15 +18,19 @@
 
 with EL.Expressions;
 with EL.Contexts;
+with Util.Beans.Methods;
+with Util.Beans.Basic;
 generic
    type Param1_Type (<>) is private;
-package EL.Beans.Methods.Proc_1 is
+   type Return_Type (<>) is private;
+package EL.Methods.Func_1 is
+
+   use Util.Beans.Methods;
 
    --  Execute the method describe by the method expression
    --  and with the given context.  The method signature is:
    --
-   --   procedure F (Obj   : in out <Bean>;
-   --                Param : in out Param1_Type);
+   --   function F (Obj : <Bean>; Param : Param1_Type) return Return_Type;
    --
    --  where <Bean> inherits from <b>Readonly_Bean</b>
    --  (See <b>Bind</b> package)
@@ -34,14 +38,14 @@ package EL.Beans.Methods.Proc_1 is
    --  Raises <b>Invalid_Method</b> if the method referenced by
    --  the method expression does not exist or does not match
    --  the signature.
-   procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
-		      Param   : in out Param1_Type;
-		      Context : in EL.Contexts.ELContext'Class);
+   function Execute (Method  : in EL.Expressions.Method_Expression'Class;
+                     Param   : in Param1_Type;
+                     Context : in EL.Contexts.ELContext'Class) return Return_Type;
 
    --  Function access to the proxy.
    type Proxy_Access is
-      access procedure (O : access EL.Beans.Readonly_Bean'Class;
-                        P : in out Param1_Type);
+      access function (O : in Util.Beans.Basic.Readonly_Bean'Class;
+                       P : in Param1_Type) return Return_Type;
 
    --  The binding record which links the method name
    --  to the proxy function.
@@ -60,16 +64,16 @@ package EL.Beans.Methods.Proc_1 is
       Name : String;
 
       --  The bean type
-      type Bean is new EL.Beans.Readonly_Bean with private;
+      type Bean is new Util.Beans.Basic.Readonly_Bean with private;
 
       --  The bean method to invoke
-      with procedure Method (O  : in out Bean;
-                             P1 : in out Param1_Type);
+      with function Method (O  : in Bean;
+                            P1 : in Param1_Type) return Return_Type;
    package Bind is
 
       --  Method that <b>Execute</b> will invoke.
-      procedure Method_Access (O  : access EL.Beans.Readonly_Bean'Class;
-                               P1 : in out Param1_Type);
+      function Method_Access (O  : in Util.Beans.Basic.Readonly_Bean'Class;
+                              P1 : in Param1_Type) return Return_Type;
 
       F_NAME : aliased constant String := Name;
 
@@ -80,4 +84,4 @@ package EL.Beans.Methods.Proc_1 is
                      Method => Method_Access'Access);
    end Bind;
 
-end EL.Beans.Methods.Proc_1;
+end EL.Methods.Func_1;

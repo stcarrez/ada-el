@@ -18,7 +18,7 @@
 with EL.Variables;
 with Ada.Finalization;
 
-private with EL.Objects.Maps;
+private with Util.Beans.Objects.Maps;
 package EL.Contexts.Default is
 
    --  ------------------------------
@@ -59,7 +59,7 @@ package EL.Contexts.Default is
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
-                           Value   : access EL.Beans.Readonly_Bean'Class);
+                           Value   : access Util.Beans.Basic.Readonly_Bean'Class);
 
    --  ------------------------------
    --  Default Resolver
@@ -71,21 +71,21 @@ package EL.Contexts.Default is
    overriding
    function Get_Value (Resolver : Default_ELResolver;
                        Context  : ELContext'Class;
-                       Base     : access EL.Beans.Readonly_Bean'Class;
-                       Name     : Unbounded_String) return Object;
+                       Base     : access Util.Beans.Basic.Readonly_Bean'Class;
+                       Name     : Unbounded_String) return EL.Objects.Object;
 
    --  Set the value associated with a base object and a given property.
    overriding
    procedure Set_Value (Resolver : in Default_ELResolver;
                         Context  : in ELContext'Class;
-                        Base     : access EL.Beans.Bean'Class;
+                        Base     : access Util.Beans.Basic.Bean'Class;
                         Name     : in Unbounded_String;
-                        Value    : in Object);
+                        Value    : in EL.Objects.Object);
 
    --  Register the value under the given name.
    procedure Register (Resolver : in out Default_ELResolver;
                        Name     : in Unbounded_String;
-                       Value    : access EL.Beans.Readonly_Bean'Class);
+                       Value    : access Util.Beans.Basic.Readonly_Bean'Class);
 
    --  Register the value under the given name.
    procedure Register (Resolver : in out Default_ELResolver;
@@ -103,8 +103,6 @@ private
 
    overriding
    procedure Finalize (Obj : in out Default_Context);
-
-   use EL.Beans;
 
    type Default_ELResolver is new ELResolver with record
       Map : EL.Objects.Maps.Map;

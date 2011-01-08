@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Objects.Enums -- Helper conversion for discrete types
+--  EL.Methods -- Bean methods
 --  Copyright (C) 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -16,19 +16,8 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-generic
-   type T is (<>);
+package EL.Methods is
 
-   --  When True, round the integer value held by the object before
-   --  converting it into the type T.
-   ROUND_VALUE : Boolean := False;
-package EL.Objects.Enums is
+   pragma Preelaborate;
 
-   --  Create an object from the given value.
-   function To_Object (Value : in T) return Object;
-
-   --  Convert the object into a value.
-   --  Raises Constraint_Error if the object cannot be converter to the target type.
-   function To_Value (Value : in EL.Objects.Object) return T;
-
-end EL.Objects.Enums;
+end EL.Methods;

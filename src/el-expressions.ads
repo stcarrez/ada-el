@@ -39,8 +39,8 @@ with Ada.Finalization;
 
 limited private with EL.Expressions.Nodes;
 with EL.Contexts;
-with EL.Beans;
-with EL.Beans.Methods;
+with Util.Beans.Methods;
+with Util.Beans.Basic;
 package EL.Expressions is
 
    pragma Preelaborate;
@@ -128,8 +128,8 @@ package EL.Expressions is
    type Method_Expression is new EL.Expressions.Expression with private;
 
    type Method_Info is record
-      Object  : access EL.Beans.Readonly_Bean'Class;
-      Binding : EL.Beans.Methods.Method_Binding_Access;
+      Object  : access Util.Beans.Basic.Readonly_Bean'Class;
+      Binding : Util.Beans.Methods.Method_Binding_Access;
    end record;
 
    --  Evaluate the method expression and return the object and method

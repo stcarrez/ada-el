@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Beans.Methods.Proc_2 -- Procedure Binding with 2 arguments
+--  EL.Methods.Proc_2 -- Procedure Binding with 2 arguments
 --  Copyright (C) 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -16,7 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-package body EL.Beans.Methods.Proc_2 is
+package body EL.Methods.Proc_2 is
 
    use EL.Expressions;
 
@@ -36,9 +36,9 @@ package body EL.Beans.Methods.Proc_2 is
    --  the signature.
    --  ------------------------------
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
-		      Param1  : in Param1_Type;
-		      Param2  : in Param2_Type;
-		      Context : in EL.Contexts.ELContext'Class) is
+                      Param1  : in Param1_Type;
+                      Param2  : in Param2_Type;
+                      Context : in EL.Contexts.ELContext'Class) is
       Info   : constant Method_Info := Method.Get_Method_Info (Context);
    begin
       if Info.Binding = null then
@@ -66,13 +66,13 @@ package body EL.Beans.Methods.Proc_2 is
    --  object to the target object type.
    --  ------------------------------
    package body Bind is
-      procedure Method_Access (O  : access EL.Beans.Readonly_Bean'Class;
-			       P1 : Param1_Type;
-			       P2 : Param2_Type) is
-	 Object : constant access Bean := Bean (O.all)'Access;
+      procedure Method_Access (O  : access Util.Beans.Basic.Readonly_Bean'Class;
+                               P1 : Param1_Type;
+                               P2 : Param2_Type) is
+         Object : constant access Bean := Bean (O.all)'Access;
       begin
-	 Method (Object.all, P1, P2);
+         Method (Object.all, P1, P2);
       end Method_Access;
    end Bind;
 
-end EL.Beans.Methods.Proc_2;
+end EL.Methods.Proc_2;

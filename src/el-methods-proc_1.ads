@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Beans.Methods.Proc_1 -- Procedure Binding with 1 argument
+--  EL.Methods.Proc_1 -- Procedure Binding with 1 argument
 --  Copyright (C) 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -16,16 +16,21 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-package body EL.Beans.Methods.Proc_1 is
+with EL.Expressions;
+with EL.Contexts;
+with Util.Beans.Methods;
+with Util.Beans.Basic;
+generic
+   type Param1_Type (<>) is private;
+package EL.Methods.Proc_1 is
 
-   use EL.Expressions;
+   use Util.Beans.Methods;
 
-   --  ------------------------------
    --  Execute the method describe by the method expression
    --  and with the given context.  The method signature is:
    --
    --   procedure F (Obj   : in out <Bean>;
-   --                Param : in Param1_Type);
+   --                Param : in out Param1_Type);
    --
    --  where <Bean> inherits from <b>Readonly_Bean</b>
    --  (See <b>Bind</b> package)
@@ -33,43 +38,50 @@ package body EL.Beans.Methods.Proc_1 is
    --  Raises <b>Invalid_Method</b> if the method referenced by
    --  the method expression does not exist or does not match
    --  the signature.
-   --  ------------------------------
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
                       Param   : in out Param1_Type;
-                      Context : in EL.Contexts.ELContext'Class) is
-      Info   : constant Method_Info := Method.Get_Method_Info (Context);
-   begin
-      if Info.Binding = null then
-         raise EL.Expressions.Invalid_Method with "Method not found";
-      end if;
+                      Context : in EL.Contexts.ELContext'Class);
 
-      --  If the binding has the wrong type, we are trying to invoke
-      --  a method with a different signature.
-      if not (Info.Binding.all in Binding'Class) then
-         raise EL.Expressions.Invalid_Method
-           with "Invalid signature for method '" & Info.Binding.Name.all & "'";
-      end if;
-      declare
-         Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
-      begin
-         Proxy.Method (Info.Object, Param);
-      end;
-   end Execute;
+   --  Function access to the proxy.
+   type Proxy_Access is
+      access procedure (O : access Util.Beans.Basic.Readonly_Bean'Class;
+                        P : in out Param1_Type);
 
-   --  ------------------------------
+   --  The binding record which links the method name
+   --  to the proxy function.
+   type Binding is new Method_Binding with record
+      Method : Proxy_Access;
+   end record;
+   type Binding_Access is access constant Binding;
+
    --  Proxy for the binding.
    --  The proxy declares the binding definition that links
    --  the name to the function and it implements the necessary
    --  object conversion to translate the <b>Readonly_Bean</b>
    --  object to the target object type.
-   --  ------------------------------
-   package body Bind is
-      procedure Method_Access (O  : access EL.Beans.Readonly_Bean'Class;
-                               P1 : in out Param1_Type) is
-         Object : constant access Bean := Bean (O.all)'Access;
-      begin
-         Method (Object.all, P1);
-      end Method_Access;
+   generic
+      --  Name of the method (as exposed in the EL expression)
+      Name : String;
+
+      --  The bean type
+      type Bean is new Util.Beans.Basic.Readonly_Bean with private;
+
+      --  The bean method to invoke
+      with procedure Method (O  : in out Bean;
+                             P1 : in out Param1_Type);
+   package Bind is
+
+      --  Method that <b>Execute</b> will invoke.
+      procedure Method_Access (O  : access Util.Beans.Basic.Readonly_Bean'Class;
+                               P1 : in out Param1_Type);
+
+      F_NAME : aliased constant String := Name;
+
+      --  The proxy binding that can be exposed through
+      --  the <b>Method_Bean</b> interface.
+      Proxy  : aliased constant Binding
+        := Binding '(Name => F_NAME'Access,
+                     Method => Method_Access'Access);
    end Bind;
 
-end EL.Beans.Methods.Proc_1;
+end EL.Methods.Proc_1;

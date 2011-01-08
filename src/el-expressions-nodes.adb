@@ -16,9 +16,8 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
-with EL.Beans;
 with EL.Variables;
-with EL.Beans.Methods;
+with Util.Beans.Methods;
 with Util.Strings;
 package body EL.Expressions.Nodes is
 
@@ -393,7 +392,7 @@ package body EL.Expressions.Nodes is
    function Get_Value (Expr    : ELValue;
                        Context : ELContext'Class) return Object is
       Var  : constant Object := Expr.Variable.Get_Value (Context);
-      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
+      Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
    begin
       if Bean /= null then
          return Bean.Get_Value (To_String (Expr.Name));
@@ -408,9 +407,9 @@ package body EL.Expressions.Nodes is
    function Is_Readonly (Node    : in ELValue;
                          Context : in ELContext'Class) return Boolean is
       Var  : constant Object := Node.Variable.Get_Value (Context);
-      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
+      Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
    begin
-      return Bean = null or else not (Bean.all in Beans.Bean'Class);
+      return Bean = null or else not (Bean.all in Util.Beans.Basic.Bean'Class);
    end Is_Readonly;
 
    --  ------------------------------
@@ -419,11 +418,11 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    function Get_Method_Info (Node    : in ELValue;
                              Context : in ELContext'Class) return Method_Info is
-      use EL.Beans.Methods;
+      use Util.Beans.Methods;
       use type Util.Strings.Name_Access;
 
       Var  : constant Object := Node.Variable.Get_Value (Context);
-      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
+      Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
       Name : constant String := To_String (Node.Name);
    begin
       if Bean = null then
@@ -459,11 +458,11 @@ package body EL.Expressions.Nodes is
    procedure Set_Value (Node    : in ELValue;
                         Context : in ELContext'Class;
                         Value   : in Objects.Object) is
-      use EL.Beans;
+      use Util.Beans;
       use type Util.Strings.Name_Access;
 
       Var  : constant Object := Node.Variable.Get_Value (Context);
-      Bean : constant access EL.Beans.Readonly_Bean'Class := To_Bean (Var);
+      Bean : constant access Basic.Readonly_Bean'Class := To_Bean (Var);
       Name : constant String := To_String (Node.Name);
    begin
       if Bean = null then
@@ -472,11 +471,11 @@ package body EL.Expressions.Nodes is
 
       --  If the bean is a method bean, get the methods that it exposes
       --  and look for the binding that matches our method name.
-      if not (Bean.all in EL.Beans.Bean'Class) then
+      if not (Bean.all in Basic.Bean'Class) then
          raise Invalid_Method with "Method '" & Name & "' not found";
       end if;
       declare
-         VBean : constant access Beans.Bean'Class := Beans.Bean'Class (Bean.all)'Unchecked_Access;
+         VBean : constant access Basic.Bean'Class := Basic.Bean'Class (Bean.all)'Unchecked_Access;
       begin
          VBean.Set_Value (Name, Value);
       end;
@@ -492,7 +491,7 @@ package body EL.Expressions.Nodes is
    begin
       if Var.Node = null then
          declare
-            Bean : constant access EL.Beans.Readonly_Bean'Class
+            Bean : constant access Util.Beans.Basic.Readonly_Bean'Class
               := To_Bean (Var.Value);
          begin
             if Bean /= null then

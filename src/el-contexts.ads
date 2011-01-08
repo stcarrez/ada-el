@@ -21,7 +21,7 @@
 --  a resolver whose role is to find variables given their name.
 
 with EL.Objects;
-with EL.Beans;
+with Util.Beans.Basic;
 with Ada.Strings.Unbounded;
 with EL.Functions;
 limited with EL.Variables;
@@ -45,15 +45,15 @@ package EL.Contexts is
    --  Get the value associated with a base object and a given property.
    function Get_Value (Resolver : ELResolver;
                        Context  : ELContext'Class;
-                       Base     : access EL.Beans.Readonly_Bean'Class;
-                       Name     : Unbounded_String) return Object is abstract;
+                       Base     : access Util.Beans.Basic.Readonly_Bean'Class;
+                       Name     : Unbounded_String) return EL.Objects.Object is abstract;
 
    --  Set the value associated with a base object and a given property.
    procedure Set_Value (Resolver : in ELResolver;
                         Context  : in ELContext'Class;
-                        Base     : access EL.Beans.Bean'Class;
+                        Base     : access Util.Beans.Basic.Bean'Class;
                         Name     : in Unbounded_String;
-                        Value    : in Object) is abstract;
+                        Value    : in EL.Objects.Object) is abstract;
 
    --  ------------------------------
    --  Expression Context

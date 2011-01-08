@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Beans.Methods.Func_1 -- Function Bindings with 1 argument
+--  EL.Methods.Func_1 -- Function Bindings with 1 argument
 --  Copyright (C) 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -16,7 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-package body EL.Beans.Methods.Func_1 is
+package body EL.Methods.Func_1 is
 
    use EL.Expressions;
 
@@ -63,7 +63,7 @@ package body EL.Beans.Methods.Func_1 is
    --  object to the target object type.
    --  ------------------------------
    package body Bind is
-      function Method_Access (O  : EL.Beans.Readonly_Bean'Class;
+      function Method_Access (O  : Util.Beans.Basic.Readonly_Bean'Class;
 			      P1 : Param1_Type) return Return_Type is
 	 Object : constant Bean        := Bean (O);
 	 Result : constant Return_Type := Method (Object, P1);
@@ -72,4 +72,4 @@ package body EL.Beans.Methods.Func_1 is
       end Method_Access;
    end Bind;
 
-end EL.Beans.Methods.Func_1;
+end EL.Methods.Func_1;

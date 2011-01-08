@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Beans.Methods.Func_Unbounded -- Pre-defined binding
+--  EL.Methods.Func_String -- Pre-defined binding
 --  Copyright (C) 2010 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -16,24 +16,23 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with Ada.Strings.Unbounded;
-with EL.Beans.Methods.Func_1;
+with EL.Methods.Func_1;
 
 --  This package provides the method bindings to invoke
 --  methods with the following signature:
 --
 --    function F (Object : <Bean>;
---                Param  : Unbounded_String)
---             return Unbounded_String;
+--                Param  : String)
+--             return String;
 --
 --  Example of call:
 --
 --    Ctx : ELContext := ...;
 --    M   : Method_Expression := ...;
---    A   : Unbounded_String  := ...;
+--    A   : String  := ...;
 --
---    R : Unbounded_String := Func_Unbounded.Execute (M, A, Ctx);
+--    R : String := Func_Unbounded.Execute (M, A, Ctx);
 --
-package EL.Beans.Methods.Func_Unbounded is
-  new EL.Beans.Methods.Func_1 (Param1_Type => Ada.Strings.Unbounded.Unbounded_String,
-                               Return_Type  => Ada.Strings.Unbounded.Unbounded_String);
+package EL.Methods.Func_String is
+  new EL.Methods.Func_1 (Param1_Type => String,
+                         Return_Type => String);
