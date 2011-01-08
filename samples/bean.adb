@@ -15,14 +15,15 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with EL.Beans.Factory;
-with EL.Beans.Methods.Func_String;
-with EL.Beans.Methods.Func_Unbounded;
+with Util.Beans.Factory;
+with EL.Methods.Func_String;
+with EL.Methods.Func_Unbounded;
 with Ada.Unchecked_Deallocation;
 package body Bean is
 
    use EL.Objects;
-   use EL.Beans.Methods;
+   use Util.Beans.Methods;
+   use EL.Methods;
 
    FIRST_NAME : constant String := "firstName";
    LAST_NAME  : constant String := "lastName";
@@ -75,7 +76,7 @@ package body Bean is
       return Result;
    end Save;
 
-   function Compute (B  : EL.Beans.Bean'Class;
+   function Compute (B  : Util.Beans.Basic.Bean'Class;
                      P1 : EL.Objects.Object) return EL.Objects.Object is
       P : Person := Person (B);
    begin
@@ -106,22 +107,22 @@ package body Bean is
                            Method      => Print,
                            Name        => "print");
 
-   type Bean_Definition is new EL.Beans.Factory.Bean_Definition with null record;
+   type Bean_Definition is new Util.Beans.Factory.Bean_Definition with null record;
 
    --  Create a bean.
    overriding
    function Create (Def : in Bean_Definition)
-                    return EL.Beans.Readonly_Bean_Access;
+                    return Util.Beans.Basic.Readonly_Bean_Access;
 
    --  Free the bean instance.
    overriding
    procedure Destroy (Def  : in Bean_Definition;
-                      Bean : in out EL.Beans.Readonly_Bean_Access);
+                      Bean : in out Util.Beans.Basic.Readonly_Bean_Access);
 
    --  Create a bean.
    overriding
    function Create (Def : in Bean_Definition)
-                    return EL.Beans.Readonly_Bean_Access is
+                    return Util.Beans.Basic.Readonly_Bean_Access is
      Result : Person_Access := new Person;
    begin
       return Result.all'Access;
@@ -130,7 +131,7 @@ package body Bean is
    --  Free the bean instance.
    overriding
    procedure Destroy (Def  : in Bean_Definition;
-                      Bean : in out EL.Beans.Readonly_Bean_Access) is
+                      Bean : in out Util.Beans.Basic.Readonly_Bean_Access) is
    begin
      null;
    end Destroy;
@@ -140,11 +141,11 @@ package body Bean is
                           Methods => (Save_Binding.Proxy'Access, null)
                           );
 
-   Binding_Array : aliased constant EL.Beans.Methods.Method_Binding_Array
+   Binding_Array : aliased constant Util.Beans.Methods.Method_Binding_Array
      := (Save_Binding.Proxy'Access, Print_Binding.Proxy'Access);
 
    function Get_Method_Bindings (From : in Person)
-                                 return EL.Beans.Methods.Method_Binding_Array_Access is
+                                 return Util.Beans.Methods.Method_Binding_Array_Access is
    begin
       return Binding_Array'Access;
    end Get_Method_Bindings;

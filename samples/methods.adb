@@ -23,15 +23,14 @@
 with EL.Expressions;
 with EL.Objects;
 with EL.Contexts.Default;
-with EL.Beans;
-with EL.Beans.Methods;
-with EL.Beans.Methods.Func_String;
+with EL.Methods;
+with EL.Methods.Func_String;
 with Ada.Text_IO;
 with Bean;
 procedure Methods is
 
    use Bean;
-   use EL.Beans.Methods;
+   use EL.Methods;
 
    Joe    : Person_Access := Create_Person ("Joe", "Smith", 12);
    Bill   : Person_Access := Create_Person ("Bill", "Johnson", 42);
