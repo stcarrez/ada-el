@@ -16,7 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with EL.Objects;
-with EL.Beans;
+with Util.Beans.Basic;
 with Ada.Strings.Unbounded;
 with Ada.Calendar;
 with Ada.Unchecked_Deallocation;
@@ -24,7 +24,7 @@ package Test_Bean is
 
    use Ada.Strings.Unbounded;
 
-   type Person is new EL.Beans.Bean with record
+   type Person is new Util.Beans.Basic.Bean with record
       Last_Name  : Unbounded_String;
       First_Name : Unbounded_String;
       Age        : Natural;

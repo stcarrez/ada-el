@@ -79,7 +79,7 @@ package body Action_Bean is
    package Print_Binding is
      new Proc_Action.Bind (Bean => Action, Method => Print, Name => "print");
 
-   Binding_Array : aliased constant EL.Beans.Methods.Method_Binding_Array
+   Binding_Array : aliased constant Util.Beans.Methods.Method_Binding_Array
      := (Notify_Binding.Proxy'Access,
 	 Print_Binding.Proxy'Access,
 	 Notify_Count_Binding.Proxy'Access);
@@ -88,7 +88,7 @@ package body Action_Bean is
    --  Get the EL method bindings exposed by the Action type.
    --  ------------------------------
    function Get_Method_Bindings (From : in Action)
-                                 return EL.Beans.Methods.Method_Binding_Array_Access is
+                                 return Util.Beans.Methods.Method_Binding_Array_Access is
       pragma Unreferenced (From);
    begin
       return Binding_Array'Access;

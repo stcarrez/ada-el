@@ -19,13 +19,11 @@
 with AUnit.Test_Caller;
 with EL.Expressions;
 with EL.Objects;
-with EL.Objects.Enums;
-with EL.Objects.Time;
+--  with EL.Objects.Enums;
+--  with EL.Objects.Time;
 with EL.Contexts;
 with EL.Contexts.Default;
 with Ada.Calendar;
-with EL.Objects.Discrete_Tests;
-with EL.Objects.Time.Tests;
 with Ada.Calendar.Formatting;
 with Ada.Calendar.Conversions;
 with Interfaces.C;
@@ -36,13 +34,13 @@ package body EL.Testsuite is
    use EL.Objects;
    use Ada.Calendar;
    use Ada.Calendar.Conversions;
-
-   function "+" (Left, Right : Boolean) return Boolean;
-   function "-" (Left, Right : Boolean) return Boolean;
-
-   function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
-   function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
-   function Time_Value (S : String) return Ada.Calendar.Time;
+--
+--     function "+" (Left, Right : Boolean) return Boolean;
+--     function "-" (Left, Right : Boolean) return Boolean;
+--
+--     function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
+--     function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
+--     function Time_Value (S : String) return Ada.Calendar.Time;
 
    --  ------------------------------
    --  Test object integer
@@ -120,135 +118,6 @@ package body EL.Testsuite is
 
    end Test_Expression;
 
-   package Test_Integer is new
-     EL.Objects.Discrete_Tests (Test_Type      => Integer,
-                                To_Type        => EL.Objects.To_Integer,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Integer'Value,
-                                Test_Name      => "Integer",
-                                Test_Values    => "-100,1,0,1,1000");
-
-   package Test_Long_Integer is new
-     EL.Objects.Discrete_Tests (Test_Type      => Long_Integer,
-                                To_Type        => EL.Objects.To_Long_Integer,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Long_Integer'Value,
-                                Test_Name      => "Long_Integer",
-                                Test_Values    => "-100,1,0,1,1000");
-
-   package Test_Long_Long_Integer is new
-     EL.Objects.Discrete_Tests (Test_Type      => Long_Long_Integer,
-                                To_Type        => EL.Objects.To_Long_Long_Integer,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Long_Long_Integer'Value,
-                                Test_Name      => "Long_Long_Integer",
-                                Test_Values => "-10000000000000,1,0,1,1000_000_000_000");
-
-   function "-" (Left, Right : Boolean) return Boolean is
-   begin
-      return Left and Right;
-   end "-";
-
-   function "+" (Left, Right : Boolean) return Boolean is
-   begin
-      return Left or Right;
-   end "+";
-
-   package Test_Boolean is new
-     EL.Objects.Discrete_Tests (Test_Type      => Boolean,
-                                To_Type        => EL.Objects.To_Boolean,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Boolean'Value,
-                                Test_Name      => "Boolean",
-                                Test_Values    => "false,true");
-
-   type Color is (WHITE, BLACK, RED, GREEN, BLUE, YELLOW);
-
-   package Color_Object is new EL.Objects.Enums (Color, ROUND_VALUE => True);
-
-   function "-" (Left, Right : Color) return Color is
-      N : constant Integer := Color'Pos (Left) - Color'Pos (Right);
-   begin
-      if N >= 0 then
-         return Color'Val ((Color'Pos (WHITE) + N) mod 6);
-      else
-         return Color'Val ((Color'Pos (WHITE) - N) mod 6);
-      end if;
-   end "-";
-
-   function "+" (Left, Right : Color) return Color is
-      N : constant Integer := Color'Pos (Left) + Color'Pos (Right);
-   begin
-      return Color'Val ((Color'Pos (WHITE) + N) mod 6);
-   end "+";
-
-   package Test_Enum is new
-     EL.Objects.Discrete_Tests (Test_Type      => Color,
-                                To_Type        => Color_Object.To_Value,
-                                To_Object_Test => Color_Object.To_Object,
-                                Value          => Color'Value,
-                                Test_Name      => "Color",
-                                Test_Values    => "BLACK,RED,GREEN,BLUE,YELLOW");
-
-   Epoch : constant Ada.Calendar.Time :=
-     Ada.Calendar.Time_Of (Year    => Year_Number'First,
-                           Month   => 1,
-                           Day     => 1,
-                           Seconds => 12 * 3600.0);
-
-   function Time_Value (S : String) return Ada.Calendar.Time is
-   begin
-      return Ada.Calendar.Formatting.Value (S);
-   end Time_Value;
-
-   --  For the purpose of the time unit test, we need Time + Time operation even
-   --  if this does not really makes sense.
-   function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
-      T1 : constant Duration := Left - Epoch;
-      T2 : constant Duration := Right - Epoch;
-   begin
-      return (T1 + T2) + Epoch;
-   end "+";
-
-   function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time is
-      T1 : constant Duration := Left - Epoch;
-      T2 : constant Duration := Right - Epoch;
-   begin
-      return (T1 - T2) + Epoch;
-   end "-";
-
-   package Test_Time is new
-     EL.Objects.Discrete_Tests (Test_Type      => Ada.Calendar.Time,
-                                To_Type        => EL.Objects.Time.To_Time,
-                                To_Object_Test => EL.Objects.Time.To_Object,
-                                Value          => Time_Value,
-                                Test_Name      => "Time",
-                                Test_Values => "1970-03-04 12:12:00,1975-05-04 13:13:10");
-
-   package Test_Float is new
-     EL.Objects.Discrete_Tests (Test_Type      => Float,
-                                To_Type        => EL.Objects.To_Float,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Float'Value,
-                                Test_Name      => "Float",
-                                Test_Values    => "1.2,3.3,-3.3");
-
-   package Test_Long_Float is new
-     EL.Objects.Discrete_Tests (Test_Type      => Long_Float,
-                                To_Type        => EL.Objects.To_Long_Float,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Long_Float'Value,
-                                Test_Name      => "Long_Float",
-                                Test_Values    => "1.2,3.3,-3.3");
-
-   package Test_Long_Long_Float is new
-     EL.Objects.Discrete_Tests (Test_Type      => Long_Long_Float,
-                                To_Type        => EL.Objects.To_Long_Long_Float,
-                                To_Object_Test => EL.Objects.To_Object,
-                                Value          => Long_Long_Float'Value,
-                                Test_Name      => "Long_Long_Float",
-                                Test_Values    => "1.2,3.3,-3.3");
-
    package Caller is new AUnit.Test_Caller (Test);
 
    Tests : aliased Test_Suite;
@@ -259,16 +128,6 @@ package body EL.Testsuite is
       Ret.Add_Test (Caller.Create ("Test To_Object (Integer)",
                                    Test_To_Object_Integer'Access));
       Ret.Add_Test (Caller.Create ("Test Expressions", Test_Expression'Access));
-      Test_Boolean.Add_Tests (Ret);
-      Test_Integer.Add_Tests (Ret);
-      Test_Long_Integer.Add_Tests (Ret);
-      Test_Long_Long_Integer.Add_Tests (Ret);
-      Test_Time.Add_Tests (Ret);
-      Test_Float.Add_Tests (Ret);
-      Test_Long_Float.Add_Tests (Ret);
-      Test_Long_Long_Float.Add_Tests (Ret);
-      Test_Enum.Add_Tests (Ret);
-      EL.Objects.Time.Tests.Add_Tests (Ret);
       EL.Expressions.Tests.Add_Tests (Ret);
       return Ret;
    end Suite;

@@ -70,7 +70,7 @@ package body Test_Bean is
 --        elsif Name = DATE then
 --           From.Date := To_Time (Value);
       else
-         raise EL.Beans.No_Value;
+         raise EL.Objects.No_Value;
       end if;
    end Set_Value;
 

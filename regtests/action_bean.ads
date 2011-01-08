@@ -16,15 +16,15 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with EL.Objects;
-with EL.Beans;
-with EL.Beans.Methods;
-with EL.Beans.Methods.Proc_1;
-with EL.Beans.Methods.Proc_2;
+with Util.Beans.Basic;
+with Util.Beans.Methods;
+with EL.Methods.Proc_1;
+with EL.Methods.Proc_2;
 with Test_Bean;
 with Ada.Unchecked_Deallocation;
 package Action_Bean is
 
-   type Action is new EL.Beans.Bean and EL.Beans.Methods.Method_Bean with record
+   type Action is new Util.Beans.Basic.Bean and Util.Beans.Methods.Method_Bean with record
       Person     : Test_Bean.Person;
       Count      : Natural;
    end record;
@@ -40,7 +40,7 @@ package Action_Bean is
 
    --  Get the EL method bindings exposed by the Action type.
    function Get_Method_Bindings (From : in Action)
-                                 return EL.Beans.Methods.Method_Binding_Array_Access;
+                                 return Util.Beans.Methods.Method_Binding_Array_Access;
 
    --  Action with one parameter.
    --  Sets the person.
@@ -58,12 +58,12 @@ package Action_Bean is
                     Param  : in out Test_Bean.Person);
 
    --  Package to invoke an EL method with one <b>Person</b> as parameter.
-   package Proc_Action is new EL.Beans.Methods.Proc_1 (Param1_Type => Test_Bean.Person);
+   package Proc_Action is new EL.Methods.Proc_1 (Param1_Type => Test_Bean.Person);
 
    --  Package to invoke an EL method with <b>Person</b> as parameter and a <b>Natural</b>.
    package Proc2_Action is
-     new EL.Beans.Methods.Proc_2 (Param1_Type => Test_Bean.Person,
-                                  Param2_Type => Natural);
+     new EL.Methods.Proc_2 (Param1_Type => Test_Bean.Person,
+                            Param2_Type => Natural);
 
    procedure Free is new Ada.Unchecked_Deallocation (Object => Action'Class,
                                                      Name   => Action_Access);
