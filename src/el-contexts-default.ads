@@ -19,6 +19,7 @@ with EL.Variables;
 with Ada.Finalization;
 
 private with Util.Beans.Objects.Maps;
+--  private with EL.Objects.Maps;  creates Assert_Failure sem_ch10.adb:2691
 package EL.Contexts.Default is
 
    --  ------------------------------
