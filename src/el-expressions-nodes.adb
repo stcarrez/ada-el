@@ -560,13 +560,24 @@ package body EL.Expressions.Nodes is
       if Expr.Func.Of_Type = F_1_ARG then
          return Expr.Func.Func1 (Arg1);
       end if;
+      if Expr.Arg2 = null then
+         raise Missing_Argument with "Missing argument 2";
+      end if;
       Arg2 := Expr.Arg2.Get_Value (Context);
       if Expr.Func.Of_Type = F_2_ARG then
          return Expr.Func.Func2 (Arg1, Arg2);
       end if;
+
+      if Expr.Arg3 = null then
+         raise Missing_Argument with "Missing argument 3";
+      end if;
       Arg3 := Expr.Arg3.Get_Value (Context);
       if Expr.Func.Of_Type = F_3_ARG then
          return Expr.Func.Func3 (Arg1, Arg2, Arg3);
+      end if;
+
+      if Expr.Arg4 = null then
+         raise Missing_Argument with "Missing argument 4";
       end if;
       Arg4 := Expr.Arg4.Get_Value (Context);
       return Expr.Func.Func4 (Arg1, Arg2, Arg3, Arg4);

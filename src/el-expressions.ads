@@ -57,6 +57,9 @@ package EL.Expressions is
    --  Exception raised when a method cannot be found.
    Invalid_Method : exception;
 
+   --  A parameter is missing in a function call.
+   Missing_Argument : exception;
+
    --  ------------------------------
    --  Expression
    --  ------------------------------
