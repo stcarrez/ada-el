@@ -42,6 +42,14 @@ package body EL.Expressions is
    end Get_Value;
 
    --  ------------------------------
+   --  Get the expression string that was parsed.
+   --  ------------------------------
+   function Get_Expression (Expr : in Expression) return String is
+   begin
+      return Ada.Strings.Unbounded.To_String (Expr.Expr);
+   end Get_Expression;
+
+   --  ------------------------------
    --  Set the value of the expression to the given object value.
    --  ------------------------------
    procedure Set_Value (Expr    : in Value_Expression;
@@ -90,6 +98,7 @@ package body EL.Expressions is
       if Node /= null then
          Result.Node := Node.all'Access;
       end if;
+      Result.Expr := Ada.Strings.Unbounded.To_Unbounded_String (Expr);
       return Result;
    end Create_Expression;
 
@@ -98,8 +107,8 @@ package body EL.Expressions is
    --  constant expressions.  The result expression is either another
    --  expression or a computed constant value.
    --  ------------------------------
-   function Reduce_Expression (Expr    : Expression;
-                               Context : ELContext'Class)
+   function Reduce_Expression (Expr    : in Expression;
+                               Context : in ELContext'Class)
                                return Expression is
       use EL.Expressions.Nodes;
       use Ada.Finalization;
@@ -111,8 +120,9 @@ package body EL.Expressions is
          Result : constant Reduction := Expr.Node.Reduce (Context);
       begin
          return Expression '(Controlled with
-                             Node => Result.Node,
-                             Value => Result.Value);
+                             Node  => Result.Node,
+                             Value => Result.Value,
+                             Expr  => Expr.Expr);
       end;
    end Reduce_Expression;
 
@@ -143,6 +153,7 @@ package body EL.Expressions is
          raise Invalid_Expression with "Expression is not a value expression";
       end if;
       Result.Node := Node.all'Access;
+      Result.Expr := Ada.Strings.Unbounded.To_Unbounded_String (Expr);
       return Result;
    end Create_Expression;
 
@@ -150,7 +161,7 @@ package body EL.Expressions is
    --  Create a Value_Expression from an expression.
    --  Raises Invalid_Expression if the expression in not an lvalue.
    --  ------------------------------
-   function Create_Expression (Expr : Expression'Class)
+   function Create_Expression (Expr : in Expression'Class)
                                return Value_Expression is
       use type EL.Expressions.Nodes.ELNode_Access;
 
@@ -163,6 +174,7 @@ package body EL.Expressions is
       end if;
       Util.Concurrent.Counters.Increment (Node.Ref_Counter);
       Result.Node := Node.all'Unchecked_Access;
+      Result.Expr := Expr.Expr;
       return Result;
    end Create_Expression;
 
@@ -205,8 +217,8 @@ package body EL.Expressions is
    --  Raises the <b>Invalid_Method</b> exception if the method
    --  cannot be resolved.
    --  ------------------------------
-   function Get_Method_Info (Expr    : Method_Expression;
-                             Context : ELContext'Class)
+   function Get_Method_Info (Expr    : in Method_Expression;
+                             Context : in ELContext'Class)
                              return Method_Info is
       use EL.Expressions.Nodes;
    begin
@@ -227,8 +239,8 @@ package body EL.Expressions is
    --  Raises <b>Invalid_Expression</b> if the expression is invalid.
    --  ------------------------------
    overriding
-   function Create_Expression (Expr    : String;
-                               Context : EL.Contexts.ELContext'Class)
+   function Create_Expression (Expr    : in String;
+                               Context : in EL.Contexts.ELContext'Class)
                                return Method_Expression is
      use type EL.Expressions.Nodes.ELNode_Access;
 
@@ -243,6 +255,7 @@ package body EL.Expressions is
          raise Invalid_Expression with "Expression is not a method expression";
       end if;
       Result.Node := Node.all'Access;
+      Result.Expr := Ada.Strings.Unbounded.To_Unbounded_String (Expr);
       return Result;
    end Create_Expression;
 
@@ -252,8 +265,8 @@ package body EL.Expressions is
    --  expression or a computed constant value.
    --  ------------------------------
    overriding
-   function Reduce_Expression (Expr    : Method_Expression;
-                               Context : EL.Contexts.ELContext'Class)
+   function Reduce_Expression (Expr    : in Method_Expression;
+                               Context : in EL.Contexts.ELContext'Class)
                                return Method_Expression is
       pragma Unreferenced (Context);
    begin
@@ -264,7 +277,7 @@ package body EL.Expressions is
    --  Create a Method_Expression from an expression.
    --  Raises Invalid_Expression if the expression in not an lvalue.
    --  ------------------------------
-   function Create_Expression (Expr    : Expression'Class)
+   function Create_Expression (Expr    : in Expression'Class)
                                return Method_Expression is
       use type EL.Expressions.Nodes.ELNode_Access;
 
@@ -277,6 +290,7 @@ package body EL.Expressions is
       end if;
       Util.Concurrent.Counters.Increment (Node.Ref_Counter);
       Result.Node := Node.all'Unchecked_Access;
+      Result.Expr := Expr.Expr;
       return Result;
    end Create_Expression;
 

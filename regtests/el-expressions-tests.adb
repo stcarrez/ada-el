@@ -100,6 +100,7 @@ package body EL.Expressions.Tests is
          T.Assert (To_String (V2) = Expect,
                    "Reduce produced incorrect result: " & To_String (V2));
       end;
+      T.Assert (Expr, E.Get_Expression, "Invalid expression stored");
    end Check;
 
    --  ------------------------------

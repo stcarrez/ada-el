@@ -36,6 +36,7 @@
 
 with EL.Objects;
 with Ada.Finalization;
+with Ada.Strings.Unbounded;
 
 limited private with EL.Expressions.Nodes;
 with EL.Contexts;
@@ -73,6 +74,9 @@ package EL.Expressions is
    --  Returns an object that holds a typed result.
    function Get_Value (Expr    : Expression;
                        Context : ELContext'Class) return Object;
+
+   --  Get the expression string that was parsed.
+   function Get_Expression (Expr : in Expression) return String;
 
    --  Parse an expression and return its representation ready for evaluation.
    --  The context is used to resolve the functions.  Variables will be
@@ -179,6 +183,7 @@ private
    type Expression is new Ada.Finalization.Controlled with record
       Node  : access EL.Expressions.Nodes.ELNode'Class := null;
       Value : EL.Objects.Object := EL.Objects.Null_Object;
+      Expr  : Ada.Strings.Unbounded.Unbounded_String;
    end record;
 
    type Value_Expression is new Expression with null record;
