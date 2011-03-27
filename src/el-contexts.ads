@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Contexts -- Contexts for evaluating an expression
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@
 with EL.Objects;
 with Util.Beans.Basic;
 with Ada.Strings.Unbounded;
+with Ada.Exceptions;
 with EL.Functions;
 limited with EL.Variables;
 package EL.Contexts is
@@ -59,7 +60,7 @@ package EL.Contexts is
    --  Expression Context
    --  ------------------------------
    --  Context information for expression evaluation.
-   type ELContext is interface;
+   type ELContext is limited interface;
    type ELContext_Access is access all ELContext'Class;
 
    --  Retrieves the ELResolver associated with this ELcontext.
@@ -83,5 +84,10 @@ package EL.Contexts is
    procedure Set_Function_Mapper (Context : in out ELContext;
                                   Mapper  : access EL.Functions.Function_Mapper'Class)
      is abstract;
+
+   --  Handle the exception during expression evaluation.  The handler can ignore the
+   --  exception or raise it.
+   procedure Handle_Exception (Context : in ELContext;
+                               Ex      : in Ada.Exceptions.Exception_Occurrence) is abstract;
 
 end EL.Contexts;

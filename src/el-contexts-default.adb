@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Contexts -- Default contexts for evaluating an expression
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -104,6 +104,78 @@ package body EL.Contexts.Default is
       end if;
       Context.Var_Mapper.Bind (Name, EL.Objects.To_Object (Value));
    end Set_Variable;
+
+   --  Handle the exception during expression evaluation.
+   overriding
+   procedure Handle_Exception (Context : in Default_Context;
+                               Ex      : in Ada.Exceptions.Exception_Occurrence) is
+   begin
+      null;
+   end Handle_Exception;
+
+   --  ------------------------------
+   --  Guarded Context
+   --  ------------------------------
+
+   --  ------------------------------
+   --  Retrieves the ELResolver associated with this ELcontext.
+   --  ------------------------------
+   overriding
+   function Get_Resolver (Context : in Guarded_Context) return ELResolver_Access is
+   begin
+      return Context.Context.Get_Resolver;
+   end Get_Resolver;
+
+   --  ------------------------------
+   --  Retrieves the VariableMapper associated with this ELContext.
+   --  ------------------------------
+   overriding
+   function Get_Variable_Mapper (Context : in Guarded_Context)
+                                 return access EL.Variables.VariableMapper'Class is
+   begin
+      return Context.Context.Get_Variable_Mapper;
+   end Get_Variable_Mapper;
+
+   --  ------------------------------
+   --  Retrieves the FunctionMapper associated with this ELContext.
+   --  The FunctionMapper is only used when parsing an expression.
+   --  ------------------------------
+   overriding
+   function Get_Function_Mapper (Context : in Guarded_Context)
+                                 return EL.Functions.Function_Mapper_Access is
+   begin
+      return Context.Context.Get_Function_Mapper;
+   end Get_Function_Mapper;
+
+   --  ------------------------------
+   --  Set the function mapper to be used when parsing an expression.
+   --  ------------------------------
+   overriding
+   procedure Set_Function_Mapper (Context : in out Guarded_Context;
+                                  Mapper  : access EL.Functions.Function_Mapper'Class) is
+   begin
+      Context.Context.Set_Function_Mapper (Mapper);
+   end Set_Function_Mapper;
+
+   --  ------------------------------
+   --  Set the VariableMapper associated with this ELContext.
+   --  ------------------------------
+   overriding
+   procedure Set_Variable_Mapper (Context : in out Guarded_Context;
+                                  Mapper  : access EL.Variables.VariableMapper'Class) is
+   begin
+      Context.Context.Set_Variable_Mapper (Mapper);
+   end Set_Variable_Mapper;
+
+   --  ------------------------------
+   --  Handle the exception during expression evaluation.
+   --  ------------------------------
+   overriding
+   procedure Handle_Exception (Context : in Guarded_Context;
+                               Ex      : in Ada.Exceptions.Exception_Occurrence) is
+   begin
+      Context.Handler.all (Ex);
+   end Handle_Exception;
 
    --  ------------------------------
    --  Get the value associated with a base object and a given property.
