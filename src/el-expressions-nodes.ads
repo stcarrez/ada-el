@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,15 +45,19 @@ private package EL.Expressions.Nodes is
       Value : EL.Objects.Object;
    end record;
 
+   --  Evaluate a node on a given context.  If
+   function Get_Safe_Value (Expr    : in ELNode;
+                            Context : in ELContext'Class) return Object;
+
    --  Evaluate a node on a given context.
-   function Get_Value (Expr    : ELNode;
-                       Context : ELContext'Class) return Object is abstract;
+   function Get_Value (Expr    : in ELNode;
+                       Context : in ELContext'Class) return Object is abstract;
 
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
-   function Reduce (Expr    : ELNode;
-                    Context : ELContext'Class) return Reduction is abstract;
+   function Reduce (Expr    : in ELNode;
+                    Context : in ELContext'Class) return Reduction is abstract;
 
    --  Delete the expression tree (calls Delete (ELNode_Access) recursively).
    procedure Delete (Node : in out ELNode) is abstract;

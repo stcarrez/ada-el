@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,20 @@ package body EL.Expressions.Nodes is
 
    use EL.Variables;
    use Util.Concurrent;
+
+   --  ------------------------------
+   --  Evaluate a node on a given context.  If
+   --  ------------------------------
+   function Get_Safe_Value (Expr    : in ELNode;
+                            Context : in ELContext'Class) return Object is
+   begin
+      return ELNode'Class (Expr).Get_Value (Context);
+
+   exception
+      when E : others =>
+         Context.Handle_Exception (E);
+         return EL.Objects.Null_Object;
+   end Get_Safe_Value;
 
    --  ------------------------------
    --  Evaluate a node on a given context.
@@ -49,14 +63,15 @@ package body EL.Expressions.Nodes is
       end;
 
    exception
-      when EL.Variables.No_Variable =>
+      when E : EL.Variables.No_Variable =>
          --  If we can't find the variable, empty predicate must return true.
          if Expr.Kind = EL_EMPTY then
             return To_Object (True);
          end if;
 
          --  For others, this is an error.
-         raise;
+         Context.Handle_Exception (E);
+         return EL.Objects.Null_Object;
    end Get_Value;
 
    --  ------------------------------
@@ -103,8 +118,8 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    function Get_Value (Expr    : ELBinary;
                        Context : ELContext'Class) return Object is
-      Left  : constant Object := Expr.Left.Get_Value (Context);
-      Right : constant Object := Expr.Right.Get_Value (Context);
+      Left  : constant Object := Expr.Left.Get_Safe_Value (Context);
+      Right : constant Object := Expr.Right.Get_Safe_Value (Context);
    begin
       case Expr.Kind is
          when EL_EQ =>
@@ -147,6 +162,13 @@ package body EL.Expressions.Nodes is
             return To_Object (To_Boolean (Left) or To_Boolean (Right));
 
          when EL_CONCAT =>
+            --  If one of the object is null, ignore it.
+            if Is_Null (Left) then
+               return Right;
+            end if;
+            if Is_Null (Right) then
+               return Left;
+            end if;
             if Get_Type (Left) = TYPE_WIDE_STRING
               or Get_Type (Right) = TYPE_WIDE_STRING then
                return To_Object (To_Wide_Wide_String (Left)
@@ -161,9 +183,11 @@ package body EL.Expressions.Nodes is
       end case;
    end Get_Value;
 
+   --  ------------------------------
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
+   --  ------------------------------
    overriding
    function Reduce (Expr    : ELBinary;
                     Context : ELContext'Class) return Reduction is
@@ -256,12 +280,12 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    function Get_Value (Expr    : ELTernary;
                        Context : ELContext'Class) return Object is
-      Cond : constant Object := Expr.Cond.Get_Value (Context);
+      Cond : constant Object := Expr.Cond.Get_Safe_Value (Context);
    begin
       if To_Boolean (Cond) then
-         return Expr.Left.Get_Value (Context);
+         return Expr.Left.Get_Safe_Value (Context);
       else
-         return Expr.Right.Get_Value (Context);
+         return Expr.Right.Get_Safe_Value (Context);
       end if;
    end Get_Value;
 
@@ -323,11 +347,23 @@ package body EL.Expressions.Nodes is
       Mapper   : constant access VariableMapper'Class := Context.Get_Variable_Mapper;
       Resolver : constant ELResolver_Access := Context.Get_Resolver;
    begin
+      --  Resolve using the variable mapper first.  If an exception is raised,
+      --  use the context Handle_Exception to give a chance to report custom errors (See ASF).
+      --  If the value can't be found and the Handle_Exception did not raised any exception,
+      --  return the Null object.
       if Mapper /= null then
-         declare
-            Value : constant Value_Expression := Mapper.Get_Variable (Expr.Name);
          begin
-            return Value.Get_Value (Context);
+            declare
+               Value : constant Value_Expression := Mapper.Get_Variable (Expr.Name);
+            begin
+               return Value.Get_Value (Context);
+            end;
+
+         exception
+            when E : No_Variable =>
+               if Resolver = null then
+                  raise;
+               end if;
          end;
       end if;
       if Resolver = null then
@@ -335,22 +371,13 @@ package body EL.Expressions.Nodes is
            with "Cannot resolve variable: '" & To_String (Expr.Name) & "'";
       end if;
       return Resolver.all.Get_Value (Context, null, Expr.Name);
-
-   exception
-      when No_Variable =>
-         if Resolver = null then
-            raise Invalid_Variable
-              with "Cannot resolve variable: '" & To_String (Expr.Name) & "'";
-         end if;
-         return Resolver.all.Get_Value (Context, null, Expr.Name);
-
-      when others =>
-         return EL.Objects.Null_Object;
    end Get_Value;
 
+   --  ------------------------------
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
+   --  ------------------------------
    overriding
    function Reduce (Expr    : ELVariable;
                     Context : ELContext'Class) return Reduction is
@@ -481,9 +508,11 @@ package body EL.Expressions.Nodes is
       end;
    end Set_Value;
 
+   --  ------------------------------
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
+   --  ------------------------------
    overriding
    function Reduce (Expr    : ELValue;
                     Context : ELContext'Class) return Reduction is
@@ -530,9 +559,11 @@ package body EL.Expressions.Nodes is
       return Expr.Value;
    end Get_Value;
 
+   --  ------------------------------
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
+   --  ------------------------------
    overriding
    function Reduce (Expr    : ELObject;
                     Context : ELContext'Class) return Reduction is
@@ -556,14 +587,14 @@ package body EL.Expressions.Nodes is
                        Context : ELContext'Class) return Object is
       Arg1, Arg2, Arg3, Arg4 : Object;
    begin
-      Arg1 := Expr.Arg1.Get_Value (Context);
+      Arg1 := Expr.Arg1.Get_Safe_Value (Context);
       if Expr.Func.Of_Type = F_1_ARG then
          return Expr.Func.Func1 (Arg1);
       end if;
       if Expr.Arg2 = null then
          raise Missing_Argument with "Missing argument 2";
       end if;
-      Arg2 := Expr.Arg2.Get_Value (Context);
+      Arg2 := Expr.Arg2.Get_Safe_Value (Context);
       if Expr.Func.Of_Type = F_2_ARG then
          return Expr.Func.Func2 (Arg1, Arg2);
       end if;
@@ -571,7 +602,7 @@ package body EL.Expressions.Nodes is
       if Expr.Arg3 = null then
          raise Missing_Argument with "Missing argument 3";
       end if;
-      Arg3 := Expr.Arg3.Get_Value (Context);
+      Arg3 := Expr.Arg3.Get_Safe_Value (Context);
       if Expr.Func.Of_Type = F_3_ARG then
          return Expr.Func.Func3 (Arg1, Arg2, Arg3);
       end if;
@@ -579,13 +610,15 @@ package body EL.Expressions.Nodes is
       if Expr.Arg4 = null then
          raise Missing_Argument with "Missing argument 4";
       end if;
-      Arg4 := Expr.Arg4.Get_Value (Context);
+      Arg4 := Expr.Arg4.Get_Safe_Value (Context);
       return Expr.Func.Func4 (Arg1, Arg2, Arg3, Arg4);
    end Get_Value;
 
+   --  ------------------------------
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
+   --  ------------------------------
    overriding
    function Reduce (Expr    : ELFunction;
                     Context : ELContext'Class) return Reduction is
@@ -688,12 +721,15 @@ package body EL.Expressions.Nodes is
 
    --  ------------------------------
    --  Create a literal number
+   --  ------------------------------
    function Create_Node (Value   : Boolean) return ELNode_Access is
    begin
       return new ELObject '(Value => To_Object (Value), Ref_Counter => Counters.ONE);
    end Create_Node;
 
+   --  ------------------------------
    --  Create a literal number
+   --  ------------------------------
    function Create_Node (Value   : Long_Long_Integer) return ELNode_Access is
    begin
       return new ELObject '(Value => To_Object (Value), Ref_Counter => Counters.ONE);
@@ -731,7 +767,9 @@ package body EL.Expressions.Nodes is
                            Ref_Counter => Counters.ONE);
    end Create_Value;
 
+   --  ------------------------------
    --  Create unary expressions
+   --  ------------------------------
    function Create_Node (Of_Type : Unary_Node;
                          Expr    : ELNode_Access) return ELNode_Access is
    begin
@@ -750,7 +788,9 @@ package body EL.Expressions.Nodes is
       return new ELUnary '(Kind => Of_Type, Node => Expr, Ref_Counter => Counters.ONE);
    end Create_Node;
 
+   --  ------------------------------
    --  Create binary expressions
+   --  ------------------------------
    function Create_Node (Of_Type : Binary_Node;
                          Left    : ELNode_Access;
                          Right   : ELNode_Access) return ELNode_Access is
@@ -759,7 +799,9 @@ package body EL.Expressions.Nodes is
                             Ref_Counter => Counters.ONE);
    end Create_Node;
 
+   --  ------------------------------
    --  Create a ternary expression.
+   --  ------------------------------
    function Create_Node (Cond  : ELNode_Access;
                          Left  : ELNode_Access;
                          Right : ELNode_Access) return ELNode_Access is
@@ -768,7 +810,9 @@ package body EL.Expressions.Nodes is
                              Ref_Counter => Counters.ONE);
    end Create_Node;
 
+   --  ------------------------------
    --  Create a function call expression
+   --  ------------------------------
    function Create_Node (Func  : Function_Access;
                          Arg1  : ELNode_Access) return ELNode_Access is
    begin
@@ -778,7 +822,9 @@ package body EL.Expressions.Nodes is
                               others      => null);
    end Create_Node;
 
+   --  ------------------------------
    --  Create a function call expression
+   --  ------------------------------
    function Create_Node (Func  : Function_Access;
                          Arg1  : ELNode_Access;
                          Arg2  : ELNode_Access) return ELNode_Access is
@@ -790,7 +836,9 @@ package body EL.Expressions.Nodes is
                               others      => null);
    end Create_Node;
 
+   --  ------------------------------
    --  Create a function call expression
+   --  ------------------------------
    function Create_Node (Func  : Function_Access;
                          Arg1  : ELNode_Access;
                          Arg2  : ELNode_Access;
@@ -804,7 +852,9 @@ package body EL.Expressions.Nodes is
                               others      => null);
    end Create_Node;
 
+   --  ------------------------------
    --  Create a function call expression
+   --  ------------------------------
    function Create_Node (Func  : Function_Access;
                          Arg1  : ELNode_Access;
                          Arg2  : ELNode_Access;
@@ -819,8 +869,10 @@ package body EL.Expressions.Nodes is
                               Arg4        => Arg4);
    end Create_Node;
 
+   --  ------------------------------
    --  Delete the expression tree.  Free the memory allocated by nodes
    --  of the expression tree.  Clears the node pointer.
+   --  ------------------------------
    procedure Delete (Node : in out ELNode_Access) is
       procedure Free is new Ada.Unchecked_Deallocation (Object => ELNode'Class,
                                                         Name   => ELNode_Access);
