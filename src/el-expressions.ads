@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Language
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,6 +69,9 @@ package EL.Expressions is
 
    --  Check whether the expression is a holds a constant value.
    function Is_Constant (Expr : Expression'Class) return Boolean;
+
+   --  Returns True if the expression is empty (no constant value and no expression).
+   function Is_Null (Expr : in Expression'Class) return Boolean;
 
    --  Get the value of the expression using the given expression context.
    --  Returns an object that holds a typed result.

@@ -360,7 +360,7 @@ package body EL.Expressions.Nodes is
             end;
 
          exception
-            when E : No_Variable =>
+            when No_Variable =>
                if Resolver = null then
                   raise;
                end if;
