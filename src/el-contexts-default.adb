@@ -102,7 +102,7 @@ package body EL.Contexts.Default is
          Context.Var_Mapper := new EL.Variables.Default.Default_Variable_Mapper;
          Context.Var_Mapper_Created := True;
       end if;
-      Context.Var_Mapper.Bind (Name, EL.Objects.To_Object (Value));
+      Context.Var_Mapper.Bind (Name, EL.Objects.To_Object (Value, EL.Objects.STATIC));
    end Set_Variable;
 
    --  Handle the exception during expression evaluation.
@@ -240,9 +240,9 @@ package body EL.Contexts.Default is
    overriding
    procedure Finalize (Obj : in out Default_Context) is
    begin
-     if Obj.Var_Mapper_Created then
-        Free (Obj.Var_Mapper);
-     end if;
+      if Obj.Var_Mapper_Created then
+         Free (Obj.Var_Mapper);
+      end if;
    end Finalize;
 
 end EL.Contexts.Default;
