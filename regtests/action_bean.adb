@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  Action_Bean - Simple bean with methods that can be called from EL
---  Copyright (C) 2010 Stephane Carrez
+--  Copyright (C) 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,8 +54,8 @@ package body Action_Bean is
    --  Sets the person object and the counter.
    --  ------------------------------
    procedure Notify (Target : in out Action;
-		     Param  : in Test_Bean.Person;
-		     Count  : in Natural) is
+                     Param  : in Test_Bean.Person;
+                     Count  : in Natural) is
    begin
       Target.Person := Param;
       Target.Count  := Count;
@@ -81,8 +81,8 @@ package body Action_Bean is
 
    Binding_Array : aliased constant Util.Beans.Methods.Method_Binding_Array
      := (Notify_Binding.Proxy'Access,
-	 Print_Binding.Proxy'Access,
-	 Notify_Count_Binding.Proxy'Access);
+         Print_Binding.Proxy'Access,
+         Notify_Count_Binding.Proxy'Access);
 
    --  ------------------------------
    --  Get the EL method bindings exposed by the Action type.

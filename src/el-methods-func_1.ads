@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Func_1 -- Function Bindings with 1 argument
---  Copyright (C) 2010 Stephane Carrez
+--  Copyright (C) 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,8 +44,8 @@ package EL.Methods.Func_1 is
 
    --  Function access to the proxy.
    type Proxy_Access is
-      access function (O : in Util.Beans.Basic.Readonly_Bean'Class;
-                       P : in Param1_Type) return Return_Type;
+     access function (O : in Util.Beans.Basic.Readonly_Bean'Class;
+                      P : in Param1_Type) return Return_Type;
 
    --  The binding record which links the method name
    --  to the proxy function.

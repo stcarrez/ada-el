@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  Parser -- Parser for Expression Language
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ package body EL.Expressions.Parser is
                        T_LT, T_LE, T_GT, T_GE, T_NE, T_EQ, T_EMPTY,
                        T_NOT,
                        T_OR, T_AND, T_LOGICAL_AND,
-                       T_MINUS, T_PLUS, T_MUL, T_Div, T_MOD, T_DOT,
+                       T_MINUS, T_PLUS, T_MUL, T_DIV, T_MOD, T_DOT,
                        T_QUESTION, T_COLON, T_COMMA,
                        T_NUMBER, T_LITERAL, T_NAME,
                        T_TRUE, T_FALSE, T_NULL,
@@ -58,6 +58,10 @@ package body EL.Expressions.Parser is
      return Unbounded_String;
 
    procedure Put_Back (P : in out Parser; Token : in Token_Type);
+
+   --  Parse a literal or an expression
+   procedure Parse_EL (P      : in out Parser;
+                       Result : out ELNode_Access);
 
    procedure Parse_Choice (P : in out Parser; Result : out ELNode_Access);
    procedure Parse_Or (P : in out Parser; Result : out ELNode_Access);
@@ -104,7 +108,7 @@ package body EL.Expressions.Parser is
    --  ------------------------------
    --  Parse a literal or an expression
    --  ------------------------------
-   procedure Parse_EL (P : in out Parser;
+   procedure Parse_EL (P      : in out Parser;
                        Result : out ELNode_Access) is
       Literal, Node : ELNode_Access;
       C : Wide_Wide_Character;
@@ -417,7 +421,7 @@ package body EL.Expressions.Parser is
                Parse_Unary (P, Right);
                Result := Create_Node (EL_MUL, Result, Right);
 
-            when T_Div =>
+            when T_DIV =>
                Parse_Unary (P, Right);
                Result := Create_Node (EL_DIV, Result, Right);
 
@@ -681,7 +685,7 @@ package body EL.Expressions.Parser is
 
                when 'd' | 'D' =>
                   if P.Token = "div" then
-                     Token := T_Div;
+                     Token := T_DIV;
                      return;
                   end if;
 

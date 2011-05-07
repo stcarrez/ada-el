@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Proc_2 -- Procedure Binding with 2 arguments
---  Copyright (C) 2010 Stephane Carrez
+--  Copyright (C) 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -72,14 +72,14 @@ package EL.Methods.Proc_2 is
 
       --  The bean method to invoke
       with procedure Method (O  : in out Bean;
-			     P1 : in Param1_Type;
-			     P2 : in Param2_Type);
+                             P1 : in Param1_Type;
+                             P2 : in Param2_Type);
    package Bind is
 
       --  Method that <b>Execute</b> will invoke.
       procedure Method_Access (O  : access Util.Beans.Basic.Readonly_Bean'Class;
-			       P1 : in Param1_Type;
-			       P2 : in Param2_Type);
+                               P1 : in Param1_Type;
+                               P2 : in Param2_Type);
 
       F_NAME : aliased constant String := Name;
 

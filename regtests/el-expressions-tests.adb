@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL testsuite - EL Testsuite
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +39,14 @@ package body EL.Expressions.Tests is
 
    LOG : constant Util.Log.Loggers.Logger := Loggers.Create ("Tests");
 
-   procedure Free is new Ada.Unchecked_Deallocation (Object => EL.Contexts.Default.Default_Context'Class,
-                                                     Name   => EL.Contexts.Default.Default_Context_Access);
+   procedure Free is
+     new Ada.Unchecked_Deallocation (Object => EL.Contexts.Default.Default_Context'Class,
+                                     Name   => EL.Contexts.Default.Default_Context_Access);
+
+   function Format1 (Arg : EL.Objects.Object) return EL.Objects.Object;
+   function Format2 (Arg1, Arg2 : EL.Objects.Object) return EL.Objects.Object;
+   function Format3 (Arg1, Arg2, Arg3 : EL.Objects.Object) return EL.Objects.Object;
+   function Format4 (Arg1, Arg2, Arg3, Arg4 : EL.Objects.Object) return EL.Objects.Object;
 
    procedure Check_Error (T    : in out Test'Class;
                           Expr : in String);
@@ -229,7 +235,7 @@ package body EL.Expressions.Tests is
    function Format2 (Arg1, Arg2 : EL.Objects.Object) return EL.Objects.Object is
       S1 : constant String := To_String (Arg1);
       S2 : constant String := To_String (Arg2);
-      begin
+   begin
       return To_Object ("[" & S1 & "-" & S2 & "]");
    end Format2;
 
@@ -353,8 +359,8 @@ package body EL.Expressions.Tests is
       end loop;
 
       Free (P);
-      Free (A1);
-      Free (A2);
+--        Free (A1);
+--        Free (A2);
    end Test_Method_Evaluation;
 
    --  ------------------------------
@@ -425,8 +431,8 @@ package body EL.Expressions.Tests is
       end;
 
       Free (P);
-      Free (A1);
-      Free (A2);
+--        Free (A1);
+--        Free (A2);
    end Test_Invalid_Method;
 
    --  ------------------------------

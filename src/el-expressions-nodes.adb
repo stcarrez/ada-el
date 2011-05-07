@@ -460,7 +460,7 @@ package body EL.Expressions.Nodes is
       --  and look for the binding that matches our method name.
       if Bean.all in Method_Bean'Class then
          declare
-            MBean    : constant Method_Bean_Access := Method_Bean (Bean.all)'Access;
+            MBean    : constant access Method_Bean'Class := Method_Bean (Bean.all)'Access;
             Bindings : constant Method_Binding_Array_Access := MBean.Get_Method_Bindings;
             Result   : Method_Info;
          begin

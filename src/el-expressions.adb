@@ -251,10 +251,10 @@ package body EL.Expressions is
    function Create_Expression (Expr    : in String;
                                Context : in EL.Contexts.ELContext'Class)
                                return Method_Expression is
-     use type EL.Expressions.Nodes.ELNode_Access;
+      use type EL.Expressions.Nodes.ELNode_Access;
 
-     Result : Method_Expression;
-     Node   : EL.Expressions.Nodes.ELNode_Access;
+      Result : Method_Expression;
+      Node   : EL.Expressions.Nodes.ELNode_Access;
    begin
       EL.Expressions.Parser.Parse (Expr => Expr, Context => Context, Result => Node);
 

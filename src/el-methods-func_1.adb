@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Func_1 -- Function Bindings with 1 argument
---  Copyright (C) 2010 Stephane Carrez
+--  Copyright (C) 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,19 +39,19 @@ package body EL.Methods.Func_1 is
       Info   : constant Method_Info := Method.Get_Method_Info (Context);
    begin
       if Info.Binding = null then
-	 raise EL.Expressions.Invalid_Method with "Method not found";
+         raise EL.Expressions.Invalid_Method with "Method not found";
       end if;
 
       --  If the binding has the wrong type, we are trying to invoke
       --  a method with a different signature.
       if not (Info.Binding.all in Binding'Class) then
-	 raise EL.Expressions.Invalid_Method
-	   with "Invalid signature for method '" & Info.Binding.Name.all & "'";
+         raise EL.Expressions.Invalid_Method
+         with "Invalid signature for method '" & Info.Binding.Name.all & "'";
       end if;
       declare
-	 Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
+         Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
       begin
-	 return Proxy.Method (Info.Object.all, Param);
+         return Proxy.Method (Info.Object.all, Param);
       end;
    end Execute;
 
@@ -64,11 +64,11 @@ package body EL.Methods.Func_1 is
    --  ------------------------------
    package body Bind is
       function Method_Access (O  : Util.Beans.Basic.Readonly_Bean'Class;
-			      P1 : Param1_Type) return Return_Type is
-	 Object : constant Bean        := Bean (O);
-	 Result : constant Return_Type := Method (Object, P1);
+                              P1 : Param1_Type) return Return_Type is
+         Object : constant Bean        := Bean (O);
+         Result : constant Return_Type := Method (Object, P1);
       begin
-	 return Result;
+         return Result;
       end Method_Access;
    end Bind;
 

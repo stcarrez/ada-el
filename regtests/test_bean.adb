@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  Test_Bean - A simple bean ffor unit tests
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Test_Bean - A simple bean for unit tests
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,6 @@ package body Test_Bean is
    LAST_NAME  : constant String := "lastName";
    AGE        : constant String := "age";
    WEIGHT     : constant String := "weight";
-   DATE       : constant String := "date";
 
    function Create_Person (First_Name, Last_Name : String;
                            Age : Natural) return Person_Access is
