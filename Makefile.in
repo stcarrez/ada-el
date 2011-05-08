@@ -24,6 +24,10 @@ projectdir=${prefix}/share/ada/adainclude
 libdir=${prefix}/lib
 alidir=${prefix}/share/ada/adainclude
 
+# Build executables for all mains defined by the project.
+build:
+	$(GNATMAKE) -p -P "$(GPRPATH)"
+
 # Not intended for manual invocation.
 # Invoked if automatic builds are enabled.
 # Analyzes only on those sources that have changed.
@@ -44,10 +48,6 @@ clean_tree:
 analyze:
 	$(GNATMAKE) -f  -gnatc -c -k  -P "$(GPRPATH)"
 
-# Build executables for all mains defined by the project.
-build:
-	$(GNATMAKE) -p -P "$(GPRPATH)"
-
 # Clean, then build executables for all mains defined by the project.
 rebuild: clean build
 
@@ -57,11 +57,11 @@ test:	build
 	bin/el_harness
 
 # Files to package in source distribution
-DISTFILES=README LICENSE.txt NOTICE.txt CHANGES config.guess configure config.sub \
+DISTFILES=README LICENSE.txt NOTICE.txt CHANGES ChangeLog config.guess configure config.sub \
 configure.in Makefile.in install-sh \
-el.gpr.in tests.gpr samples.gpr config.gpr \
+el.gpr.in tests.gpr.in samples.gpr config.gpr \
 src samples regtests \
-bin obj lib
+bin obj lib doc distrib
 
 dist:
 	-rm -rf $(distdir)
@@ -81,6 +81,8 @@ dist:
 	  fi; \
 	done
 	-rm -f $(distdir)/bin/*
+	-rm -f $(distdir)/obj/*
+	-rm -f $(distdir)/lib/*
 	tar --exclude=.svn --exclude="*~" --exclude="*.o" --exclude="*.ali" \
 	    --exclude="*.log" --exclude="*.a" \
 	    -cvzf $(DIST_FILE) $(distdir)
@@ -92,4 +94,9 @@ install:
 	${CP} src/*.ad[bs] ${includedir}/el
 	${CP} distrib/el.gpr ${projectdir}/el.gpr
 	${CP} lib/*.ali ${alidir}/el
-	${CP} lib/libel.a ${libdir}/
+	${CP} lib/libadael.a ${libdir}/
+
+uninstall:
+	rm -rf ${includedir}/el
+	rm -f ${libdir}/libadael.a
+	rm -f ${projectdir}/el.gpr

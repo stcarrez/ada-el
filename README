@@ -28,6 +28,9 @@ And unit tests are executed with:
 
    bin/el_harness
 
+or just
+
+   make test
 
 Documentation
 
