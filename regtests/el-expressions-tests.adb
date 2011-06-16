@@ -31,7 +31,6 @@ package body EL.Expressions.Tests is
 
    use Test_Bean;
    use EL.Expressions;
-   use AUnit.Test_Fixtures;
    use Ada.Strings.Unbounded;
 
    use Util.Log;
@@ -106,7 +105,7 @@ package body EL.Expressions.Tests is
          T.Assert (To_String (V2) = Expect,
                    "Reduce produced incorrect result: " & To_String (V2));
       end;
-      T.Assert (Expr, E.Get_Expression, "Invalid expression stored");
+      T.Assert_Equals (Expr, E.Get_Expression, "Invalid expression stored");
    end Check;
 
    --  ------------------------------
@@ -331,13 +330,13 @@ package body EL.Expressions.Tests is
       A2.Count := 0;
       Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
-      Assert (T, P.Last_Name = A1.Person.Last_Name, "Name was not set");
+      T.Assert (P.Last_Name = A1.Person.Last_Name, "Name was not set");
 
       P.Last_Name := To_Unbounded_String ("John");
       T.Context.all.Set_Variable ("action", A2);
       Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
-      Assert (T, "John" = A2.Person.Last_Name, "Name was not set");
+      T.Assert ("John" = A2.Person.Last_Name, "Name was not set");
 
       --  Build the method expression from the expression
       M := Create_Expression (Expr => E);
@@ -345,7 +344,7 @@ package body EL.Expressions.Tests is
       P.Last_Name := To_Unbounded_String ("Harry");
       Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
-      Assert (T, "Harry" = A2.Person.Last_Name, "Name was not set");
+      T.Assert ("Harry" = A2.Person.Last_Name, "Name was not set");
 
       M := Create_Expression (Context => T.Context.all,
                               Expr    => "#{action.notify2}");
@@ -354,8 +353,8 @@ package body EL.Expressions.Tests is
       for I in 1 .. 5 loop
          Proc2_Action.Execute (M, Person (P.all), I, T.Context.all);
 
-         Assert (T, I = A2.Count, "Count was not set");
-         Assert (T, 0 = A1.Count, "First action modified as side effect");
+         T.Assert (I = A2.Count, "Count was not set");
+         T.Assert (0 = A1.Count, "First action modified as side effect");
       end loop;
 
       Free (P);
@@ -380,7 +379,7 @@ package body EL.Expressions.Tests is
       --  Bean is not found
       begin
          Proc_Action.Execute (M, Person (P.all), T.Context.all);
-         Assert (T, False, "The Invalid_Variable exception was not raised");
+         T.Assert (False, "The Invalid_Variable exception was not raised");
 
       exception
          when EL.Expressions.Invalid_Variable =>
@@ -390,7 +389,7 @@ package body EL.Expressions.Tests is
       T.Context.all.Set_Variable ("action2", A1);
       begin
          Proc_Action.Execute (M, Person (P.all), T.Context.all);
-         Assert (T, False, "The Invalid_Method exception was not raised");
+         T.Assert (False, "The Invalid_Method exception was not raised");
 
       exception
          when EL.Expressions.Invalid_Method =>
@@ -400,7 +399,7 @@ package body EL.Expressions.Tests is
       --  M2 is not initialized, this should raise Invalid_Expression
       begin
          Proc_Action.Execute (M2, Person (P.all), T.Context.all);
-         Assert (T, False, "The Invalid_Method exception was not raised");
+         T.Assert (False, "The Invalid_Method exception was not raised");
 
       exception
          when EL.Expressions.Invalid_Expression =>
@@ -410,7 +409,7 @@ package body EL.Expressions.Tests is
       --  Create a method expression with an invalid expression
       begin
          M := Create_Expression ("#{12+13}", T.Context.all);
-         Assert (T, False, "The Invalid_Expression exception was not raised");
+         T.Assert (False, "The Invalid_Expression exception was not raised");
 
       exception
          when EL.Expressions.Invalid_Expression =>
@@ -423,7 +422,7 @@ package body EL.Expressions.Tests is
       begin
          --  This should raise an Invalid_Expression exception
          M := Create_Expression (D);
-         Assert (T, False, "The Invalid_Expression exception was not raised");
+         T.Assert (False, "The Invalid_Expression exception was not raised");
 
       exception
          when EL.Expressions.Invalid_Expression =>
@@ -453,7 +452,7 @@ package body EL.Expressions.Tests is
 
             Assert_Equals (T, I, P.Age, "The value expression did not set the age");
 
-            Assert (T, not VE.Is_Readonly (T.Context.all),
+            T.Assert (not VE.Is_Readonly (T.Context.all),
                     "Value expression should not be readonly");
          end;
       end loop;
@@ -474,7 +473,7 @@ package body EL.Expressions.Tests is
          declare
             VE : constant Value_Expression := Create_Expression (V1);
          begin
-            Assert (T, False, "No exception raised for an invalid value expression");
+            T.Assert (False, "No exception raised for an invalid value expression");
             VE.Set_Value (Context => T.Context.all, Value => EL.Objects.Null_Object);
          end;
       exception
@@ -488,7 +487,7 @@ package body EL.Expressions.Tests is
       begin
          VE.Set_Value (Context => T.Context.all,
                        Value   => EL.Objects.To_Object (Integer (2)));
-         Assert (T, False, "No exception raised when setting the value expression");
+         T.Assert (False, "No exception raised when setting the value expression");
 
       exception
          when Invalid_Variable =>

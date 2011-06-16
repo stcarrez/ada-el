@@ -17,15 +17,13 @@
 -----------------------------------------------------------------------
 
 with AUnit.Test_Suites; use AUnit.Test_Suites;
-with AUnit.Test_Fixtures;
+with Util.Tests;
 
 package EL.Testsuite is
 
-   use AUnit.Test_Fixtures;
-
    function Suite return Access_Test_Suite;
 
-   type Test is new AUnit.Test_Fixtures.Test_Fixture with record
+   type Test is new Util.Tests.Test with record
       I1 : Integer;
       I2 : Integer;
    end record;
