@@ -149,8 +149,8 @@ package EL.Expressions is
    --  (such as an access to the function or procedure).
    --  Raises the <b>Invalid_Method</b> exception if the method
    --  cannot be resolved.
-   function Get_Method_Info (Expr   : Method_Expression;
-                            Context : ELContext'Class)
+   function Get_Method_Info (Expr    : Method_Expression;
+                             Context : ELContext'Class)
                          return Method_Info;
 
    --  Parse an expression and return its representation ready for evaluation.

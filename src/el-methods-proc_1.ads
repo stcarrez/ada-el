@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Proc_1 -- Procedure Binding with 1 argument
---  Copyright (C) 2010 Stephane Carrez
+--  Copyright (C) 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,6 +41,21 @@ package EL.Methods.Proc_1 is
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
                       Param   : in out Param1_Type;
                       Context : in EL.Contexts.ELContext'Class);
+
+   --  Execute the method describe by the method binding object.
+   --  The method signature is:
+   --
+   --   procedure F (Obj   : in out <Bean>;
+   --                Param : in out Param1_Type);
+   --
+   --  where <Bean> inherits from <b>Readonly_Bean</b>
+   --  (See <b>Bind</b> package)
+   --
+   --  Raises <b>Invalid_Method</b> if the method referenced by
+   --  the method expression does not exist or does not match
+   --  the signature.
+   procedure Execute (Method  : in EL.Expressions.Method_Info;
+                      Param   : in out Param1_Type);
 
    --  Function access to the proxy.
    type Proxy_Access is

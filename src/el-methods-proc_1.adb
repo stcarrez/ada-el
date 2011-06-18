@@ -21,6 +21,40 @@ package body EL.Methods.Proc_1 is
    use EL.Expressions;
 
    --  ------------------------------
+   --  Execute the method describe by the method binding object.
+   --  The method signature is:
+   --
+   --   procedure F (Obj   : in out <Bean>;
+   --                Param : in out Param1_Type);
+   --
+   --  where <Bean> inherits from <b>Readonly_Bean</b>
+   --  (See <b>Bind</b> package)
+   --
+   --  Raises <b>Invalid_Method</b> if the method referenced by
+   --  the method expression does not exist or does not match
+   --  the signature.
+   --  ------------------------------
+   procedure Execute (Method  : in EL.Expressions.Method_Info;
+                      Param   : in out Param1_Type) is
+   begin
+      if Method.Binding = null then
+         raise EL.Expressions.Invalid_Method with "Method not found";
+      end if;
+
+      --  If the binding has the wrong type, we are trying to invoke
+      --  a method with a different signature.
+      if not (Method.Binding.all in Binding'Class) then
+         raise EL.Expressions.Invalid_Method
+         with "Invalid signature for method '" & Method.Binding.Name.all & "'";
+      end if;
+      declare
+         Proxy  : constant Binding_Access := Binding (Method.Binding.all)'Access;
+      begin
+         Proxy.Method (Method.Object, Param);
+      end;
+   end Execute;
+
+   --  ------------------------------
    --  Execute the method describe by the method expression
    --  and with the given context.  The method signature is:
    --
@@ -37,23 +71,9 @@ package body EL.Methods.Proc_1 is
    procedure Execute (Method  : in EL.Expressions.Method_Expression'Class;
                       Param   : in out Param1_Type;
                       Context : in EL.Contexts.ELContext'Class) is
-      Info   : constant Method_Info := Method.Get_Method_Info (Context);
+      Info : constant Method_Info := Method.Get_Method_Info (Context);
    begin
-      if Info.Binding = null then
-         raise EL.Expressions.Invalid_Method with "Method not found";
-      end if;
-
-      --  If the binding has the wrong type, we are trying to invoke
-      --  a method with a different signature.
-      if not (Info.Binding.all in Binding'Class) then
-         raise EL.Expressions.Invalid_Method
-           with "Invalid signature for method '" & Info.Binding.Name.all & "'";
-      end if;
-      declare
-         Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
-      begin
-         Proxy.Method (Info.Object, Param);
-      end;
+      Execute (Info, Param);
    end Execute;
 
    --  ------------------------------
