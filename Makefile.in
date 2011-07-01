@@ -93,7 +93,7 @@ install:
 	$(MKDIR) -p ${projectdir}/
 	${MKDIR} -p ${alidir}/el
 	${CP} src/*.ad[bs] ${includedir}/el
-	${CP} distrib/el.gpr ${projectdir}/el.gpr
+	sed -e "s,INSTALL,${prefix},g" < distrib/el.gpr > ${projectdir}/el.gpr
 	${CP} lib/*.ali ${alidir}/el
 	${CP} lib/libadael.a ${libdir}/
 
