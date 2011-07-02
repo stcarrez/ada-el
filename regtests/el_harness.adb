@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL -- Expression Language
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,12 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Reporter.Text;
-with AUnit.Run;
 with EL.Testsuite;
+with Util.Tests;
 
 procedure EL_Harness is
-   procedure Runner is new AUnit.Run.Test_Runner (EL.Testsuite.Suite);
-   Reporter : AUnit.Reporter.Text.Text_Reporter;
+
+   procedure Harness is new Util.Tests.Harness (EL.Testsuite.Suite);
 begin
-   Runner (Reporter);
+   Harness ("el-tests.xml");
 end EL_Harness;
