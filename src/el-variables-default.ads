@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Variables -- Default Variable Mapper
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,6 +39,11 @@ package EL.Variables.Default is
                            Name   : in Unbounded_String;
                            Value  : in EL.Expressions.Value_Expression);
 
+   --  Set the next variable mapper that will be used to resolve a variable if
+   --  the current variable mapper does not find a variable.
+   procedure Set_Next_Variable_Mapper (Mapper      : in out Default_Variable_Mapper;
+                                       Next_Mapper : in VariableMapper_Access);
+
 private
 
    use type EL.Objects.Object;
@@ -51,7 +56,7 @@ private
                                  Equivalent_Keys => "=");
 
    type Default_Variable_Mapper is new VariableMapper with record
-      Next_Mapper : VariableMapper_Access;
+      Next_Mapper : VariableMapper_Access := null;
       Map         : Variable_Maps.Map;
    end record;
 

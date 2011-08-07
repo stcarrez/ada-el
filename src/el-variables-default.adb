@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Variables -- Default Variable Mapper
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,5 +53,15 @@ package body EL.Variables.Default is
       Mapper.Map.Include (Key      => Name,
                           New_Item => Value);
    end Set_Variable;
+
+   --  ------------------------------
+   --  Set the next variable mapper that will be used to resolve a variable if
+   --  the current variable mapper does not find a variable.
+   --  ------------------------------
+   procedure Set_Next_Variable_Mapper (Mapper      : in out Default_Variable_Mapper;
+                                       Next_Mapper : in VariableMapper_Access) is
+   begin
+      Mapper.Next_Mapper := Next_Mapper;
+   end Set_Next_Variable_Mapper;
 
 end EL.Variables.Default;
