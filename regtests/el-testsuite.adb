@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL testsuite - EL Testsuite
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ with Ada.Calendar.Formatting;
 with Ada.Calendar.Conversions;
 with Interfaces.C;
 with EL.Expressions.Tests;
+with EL.Beans.Tests;
 package body EL.Testsuite is
 
    use Interfaces.C;
@@ -129,6 +130,7 @@ package body EL.Testsuite is
                                    Test_To_Object_Integer'Access));
       Ret.Add_Test (Caller.Create ("Test Expressions", Test_Expression'Access));
       EL.Expressions.Tests.Add_Tests (Ret);
+      EL.Beans.Tests.Add_Tests (Ret);
       return Ret;
    end Suite;
 
