@@ -18,7 +18,6 @@
 
 with Util.Tests;
 with AUnit.Test_Suites;
-with AUnit.Test_Fixtures;
 package EL.Beans.Tests is
 
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite);

@@ -16,7 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with Util.Tests;
 with Util.Test_Caller;
 
 with Test_Bean;
@@ -53,7 +52,8 @@ package body EL.Beans.Tests is
       Assert_Equals (T, 1, Integer (P.Length), "Parameter was not added");
       T.Assert_Equals ("firstName", P.Element (1).Name, "Invalid parameter name");
       T.Assert (P.Element (1).Value.Is_Constant, "Value should be a constant");
-      T.Assert_Equals ("my name", Util.Beans.Objects.To_String (P.Element (1).Value.Get_Value (Context)),
+      T.Assert_Equals ("my name",
+                       Util.Beans.Objects.To_String (P.Element (1).Value.Get_Value (Context)),
                        "Invalid value");
 
       --  Add an expression parameter.
@@ -81,7 +81,9 @@ package body EL.Beans.Tests is
       Initialize (Bean.all, P, Context);
       T.Assert_Equals ("Joe", Bean.First_Name, "First name not initialized");
       T.Assert_Equals ("Black", Bean.Last_Name, "Last name not initialized");
-      T.Assert_Equals (44, Integer (Bean.Age), "Age was not initialized");
+      Assert_Equals (T, 44, Integer (Bean.Age), "Age was not initialized");
+      Free (Bean);
+      Free (User);
    end Test_Initialize;
 
 end EL.Beans.Tests;
