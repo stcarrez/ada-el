@@ -216,15 +216,11 @@ package body EL.Expressions is
 
    procedure Finalize (Object : in out Expression) is
       Node    : EL.Expressions.Nodes.ELNode_Access;
-      Is_Zero : Boolean;
    begin
       if Object.Node /= null then
          Node := Object.Node.all'Access;
-         Util.Concurrent.Counters.Decrement (Node.Ref_Counter, Is_Zero);
-         if Is_Zero then
-            EL.Expressions.Nodes.Delete (Node);
-            Object.Node := null;
-         end if;
+         EL.Expressions.Nodes.Delete (Node);
+         Object.Node := null;
       end if;
    end Finalize;
 

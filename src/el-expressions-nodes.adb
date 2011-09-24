@@ -385,11 +385,36 @@ package body EL.Expressions.Nodes is
       Resolver : constant ELResolver_Access := Context.Get_Resolver;
    begin
       if Mapper /= null then
+
          declare
             Value : constant Expression := Mapper.Get_Variable (Expr.Name);
          begin
             return Reduction '(Value => Value.Get_Value (Context),
                                Node  => null);
+
+         exception
+            when others =>
+               --  An exception such as Invalid_Variable can be raised if the value expression
+               --  defined in <b>Value</b> refers to a variable which is not yet defined.
+               --  We want to keep the resolution we did (hence Expr.Name) and still refer
+               --  to the new expression so that it can be resolved later on.  Typical case in
+               --  ASF:
+               --    <h:list value="#{list}" var="item">
+               --       <ui:include src="item.xhtml">
+               --          <ui:param name="c" value="#{item.components.data}"/>
+               --       </ui:include>
+               --    </h:list>
+               --
+               --  Here, the <b>Value</b> will refer to the EL expression #{item.components.data}
+               --  which is not known at the time of reduction.
+               if Value.Node /= null then
+                  Util.Concurrent.Counters.Increment (Value.Node.Ref_Counter);
+                  return Reduction '(Value => EL.Objects.Null_Object,
+                                     Node  => Value.Node.all'Access);
+               else
+                  raise;
+               end if;
+
          end;
       end if;
       if Resolver = null then
@@ -876,10 +901,14 @@ package body EL.Expressions.Nodes is
    procedure Delete (Node : in out ELNode_Access) is
       procedure Free is new Ada.Unchecked_Deallocation (Object => ELNode'Class,
                                                         Name   => ELNode_Access);
+      Is_Zero : Boolean;
    begin
       if Node /= null then
-         Delete (Node.all);
-         Free (Node);
+         Util.Concurrent.Counters.Decrement (Node.Ref_Counter, Is_Zero);
+         if Is_Zero then
+            Delete (Node.all);
+            Free (Node);
+         end if;
       end if;
    end Delete;
 
