@@ -68,11 +68,11 @@ package EL.Contexts is
 
    --  Retrieves the VariableMapper associated with this ELContext.
    function Get_Variable_Mapper (Context : ELContext)
-                            return access EL.Variables.VariableMapper'Class is abstract;
+                            return access EL.Variables.Variable_Mapper'Class is abstract;
 
    --  Set the variable mapper associated with this ELContext.
    procedure Set_Variable_Mapper (Context : in out ELContext;
-                                  Mapper  : access EL.Variables.VariableMapper'Class)
+                                  Mapper  : access EL.Variables.Variable_Mapper'Class)
      is abstract;
 
    --  Retrieves the FunctionMapper associated with this ELContext.

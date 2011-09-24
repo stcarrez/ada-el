@@ -344,7 +344,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    function Get_Value (Expr    : ELVariable;
                        Context : ELContext'Class) return Object is
-      Mapper   : constant access VariableMapper'Class := Context.Get_Variable_Mapper;
+      Mapper   : constant access Variable_Mapper'Class := Context.Get_Variable_Mapper;
       Resolver : constant ELResolver_Access := Context.Get_Resolver;
    begin
       --  Resolve using the variable mapper first.  If an exception is raised,
@@ -354,7 +354,7 @@ package body EL.Expressions.Nodes is
       if Mapper /= null then
          begin
             declare
-               Value : constant Value_Expression := Mapper.Get_Variable (Expr.Name);
+               Value : constant Expression := Mapper.Get_Variable (Expr.Name);
             begin
                return Value.Get_Value (Context);
             end;
@@ -381,12 +381,12 @@ package body EL.Expressions.Nodes is
    overriding
    function Reduce (Expr    : ELVariable;
                     Context : ELContext'Class) return Reduction is
-      Mapper   : constant access VariableMapper'Class := Context.Get_Variable_Mapper;
+      Mapper   : constant access Variable_Mapper'Class := Context.Get_Variable_Mapper;
       Resolver : constant ELResolver_Access := Context.Get_Resolver;
    begin
       if Mapper /= null then
          declare
-            Value : constant Value_Expression := Mapper.Get_Variable (Expr.Name);
+            Value : constant Expression := Mapper.Get_Variable (Expr.Name);
          begin
             return Reduction '(Value => Value.Get_Value (Context),
                                Node  => null);

@@ -19,8 +19,9 @@ with Ada.Unchecked_Deallocation;
 with EL.Variables.Default;
 package body EL.Contexts.Default is
 
-   procedure Free is new Ada.Unchecked_Deallocation (Object => EL.Variables.VariableMapper'Class,
-                                                     Name   => EL.Variables.VariableMapper_Access);
+   procedure Free is
+     new Ada.Unchecked_Deallocation (Object => EL.Variables.Variable_Mapper'Class,
+                                     Name   => EL.Variables.Variable_Mapper_Access);
 
    --  ------------------------------
    --  Retrieves the ELResolver associated with this ELcontext.
@@ -45,7 +46,7 @@ package body EL.Contexts.Default is
    --  ------------------------------
    overriding
    function Get_Variable_Mapper (Context : Default_Context)
-                                 return access EL.Variables.VariableMapper'Class is
+                                 return access EL.Variables.Variable_Mapper'Class is
    begin
       return Context.Var_Mapper;
    end Get_Variable_Mapper;
@@ -80,7 +81,7 @@ package body EL.Contexts.Default is
    --  ------------------------------
    overriding
    procedure Set_Variable_Mapper (Context : in out Default_Context;
-                                  Mapper  : access EL.Variables.VariableMapper'Class) is
+                                  Mapper  : access EL.Variables.Variable_Mapper'Class) is
       use EL.Variables;
    begin
       if Context.Var_Mapper_Created then
@@ -131,7 +132,7 @@ package body EL.Contexts.Default is
    --  ------------------------------
    overriding
    function Get_Variable_Mapper (Context : in Guarded_Context)
-                                 return access EL.Variables.VariableMapper'Class is
+                                 return access EL.Variables.Variable_Mapper'Class is
    begin
       return Context.Context.Get_Variable_Mapper;
    end Get_Variable_Mapper;
@@ -162,7 +163,7 @@ package body EL.Contexts.Default is
    --  ------------------------------
    overriding
    procedure Set_Variable_Mapper (Context : in out Guarded_Context;
-                                  Mapper  : access EL.Variables.VariableMapper'Class) is
+                                  Mapper  : access EL.Variables.Variable_Mapper'Class) is
    begin
       Context.Context.Set_Variable_Mapper (Mapper);
    end Set_Variable_Mapper;

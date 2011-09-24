@@ -36,7 +36,7 @@ package EL.Contexts.Default is
    --  Retrieves the VariableMapper associated with this ELContext.
    overriding
    function Get_Variable_Mapper (Context : Default_Context)
-                                 return access EL.Variables.VariableMapper'Class;
+                                 return access EL.Variables.Variable_Mapper'Class;
 
    --  Retrieves the FunctionMapper associated with this ELContext.
    --  The FunctionMapper is only used when parsing an expression.
@@ -52,7 +52,7 @@ package EL.Contexts.Default is
    --  Set the VariableMapper associated with this ELContext.
    overriding
    procedure Set_Variable_Mapper (Context : in out Default_Context;
-                                  Mapper  : access EL.Variables.VariableMapper'Class);
+                                  Mapper  : access EL.Variables.Variable_Mapper'Class);
 
    --  Set the ELResolver associated with this ELcontext.
    procedure Set_Resolver (Context  : in out Default_Context;
@@ -87,7 +87,7 @@ package EL.Contexts.Default is
    --  Retrieves the VariableMapper associated with this ELContext.
    overriding
    function Get_Variable_Mapper (Context : in Guarded_Context)
-                                 return access EL.Variables.VariableMapper'Class;
+                                 return access EL.Variables.Variable_Mapper'Class;
 
    --  Retrieves the FunctionMapper associated with this ELContext.
    --  The FunctionMapper is only used when parsing an expression.
@@ -103,7 +103,7 @@ package EL.Contexts.Default is
    --  Set the VariableMapper associated with this ELContext.
    overriding
    procedure Set_Variable_Mapper (Context : in out Guarded_Context;
-                                  Mapper  : access EL.Variables.VariableMapper'Class);
+                                  Mapper  : access EL.Variables.Variable_Mapper'Class);
 
    --  Handle the exception during expression evaluation.
    overriding
@@ -144,7 +144,7 @@ package EL.Contexts.Default is
 private
 
    type Default_Context is new Ada.Finalization.Controlled and ELContext with record
-      Var_Mapper         : EL.Variables.VariableMapper_Access;
+      Var_Mapper         : EL.Variables.Variable_Mapper_Access;
       Resolver           : ELResolver_Access;
       Function_Mapper    : EL.Functions.Function_Mapper_Access;
       Var_Mapper_Created : Boolean := False;

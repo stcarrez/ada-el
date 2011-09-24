@@ -22,7 +22,7 @@ private with Ada.Strings.Unbounded.Hash;
 package EL.Variables.Default is
 
    --  Default Variable Mapper
-   type Default_Variable_Mapper is new VariableMapper with private;
+   type Default_Variable_Mapper is new Variable_Mapper with private;
 
    overriding
    procedure Bind (Mapper : in out Default_Variable_Mapper;
@@ -32,31 +32,31 @@ package EL.Variables.Default is
    overriding
    function Get_Variable (Mapper : Default_Variable_Mapper;
                           Name   : Unbounded_String)
-                          return EL.Expressions.Value_Expression;
+                          return EL.Expressions.Expression;
 
    overriding
    procedure Set_Variable (Mapper : in out Default_Variable_Mapper;
                            Name   : in Unbounded_String;
-                           Value  : in EL.Expressions.Value_Expression);
+                           Value  : in EL.Expressions.Expression);
 
    --  Set the next variable mapper that will be used to resolve a variable if
    --  the current variable mapper does not find a variable.
    procedure Set_Next_Variable_Mapper (Mapper      : in out Default_Variable_Mapper;
-                                       Next_Mapper : in VariableMapper_Access);
+                                       Next_Mapper : in Variable_Mapper_Access);
 
 private
 
    use type EL.Objects.Object;
-   use type EL.Expressions.Value_Expression;
+   use type EL.Expressions.Expression;
 
    package Variable_Maps is new
      Ada.Containers.Hashed_Maps (Key_Type      => Unbounded_String,
-                                 Element_Type  => EL.Expressions.Value_Expression,
+                                 Element_Type  => EL.Expressions.Expression,
                                  Hash          => Ada.Strings.Unbounded.Hash,
                                  Equivalent_Keys => "=");
 
-   type Default_Variable_Mapper is new VariableMapper with record
-      Next_Mapper : VariableMapper_Access := null;
+   type Default_Variable_Mapper is new Variable_Mapper with record
+      Next_Mapper : Variable_Mapper_Access := null;
       Map         : Variable_Maps.Map;
    end record;
 

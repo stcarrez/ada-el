@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Variables -- Variable mapper
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,19 +32,27 @@ package EL.Variables is
 
    No_Variable : exception;
 
-   type VariableMapper is interface;
-   type VariableMapper_Access is access all VariableMapper'Class;
+   type Variable_Mapper is interface;
+   type Variable_Mapper_Access is access all Variable_Mapper'Class;
 
-   procedure Bind (Mapper : in out VariableMapper;
+   procedure Bind (Mapper : in out Variable_Mapper;
                    Name   : in String;
                    Value  : in EL.Objects.Object) is abstract;
 
-   function Get_Variable (Mapper : VariableMapper;
+   function Get_Variable (Mapper : Variable_Mapper;
                           Name   : Unbounded_String)
-                          return EL.Expressions.Value_Expression is abstract;
+                          return EL.Expressions.Expression is abstract;
 
-   procedure Set_Variable (Mapper : in out VariableMapper;
+   function Get_Variable (Mapper : in Variable_Mapper'Class;
+                          Name   : in Unbounded_String)
+                          return EL.Expressions.Value_Expression;
+
+   procedure Set_Variable (Mapper : in out Variable_Mapper;
                            Name   : in Unbounded_String;
-                           Value  : in EL.Expressions.Value_Expression) is abstract;
+                           Value  : in EL.Expressions.Expression) is abstract;
+
+   procedure Set_Variable (Mapper : in out Variable_Mapper'Class;
+                           Name   : in Unbounded_String;
+                           Value  : in EL.Expressions.Value_Expression);
 
 end EL.Variables;

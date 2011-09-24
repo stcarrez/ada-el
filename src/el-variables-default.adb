@@ -26,13 +26,13 @@ package body EL.Variables.Default is
         := EL.Expressions.Create_ValueExpression (Value);
    begin
       Mapper.Map.Include (Key      => To_Unbounded_String (Name),
-                          New_Item => Expr);
+                          New_Item => EL.Expressions.Expression (Expr));
    end Bind;
 
    overriding
    function Get_Variable (Mapper : Default_Variable_Mapper;
                           Name   : Unbounded_String)
-                          return EL.Expressions.Value_Expression is
+                          return EL.Expressions.Expression is
       C : constant Variable_Maps.Cursor := Mapper.Map.Find (Name);
    begin
       if not Variable_Maps.Has_Element (C) then
@@ -48,7 +48,7 @@ package body EL.Variables.Default is
    overriding
    procedure Set_Variable (Mapper : in out Default_Variable_Mapper;
                            Name   : in Unbounded_String;
-                           Value  : in EL.Expressions.Value_Expression) is
+                           Value  : in EL.Expressions.Expression) is
    begin
       Mapper.Map.Include (Key      => Name,
                           New_Item => Value);
@@ -59,7 +59,7 @@ package body EL.Variables.Default is
    --  the current variable mapper does not find a variable.
    --  ------------------------------
    procedure Set_Next_Variable_Mapper (Mapper      : in out Default_Variable_Mapper;
-                                       Next_Mapper : in VariableMapper_Access) is
+                                       Next_Mapper : in Variable_Mapper_Access) is
    begin
       Mapper.Next_Mapper := Next_Mapper;
    end Set_Next_Variable_Mapper;
