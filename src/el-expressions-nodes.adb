@@ -447,7 +447,7 @@ package body EL.Expressions.Nodes is
       Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
    begin
       if Bean /= null then
-         return Bean.Get_Value (To_String (Expr.Name));
+         return Bean.Get_Value (Expr.Name);
       else
          return Var;
       end if;
@@ -475,7 +475,6 @@ package body EL.Expressions.Nodes is
 
       Var  : constant Object := Node.Variable.Get_Value (Context);
       Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
-      Name : constant String := To_String (Node.Name);
    begin
       if Bean = null then
          raise Invalid_Variable;
@@ -491,7 +490,7 @@ package body EL.Expressions.Nodes is
          begin
             for I in Bindings'Range loop
                if Bindings (I) /= null and then Bindings (I).Name /= null
-                 and then Name = Bindings (I).Name.all then
+                 and then Node.Name = Bindings (I).Name.all then
                   Result.Object := Bean;
                   Result.Binding := Bindings (I);
                   return Result;
@@ -499,7 +498,7 @@ package body EL.Expressions.Nodes is
             end loop;
          end;
       end if;
-      raise Invalid_Method with "Method '" & Name & "' not found";
+      raise Invalid_Method with "Method '" & Node.Name & "' not found";
    end Get_Method_Info;
 
    --  ------------------------------
@@ -515,7 +514,6 @@ package body EL.Expressions.Nodes is
 
       Var  : constant Object := Node.Variable.Get_Value (Context);
       Bean : constant access Basic.Readonly_Bean'Class := To_Bean (Var);
-      Name : constant String := To_String (Node.Name);
    begin
       if Bean = null then
          raise Invalid_Variable;
@@ -524,12 +522,12 @@ package body EL.Expressions.Nodes is
       --  If the bean is a method bean, get the methods that it exposes
       --  and look for the binding that matches our method name.
       if not (Bean.all in Basic.Bean'Class) then
-         raise Invalid_Method with "Method '" & Name & "' not found";
+         raise Invalid_Method with "Method '" & Node.Name & "' not found";
       end if;
       declare
          VBean : constant access Basic.Bean'Class := Basic.Bean'Class (Bean.all)'Unchecked_Access;
       begin
-         VBean.Set_Value (Name, Value);
+         VBean.Set_Value (Node.Name, Value);
       end;
    end Set_Value;
 
@@ -549,14 +547,15 @@ package body EL.Expressions.Nodes is
               := To_Bean (Var.Value);
          begin
             if Bean /= null then
-               Var.Value := Bean.Get_Value (To_String (Expr.Name));
+               Var.Value := Bean.Get_Value (Expr.Name);
                Var.Node  := null;
                return Var;
             end if;
          end;
       end if;
       return Reduction '(Node => new ELValue '(Variable => Var.Node,
-                                               Name => Expr.Name,
+                                               Len      => Expr.Len,
+                                               Name     => Expr.Name,
                                                Ref_Counter => Counters.ONE),
                         Value => EL.Objects.Null_Object);
    end Reduce;
@@ -782,13 +781,16 @@ package body EL.Expressions.Nodes is
 
    function Create_Variable (Name : Unbounded_String) return ELNode_Access is
    begin
-      return new ELVariable '(Name => Name, Ref_Counter => Counters.ONE);
+      return new ELVariable '(Name => Name,
+                              Ref_Counter => Counters.ONE);
    end Create_Variable;
 
-   function Create_Value (Variable : ELNode_Access;
-                          Name     : Unbounded_String) return ELNode_Access is
+   function Create_Value (Variable : in ELNode_Access;
+                          Name     : in String) return ELNode_Access is
    begin
-      return new ELValue '(Name => Name, Variable => Variable,
+      return new ELValue '(Len         => Name'Length,
+                           Name        => Name,
+                           Variable    => Variable,
                            Ref_Counter => Counters.ONE);
    end Create_Value;
 

@@ -538,7 +538,8 @@ package body EL.Expressions.Parser is
                         Peek (P, Token);
                         exit when Token /= T_NAME;
                         Name := To_Unbounded_String (P.Token);
-                        Result := Create_Value (Variable => Result, Name => Name);
+                        Result := Create_Value (Variable => Result,
+                                                Name => To_String (Name));
                         if P.Pos <= P.Last then
                            C := P.Expr (P.Pos);
                         else

@@ -154,7 +154,7 @@ private package EL.Expressions.Nodes is
    --  ------------------------------
    --  Value property referring to a variable
    --  ------------------------------
-   type ELValue is new ELNode with private;
+   type ELValue (Len : Natural) is new ELNode with private;
    type ELValue_Access is access all ELValue'Class;
 
    --  Check if the target bean is a readonly bean.
@@ -236,8 +236,8 @@ private package EL.Expressions.Nodes is
    function Create_Node (Value : Long_Float) return ELNode_Access;
    function Create_Node (Value : Unbounded_Wide_Wide_String) return ELNode_Access;
    function Create_Variable (Name : Unbounded_String) return ELNode_Access;
-   function Create_Value (Variable : ELNode_Access;
-                          Name     : Unbounded_String) return ELNode_Access;
+   function Create_Value (Variable : in ELNode_Access;
+                          Name     : in String) return ELNode_Access;
 
    --  Create unary expressions
    function Create_Node (Of_Type : Unary_Node;
@@ -309,9 +309,9 @@ private
       Name     : Unbounded_String;
    end record;
 
-   type ELValue is new ELNode with record
-      Name     : Unbounded_String;
+   type ELValue (Len : Natural) is new ELNode with record
       Variable : ELNode_Access;
+      Name     : String (1 .. Len);
    end record;
 
    --  A literal object (integer, boolean, float, String)
