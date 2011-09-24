@@ -129,6 +129,10 @@ package EL.Expressions is
    function Create_Expression (Expr    : Expression'Class)
                                return Value_Expression;
 
+   --  Create an EL expression from an object.
+   function Create_Expression (Bean : in EL.Objects.Object)
+                                    return Expression;
+
    --  ------------------------------
    --  Method Expression
    --  ------------------------------

@@ -187,6 +187,17 @@ package body EL.Expressions is
       return Result;
    end Create_Expression;
 
+   --  ------------------------------
+   --  Create an EL expression from an object.
+   --  ------------------------------
+   function Create_Expression (Bean : in EL.Objects.Object)
+                               return Expression is
+      Result : Expression;
+   begin
+      Result.Value := Bean;
+      return Result;
+   end Create_Expression;
+
    overriding
    function Reduce_Expression (Expr    : Value_Expression;
                                Context : ELContext'Class)

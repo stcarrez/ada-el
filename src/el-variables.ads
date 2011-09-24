@@ -43,6 +43,7 @@ package EL.Variables is
                           Name   : Unbounded_String)
                           return EL.Expressions.Expression is abstract;
 
+   --  Get the Value_Expression that corresponds to the given variable name.
    function Get_Variable (Mapper : in Variable_Mapper'Class;
                           Name   : in Unbounded_String)
                           return EL.Expressions.Value_Expression;
@@ -51,6 +52,7 @@ package EL.Variables is
                            Name   : in Unbounded_String;
                            Value  : in EL.Expressions.Expression) is abstract;
 
+   --  Set the variable to the given value expression.
    procedure Set_Variable (Mapper : in out Variable_Mapper'Class;
                            Name   : in Unbounded_String;
                            Value  : in EL.Expressions.Value_Expression);
