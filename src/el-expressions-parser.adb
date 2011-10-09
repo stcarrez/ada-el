@@ -568,6 +568,22 @@ package body EL.Expressions.Parser is
                   else
                      Result := Create_Variable (Name);
                   end if;
+
+                  --  Recognize a basic form of array index.
+                  if C = '[' then
+                     P.Pos := P.Pos + 1;
+                     Peek (P, Token);
+                     if Token /= T_NAME and Token /= T_LITERAL then
+                        raise Invalid_Expression with "Missing string in array index []";
+                     end if;
+                     Name := To_Unbounded_String (P.Token);
+                     Result := Create_Value (Variable => Result,
+                                             Name => To_String (Name));
+                     if P.Pos > P.Last or else P.Expr (P.Pos) /= ']' then
+                        raise Invalid_Expression with "Missing ']' to close array index";
+                     end if;
+                     P.Pos := P.Pos + 1;
+                  end if;
                end;
                return;
 

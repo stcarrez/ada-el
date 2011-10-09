@@ -217,6 +217,9 @@ package body EL.Expressions.Tests is
       Check_Error (T, "#{:}");
       Check_Error (T, "#{~}");
       Check_Error (T, "#{@}");
+      Check_Error (T, "#{name['index'}");
+      Check_Error (T, "#{name[1+1]}");
+
    end Test_Parse_Error;
 
    --  ------------------------------
