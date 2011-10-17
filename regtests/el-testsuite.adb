@@ -29,6 +29,7 @@ with Ada.Calendar.Conversions;
 with Interfaces.C;
 with EL.Expressions.Tests;
 with EL.Beans.Tests;
+with EL.Contexts.Tests;
 package body EL.Testsuite is
 
    use Interfaces.C;
@@ -130,6 +131,7 @@ package body EL.Testsuite is
                                    Test_To_Object_Integer'Access));
       Ret.Add_Test (Caller.Create ("Test Expressions", Test_Expression'Access));
       EL.Expressions.Tests.Add_Tests (Ret);
+      EL.Contexts.Tests.Add_Tests (Ret);
       EL.Beans.Tests.Add_Tests (Ret);
       return Ret;
    end Suite;
