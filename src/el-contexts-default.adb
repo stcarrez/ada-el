@@ -42,7 +42,7 @@ package body EL.Contexts.Default is
    end Set_Resolver;
 
    --  ------------------------------
-   --  Retrieves the VariableMapper associated with this ELContext.
+   --  Retrieves the Variable_Mapper associated with this ELContext.
    --  ------------------------------
    overriding
    function Get_Variable_Mapper (Context : Default_Context)
@@ -52,8 +52,8 @@ package body EL.Contexts.Default is
    end Get_Variable_Mapper;
 
    --  ------------------------------
-   --  Retrieves the FunctionMapper associated with this ELContext.
-   --  The FunctionMapper is only used when parsing an expression.
+   --  Retrieves the Function_Mapper associated with this ELContext.
+   --  The Function_Mapper is only used when parsing an expression.
    --  ------------------------------
    overriding
    function Get_Function_Mapper (Context : Default_Context)
@@ -77,7 +77,7 @@ package body EL.Contexts.Default is
    end Set_Function_Mapper;
 
    --  ------------------------------
-   --  Set the VariableMapper associated with this ELContext.
+   --  Set the Variable_Mapper associated with this ELContext.
    --  ------------------------------
    overriding
    procedure Set_Variable_Mapper (Context : in out Default_Context;
@@ -128,7 +128,7 @@ package body EL.Contexts.Default is
    end Get_Resolver;
 
    --  ------------------------------
-   --  Retrieves the VariableMapper associated with this ELContext.
+   --  Retrieves the Variable_Mapper associated with this ELContext.
    --  ------------------------------
    overriding
    function Get_Variable_Mapper (Context : in Guarded_Context)
@@ -138,8 +138,8 @@ package body EL.Contexts.Default is
    end Get_Variable_Mapper;
 
    --  ------------------------------
-   --  Retrieves the FunctionMapper associated with this ELContext.
-   --  The FunctionMapper is only used when parsing an expression.
+   --  Retrieves the Function_Mapper associated with this ELContext.
+   --  The Function_Mapper is only used when parsing an expression.
    --  ------------------------------
    overriding
    function Get_Function_Mapper (Context : in Guarded_Context)
@@ -159,7 +159,7 @@ package body EL.Contexts.Default is
    end Set_Function_Mapper;
 
    --  ------------------------------
-   --  Set the VariableMapper associated with this ELContext.
+   --  Set the Variable_Mapper associated with this ELContext.
    --  ------------------------------
    overriding
    procedure Set_Variable_Mapper (Context : in out Guarded_Context;
@@ -187,8 +187,6 @@ package body EL.Contexts.Default is
                        Base     : access Util.Beans.Basic.Readonly_Bean'Class;
                        Name     : Unbounded_String) return Object is
       pragma Unreferenced (Context);
-
-      R : Object;
    begin
       if Base /= null then
          return Base.Get_Value (To_String (Name));
@@ -201,14 +199,14 @@ package body EL.Contexts.Default is
             return Objects.Maps.Element (Pos);
          end if;
       end;
-      return R;
+      return Util.Beans.Objects.Null_Object;
    end Get_Value;
 
    --  ------------------------------
    --  Set the value associated with a base object and a given property.
    --  ------------------------------
    overriding
-   procedure Set_Value (Resolver : in Default_ELResolver;
+   procedure Set_Value (Resolver : in out Default_ELResolver;
                         Context  : in ELContext'Class;
                         Base     : access Util.Beans.Basic.Bean'Class;
                         Name     : in Unbounded_String;

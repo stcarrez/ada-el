@@ -84,13 +84,13 @@ package EL.Contexts.Default is
    overriding
    function Get_Resolver (Context : in Guarded_Context) return ELResolver_Access;
 
-   --  Retrieves the VariableMapper associated with this ELContext.
+   --  Retrieves the Variable_Mapper associated with this ELContext.
    overriding
    function Get_Variable_Mapper (Context : in Guarded_Context)
                                  return access EL.Variables.Variable_Mapper'Class;
 
-   --  Retrieves the FunctionMapper associated with this ELContext.
-   --  The FunctionMapper is only used when parsing an expression.
+   --  Retrieves the Function_Mapper associated with this ELContext.
+   --  The Function_Mapper is only used when parsing an expression.
    overriding
    function Get_Function_Mapper (Context : in Guarded_Context)
                                  return EL.Functions.Function_Mapper_Access;
@@ -100,7 +100,7 @@ package EL.Contexts.Default is
    procedure Set_Function_Mapper (Context : in out Guarded_Context;
                                   Mapper  : access EL.Functions.Function_Mapper'Class);
 
-   --  Set the VariableMapper associated with this ELContext.
+   --  Set the Variable_Mapper associated with this ELContext.
    overriding
    procedure Set_Variable_Mapper (Context : in out Guarded_Context;
                                   Mapper  : access EL.Variables.Variable_Mapper'Class);
@@ -125,7 +125,7 @@ package EL.Contexts.Default is
 
    --  Set the value associated with a base object and a given property.
    overriding
-   procedure Set_Value (Resolver : in Default_ELResolver;
+   procedure Set_Value (Resolver : in out Default_ELResolver;
                         Context  : in ELContext'Class;
                         Base     : access Util.Beans.Basic.Bean'Class;
                         Name     : in Unbounded_String;

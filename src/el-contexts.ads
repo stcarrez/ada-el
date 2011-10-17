@@ -50,7 +50,7 @@ package EL.Contexts is
                        Name     : Unbounded_String) return EL.Objects.Object is abstract;
 
    --  Set the value associated with a base object and a given property.
-   procedure Set_Value (Resolver : in ELResolver;
+   procedure Set_Value (Resolver : in out ELResolver;
                         Context  : in ELContext'Class;
                         Base     : access Util.Beans.Basic.Bean'Class;
                         Name     : in Unbounded_String;
