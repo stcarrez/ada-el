@@ -41,6 +41,9 @@ package EL.Expressions.Tests is
    procedure Test_Function_Evaluation (T : in out Test);
    procedure Test_Object_Sizes (T : in out Test);
 
+   --  Test function namespace
+   procedure Test_Function_Namespace (T : in out Test);
+
    --  Test the use of a value expression.
    procedure Test_Value_Expression (T : in out Test);
 

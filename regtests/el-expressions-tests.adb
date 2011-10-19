@@ -16,17 +16,19 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Caller;
-
 with EL.Functions;
 with EL.Functions.Default;
 with EL.Expressions;
+with EL.Functions.Namespaces;
+
 with Test_Bean;
 with Action_Bean;
 with Ada.Strings.Unbounded;
 with Ada.Unchecked_Deallocation;
 with Util.Log.Loggers;
 with Util.Tests;
+with Util.Test_Caller;
+
 package body EL.Expressions.Tests is
 
    use Test_Bean;
@@ -313,6 +315,65 @@ package body EL.Expressions.Tests is
    end Test_Function_Evaluation;
 
    --  ------------------------------
+   --  Test function namespace
+   --  ------------------------------
+   procedure Test_Function_Namespace (T : in out Test) is
+      P  : Person_Access := Create_Person ("Joe", "Black", 42);
+      Fn : aliased EL.Functions.Default.Default_Function_Mapper;
+      Ns : aliased EL.Functions.Namespaces.NS_Function_Mapper;
+   begin
+      T.Context.all.Set_Variable ("user", P);
+
+      --  Register the 'format' function (use a different URI for each function).
+      Fn.Set_Function (Namespace => "http://code.google.com/p/ada-el",
+                       Name      => "format1",
+                       Func      => Format1'Access);
+      Fn.Set_Function (Namespace => "http://code.google.com/p/ada-asf",
+                       Name      => "format2",
+                       Func      => Format2'Access);
+      Fn.Set_Function (Namespace => "http://code.google.com/p/ada-awa",
+                       Name      => "format3",
+                       Func      => Format3'Access);
+      Fn.Set_Function (Namespace => "http://code.google.com/p/ada-util",
+                       Name      => "format4",
+                       Func      => Format4'Access);
+
+      Ns.Set_Function_Mapper (Fn'Unchecked_Access);
+      Ns.Set_Namespace (Prefix => "fn",
+                        URI    => "http://code.google.com/p/ada-el");
+      Ns.Set_Namespace (Prefix => "fp",
+                        URI    => "http://code.google.com/p/ada-asf");
+      Ns.Set_Namespace (Prefix => "fa",
+                        URI    => "http://code.google.com/p/ada-awa");
+      Ns.Set_Namespace (Prefix => "fu",
+                        URI    => "http://code.google.com/p/ada-util");
+      T.Context.Set_Function_Mapper (Ns'Unchecked_Access);
+
+      --  Create the expression with function call and check the result
+      Check (T, "#{fn:format1(10)} #{fp:format2(10,12)}", "[10] [10-12]");
+      Check (T, "#{fp:format2(10,20)} #{fa:format3(20,32,33)}", "[10-20] [20-32-33]");
+      Check (T, "#{fu:format4(10,20,30,40)}", "[10-20-30-40]");
+
+      Check (T, "#{fn:format1(user.age)}", "[42]");
+      Check (T, "#{fp:format2(user.age,10)}", "[42-10]");
+      Check (T, "#{fp:format2(10,user.age)}", "[10-42]");
+      Check (T, "#{fa:format3(user.age,user.age,user.age)}", "[42-42-42]");
+      Check (T, "#{fa:format3(10,user.age,user.age)}", "[10-42-42]");
+      Check (T, "#{fa:format3(10,10,user.age)}", "[10-10-42]");
+      Check (T, "#{fu:format4(user.age,user.age,user.age,user.age)}", "[42-42-42-42]");
+      Check (T, "#{fu:format4(user.age,10,user.age,user.age)}", "[42-10-42-42]");
+      Check (T, "#{fu:format4(user.age,10,10,user.age)}", "[42-10-10-42]");
+      Check (T, "#{fu:format4(user.age,10,10,10)}", "[42-10-10-10]");
+--
+--        Check_Error (T, "#{fx:format4(12(");
+--        Check_Error (T, "#{fx:format4(12,12(");
+--        Check_Error (T, "#{fx:format4(12,12,12(");
+--        Check_Error (T, "#{fx:format4(12,12,12,12(");
+
+      Free (P);
+   end Test_Function_Namespace;
+
+   --  ------------------------------
    --  Test evaluation of method expression
    --  ------------------------------
    procedure Test_Method_Evaluation (T : in out Test) is
@@ -511,36 +572,40 @@ package body EL.Expressions.Tests is
       LOG.Info ("EL.Expression.Expression size = {0} bytes", Integer'Image (Expr'Size / 8));
    end Test_Object_Sizes;
 
-   package Caller is new AUnit.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test);
 
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite) is
    begin
       --  Test_Bean verifies several methods.  Register several times
       --  to enumerate what is tested.
-      Suite.Add_Test (Caller.Create ("Object sizes",
-                                      Test_Object_Sizes'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Beans.Get_Value (constant expressions)",
-                                      Test_Simple_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Contexts.Set_Variable",
-                                     Test_Bean_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Beans.Get_Value",
-                                     Test_Bean_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Create_Expression",
-                                     Test_Bean_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Get_Value",
-                                     Test_Bean_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Create_Expression (Parse Error)",
-                                     Test_Parse_Error'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Get_Method_Info",
-                                     Test_Method_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Get_Method_Info (Invalid_method)",
-                                     Test_Invalid_Method'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Functions.Set_Function (and evaluation)",
-                                     Test_Function_Evaluation'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Set_Value",
-                                      Test_Value_Expression'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Expressions.Set_Value (raise Invalid_Variable)",
-                                      Test_Invalid_Value_Expression'Access));
+      Caller.Add_Test (Suite, "Object sizes",
+                       Test_Object_Sizes'Access);
+      Caller.Add_Test (Suite, "Test EL.Beans.Get_Value (constant expressions)",
+                       Test_Simple_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Contexts.Set_Variable",
+                       Test_Bean_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Beans.Get_Value",
+                       Test_Bean_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Create_Expression",
+                       Test_Bean_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Get_Value",
+                       Test_Bean_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Create_Expression (Parse Error)",
+                       Test_Parse_Error'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Get_Method_Info",
+                       Test_Method_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Get_Method_Info (Invalid_method)",
+                       Test_Invalid_Method'Access);
+      Caller.Add_Test (Suite, "Test EL.Functions.Set_Function (and evaluation)",
+                       Test_Function_Evaluation'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Set_Value",
+                       Test_Value_Expression'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Set_Value (raise Invalid_Variable)",
+                       Test_Invalid_Value_Expression'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Get_Method_Info (Invalid_method)",
+                       Test_Invalid_Method'Access);
+      Caller.Add_Test (Suite, "Test EL.Functions.Namespaces.Set_Namespace (and evaluation)",
+                       Test_Function_Namespace'Access);
    end Add_Tests;
 
 end EL.Expressions.Tests;
