@@ -27,6 +27,11 @@ package EL.Utils is
    --  in <b>Into</b> (only the <b>Source</b> properties will be evaluated).
    procedure Expand (Source  : in Util.Properties.Manager'Class;
                      Into    : in out Util.Properties.Manager'Class;
-                     Context : in out EL.Contexts.ELContext'Class);
+                     Context : in EL.Contexts.ELContext'Class);
+
+   --  Evaluate the possible EL expressions used in <b>Value</b> and return the
+   --  string that correspond to that evaluation.
+   function Eval (Value   : in String;
+                  Context : in EL.Contexts.ELContext'Class) return String;
 
 end EL.Utils;

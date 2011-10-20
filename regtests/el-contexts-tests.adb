@@ -22,10 +22,12 @@ with Util.Properties;
 with Util.Beans.Objects;
 
 with EL.Expressions;
+with EL.Contexts.Default;
 with EL.Contexts.Properties;
 package body EL.Contexts.Tests is
 
    use Util.Tests;
+   use Util.Beans.Objects;
 
    package Caller is new Util.Test_Caller (Test);
 

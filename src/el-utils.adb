@@ -45,7 +45,7 @@ package body EL.Utils is
    --  ------------------------------
    procedure Expand (Source  : in Util.Properties.Manager'Class;
                      Into    : in out Util.Properties.Manager'Class;
-                     Context : in out EL.Contexts.ELContext'Class) is
+                     Context : in EL.Contexts.ELContext'Class) is
 
       function Expand (Value   : in String;
                        Context : in EL.Contexts.ELContext'Class) return EL.Objects.Object;
@@ -160,5 +160,24 @@ package body EL.Utils is
 
       Source.Iterate (Process'Access);
    end Expand;
+
+   --  ------------------------------
+   --  Evaluate the possible EL expressions used in <b>Value</b> and return the
+   --  string that correspond to that evaluation.
+   --  ------------------------------
+   function Eval (Value   : in String;
+                  Context : in EL.Contexts.ELContext'Class) return String is
+      Expr   : EL.Expressions.Expression;
+      Result : Util.Beans.Objects.Object;
+   begin
+      Expr := EL.Expressions.Create_Expression (Value, Context);
+      Result := Expr.Get_Value (Context);
+      return Util.Beans.Objects.To_String (Result);
+
+      --  Ignore any exception and copy the value verbatim.
+   exception
+      when others =>
+         return Value;
+   end Eval;
 
 end EL.Utils;
