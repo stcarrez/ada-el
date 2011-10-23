@@ -180,4 +180,21 @@ package body EL.Utils is
          return Value;
    end Eval;
 
+   --  ------------------------------
+   --  Evaluate the possible EL expressions used in <b>Value</b> and return an
+   --  object that correspond to that evaluation.
+   --  ------------------------------
+   function Eval (Value   : in String;
+                  Context : in EL.Contexts.ELContext'Class) return Util.Beans.Objects.Object is
+      Expr   : EL.Expressions.Expression;
+   begin
+      Expr := EL.Expressions.Create_Expression (Value, Context);
+      return Expr.Get_Value (Context);
+
+      --  Ignore any exception and copy the value verbatim.
+   exception
+      when others =>
+         return Util.Beans.Objects.To_Object (Value);
+   end Eval;
+
 end EL.Utils;

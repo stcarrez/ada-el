@@ -17,6 +17,8 @@
 -----------------------------------------------------------------------
 
 with Util.Properties;
+with Util.Beans.Objects;
+
 with EL.Contexts;
 package EL.Utils is
 
@@ -33,5 +35,10 @@ package EL.Utils is
    --  string that correspond to that evaluation.
    function Eval (Value   : in String;
                   Context : in EL.Contexts.ELContext'Class) return String;
+
+   --  Evaluate the possible EL expressions used in <b>Value</b> and return an
+   --  object that correspond to that evaluation.
+   function Eval (Value   : in String;
+                  Context : in EL.Contexts.ELContext'Class) return Util.Beans.Objects.Object;
 
 end EL.Utils;
