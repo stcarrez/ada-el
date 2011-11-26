@@ -16,34 +16,18 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Caller;
+with Util.Test_Caller;
 with EL.Expressions;
 with EL.Objects;
---  with EL.Objects.Enums;
---  with EL.Objects.Time;
 with EL.Contexts;
 with EL.Contexts.Default;
-with Ada.Calendar;
-with Ada.Calendar.Formatting;
-with Ada.Calendar.Conversions;
-with Interfaces.C;
 with EL.Expressions.Tests;
 with EL.Beans.Tests;
 with EL.Contexts.Tests;
 with EL.Utils.Tests;
 package body EL.Testsuite is
 
-   use Interfaces.C;
    use EL.Objects;
-   use Ada.Calendar;
-   use Ada.Calendar.Conversions;
---
---     function "+" (Left, Right : Boolean) return Boolean;
---     function "-" (Left, Right : Boolean) return Boolean;
---
---     function "-" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
---     function "+" (Left, Right : Ada.Calendar.Time) return Ada.Calendar.Time;
---     function Time_Value (S : String) return Ada.Calendar.Time;
 
    --  ------------------------------
    --  Test object integer
@@ -121,16 +105,16 @@ package body EL.Testsuite is
 
    end Test_Expression;
 
-   package Caller is new AUnit.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test);
 
    Tests : aliased Test_Suite;
 
    function Suite return Access_Test_Suite is
       Ret : constant Access_Test_Suite := Tests'Access;
    begin
-      Ret.Add_Test (Caller.Create ("Test To_Object (Integer)",
-                                   Test_To_Object_Integer'Access));
-      Ret.Add_Test (Caller.Create ("Test Expressions", Test_Expression'Access));
+      Caller.Add_Test (Ret, "Test To_Object (Integer)",
+                       Test_To_Object_Integer'Access);
+      Caller.Add_Test (Ret, "Test Expressions", Test_Expression'Access);
       EL.Expressions.Tests.Add_Tests (Ret);
       EL.Contexts.Tests.Add_Tests (Ret);
       EL.Beans.Tests.Add_Tests (Ret);

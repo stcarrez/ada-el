@@ -18,7 +18,6 @@
 
 with AUnit.Test_Suites;
 with Util.Tests;
-with EL.Contexts.Default;
 package EL.Contexts.Tests is
 
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite);

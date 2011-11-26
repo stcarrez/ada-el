@@ -39,6 +39,7 @@ autobuild:
 # Clean the root project of all build products.
 clean:
 	$(GNATCLEAN) -q -P "$(GPRPATH)"
+	$(GNATCLEAN) -q -Ptests
 
 # Clean root project and all imported projects too.
 clean_tree:

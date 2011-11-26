@@ -16,7 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Caller;
+with Util.Test_Caller;
 with Ada.Calendar.Formatting;
 with Util.Log.Loggers;
 with Util.Tests;
@@ -84,20 +84,20 @@ package body EL.Objects.Time.Tests is
       T.Assert (V3 < V2, "Invalid comparison for time");
    end Test_Time_Add;
 
-   package Caller is new AUnit.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test);
 
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite) is
    begin
       --  Test_Bean verifies several methods.  Register several times
       --  to enumerate what is tested.
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_Object - Is_Null, Is_Empty, Get_Type",
-                                      Test_Time_Object'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_Object - To_Time",
-                                      Test_Time_Object'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_String - Cast_Time",
-        Test_Time_To_String'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.Time.To_String - Cast_Time",
-        Test_Time_Add'Access));
+      Caller.Add_Test (Suite, "Test EL.Objects.Time.To_Object - Is_Null, Is_Empty, Get_Type",
+                       Test_Time_Object'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.Time.To_Object - To_Time",
+                       Test_Time_Object'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.Time.To_String - Cast_Time",
+                       Test_Time_To_String'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.Time.To_String - Cast_Time",
+                       Test_Time_Add'Access);
    end Add_Tests;
 
 end EL.Objects.Time.Tests;

@@ -21,9 +21,7 @@ with Util.Test_Caller;
 with Util.Properties;
 with Util.Beans.Objects;
 
-with EL.Expressions;
 with EL.Contexts.Default;
-with EL.Contexts.Properties;
 package body EL.Utils.Tests is
 
    use Util.Tests;

@@ -26,7 +26,6 @@ with Action_Bean;
 with Ada.Strings.Unbounded;
 with Ada.Unchecked_Deallocation;
 with Util.Log.Loggers;
-with Util.Tests;
 with Util.Test_Caller;
 
 package body EL.Expressions.Tests is
@@ -379,8 +378,8 @@ package body EL.Expressions.Tests is
    procedure Test_Method_Evaluation (T : in out Test) is
       use Action_Bean;
 
-      A1 : Action_Access := new Action;
-      A2 : Action_Access := new Action;
+      A1 : constant Action_Access := new Action;
+      A2 : constant Action_Access := new Action;
       P  : Person_Access := Create_Person ("Joe", "Black", 42);
       M  : EL.Expressions.Method_Expression :=
         Create_Expression (Context => T.Context.all,
@@ -432,8 +431,7 @@ package body EL.Expressions.Tests is
    procedure Test_Invalid_Method (T : in out Test) is
       use Action_Bean;
 
-      A1 : Action_Access := new Action;
-      A2 : Action_Access := new Action;
+      A1 : constant Action_Access := new Action;
       P  : Person_Access := Create_Person ("Joe", "Black", 42);
       M2 : EL.Expressions.Method_Expression;
       M  : EL.Expressions.Method_Expression :=
