@@ -17,10 +17,9 @@
 -----------------------------------------------------------------------
 
 with Util.Tests;
-with AUnit.Test_Suites;
 package EL.Beans.Tests is
 
-   procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite);
+   procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite);
 
    type Test is new Util.Tests.Test with null record;
 

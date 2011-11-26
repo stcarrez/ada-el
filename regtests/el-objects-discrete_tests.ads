@@ -16,8 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Suites; use AUnit.Test_Suites;
-with AUnit.Test_Fixtures;
+with Util.Tests;
 with EL.Objects;
 
 generic
@@ -32,11 +31,11 @@ generic
    Test_Values : String;
 package EL.Objects.Discrete_Tests is
 
-   type Test is new AUnit.Test_Fixtures.Test_Fixture with record
+   type Test is new Util.Tests.Test with record
       I1 : Integer;
       I2 : Integer;
    end record;
 
-   procedure Add_Tests (Suite : Access_Test_Suite);
+   procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite);
 
 end EL.Objects.Discrete_Tests;

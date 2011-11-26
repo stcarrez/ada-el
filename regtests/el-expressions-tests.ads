@@ -16,12 +16,11 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Suites;
 with Util.Tests;
 with EL.Contexts.Default;
 package EL.Expressions.Tests is
 
-   procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite);
+   procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite);
 
    type Test is new Util.Tests.Test with record
       Context : EL.Contexts.Default.Default_Context_Access;

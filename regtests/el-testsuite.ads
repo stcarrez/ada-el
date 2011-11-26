@@ -16,12 +16,11 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with AUnit.Test_Suites; use AUnit.Test_Suites;
 with Util.Tests;
 
 package EL.Testsuite is
 
-   function Suite return Access_Test_Suite;
+   function Suite return Util.Tests.Access_Test_Suite;
 
    type Test is new Util.Tests.Test with record
       I1 : Integer;

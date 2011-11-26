@@ -572,7 +572,7 @@ package body EL.Expressions.Tests is
 
    package Caller is new Util.Test_Caller (Test);
 
-   procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite) is
+   procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
       --  Test_Bean verifies several methods.  Register several times
       --  to enumerate what is tested.

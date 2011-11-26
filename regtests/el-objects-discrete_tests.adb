@@ -17,7 +17,7 @@
 -----------------------------------------------------------------------
 
 with Ada.Containers;
-with AUnit.Test_Caller;
+with Util.Test_Caller;
 with Ada.Strings.Fixed;
 with Ada.Text_IO;
 with Ada.Calendar;
@@ -240,28 +240,28 @@ package body EL.Objects.Discrete_Tests is
    end Test_Perf;
    procedure Test_Perf is new Test_Basic_Object (Test_Perf);
 
-   package Caller is new AUnit.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test);
 
-   procedure Add_Tests (Suite : Access_Test_Suite) is
+   procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.To_Object." & Test_Name,
-                                     Test_To_Object'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.To_String." & Test_Name,
-                                     Test_To_Object'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'='." & Test_Name,
-                                     Test_Eq'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'+'." & Test_Name,
-                                     Test_Add'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'-'." & Test_Name,
-                                     Test_Sub'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'<'." & Test_Name,
-                                     Test_Lt_Gt'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.'>'." & Test_Name,
-                                     Test_Lt_Gt'Access));
-      Suite.Add_Test (Caller.Create ("Performance EL.Objects.'>'." & Test_Name,
-                                     Test_Perf'Access));
-      Suite.Add_Test (Caller.Create ("Test EL.Objects.Hash." & Test_Name,
-                                     Test_Hash'Access));
+      Caller.Add_Test (Suite, "Test EL.Objects.To_Object." & Test_Name,
+                       Test_To_Object'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.To_String." & Test_Name,
+                       Test_To_Object'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.'='." & Test_Name,
+                       Test_Eq'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.'+'." & Test_Name,
+                       Test_Add'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.'-'." & Test_Name,
+                       Test_Sub'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.'<'." & Test_Name,
+                       Test_Lt_Gt'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.'>'." & Test_Name,
+                       Test_Lt_Gt'Access);
+      Caller.Add_Test (Suite, "Performance EL.Objects.'>'." & Test_Name,
+                       Test_Perf'Access);
+      Caller.Add_Test (Suite, "Test EL.Objects.Hash." & Test_Name,
+                       Test_Hash'Access);
    end Add_Tests;
 
 end EL.Objects.Discrete_Tests;

@@ -107,10 +107,10 @@ package body EL.Testsuite is
 
    package Caller is new Util.Test_Caller (Test);
 
-   Tests : aliased Test_Suite;
+   Tests : aliased Util.Tests.Test_Suite;
 
-   function Suite return Access_Test_Suite is
-      Ret : constant Access_Test_Suite := Tests'Access;
+   function Suite return Util.Tests.Access_Test_Suite is
+      Ret : constant Util.Tests.Access_Test_Suite := Tests'Access;
    begin
       Caller.Add_Test (Ret, "Test To_Object (Integer)",
                        Test_To_Object_Integer'Access);
