@@ -1,5 +1,4 @@
 with "config";
-with "aunit";
 with "@UTIL_DIR@util";
 with "@UTIL_DIR@testutil";
 with "el";
