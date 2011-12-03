@@ -20,7 +20,6 @@ with Ada.Strings.Unbounded;
 
 with Util.Strings;
 with Util.Beans.Basic;
-with Util.Beans.Objects;
 with Util.Log.Loggers;
 
 with EL.Objects;

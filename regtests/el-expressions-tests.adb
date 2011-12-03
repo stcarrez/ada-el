@@ -378,8 +378,8 @@ package body EL.Expressions.Tests is
    procedure Test_Method_Evaluation (T : in out Test) is
       use Action_Bean;
 
-      A1 : constant Action_Access := new Action;
-      A2 : constant Action_Access := new Action;
+      A1 : aliased Action;
+      A2 : aliased Action;
       P  : Person_Access := Create_Person ("Joe", "Black", 42);
       M  : EL.Expressions.Method_Expression :=
         Create_Expression (Context => T.Context.all,
@@ -388,7 +388,7 @@ package body EL.Expressions.Tests is
         Create_Expression (Context => T.Context.all,
                            Expr    => "#{action.notify}");
    begin
-      T.Context.all.Set_Variable ("action", A1);
+      T.Context.all.Set_Variable ("action", A1'Unchecked_Access);
       A1.Count := 0;
       A2.Count := 0;
       Proc_Action.Execute (M, Person (P.all), T.Context.all);
@@ -396,7 +396,7 @@ package body EL.Expressions.Tests is
       T.Assert (P.Last_Name = A1.Person.Last_Name, "Name was not set");
 
       P.Last_Name := To_Unbounded_String ("John");
-      T.Context.all.Set_Variable ("action", A2);
+      T.Context.all.Set_Variable ("action", A2'Unchecked_Access);
       Proc_Action.Execute (M, Person (P.all), T.Context.all);
 
       T.Assert ("John" = A2.Person.Last_Name, "Name was not set");
@@ -431,7 +431,7 @@ package body EL.Expressions.Tests is
    procedure Test_Invalid_Method (T : in out Test) is
       use Action_Bean;
 
-      A1 : constant Action_Access := new Action;
+      A1 : aliased Action;
       P  : Person_Access := Create_Person ("Joe", "Black", 42);
       M2 : EL.Expressions.Method_Expression;
       M  : EL.Expressions.Method_Expression :=
@@ -448,7 +448,7 @@ package body EL.Expressions.Tests is
             null;
       end;
 
-      T.Context.all.Set_Variable ("action2", A1);
+      T.Context.all.Set_Variable ("action2", A1'Unchecked_Access);
       begin
          Proc_Action.Execute (M, Person (P.all), T.Context.all);
          T.Assert (False, "The Invalid_Method exception was not raised");

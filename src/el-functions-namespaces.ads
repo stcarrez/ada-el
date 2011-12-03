@@ -43,11 +43,6 @@ package EL.Functions.Namespaces is
                            Name      : in String;
                            Func      : in Function_Access);
 
-   --  Find the create function in bound to the name in the given namespace.
-   --  Returns null if no such binding exist.
-   function Find (Mapper    : in NS_Function_Mapper;
-                  Namespace : in String) return String;
-
    --  Associate the <b>Prefix</b> with the givien <b>URI</b> building a new namespace.
    procedure Set_Namespace (Mapper : in out NS_Function_Mapper;
                             Prefix : in String;

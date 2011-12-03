@@ -58,6 +58,7 @@ package body EL.Contexts.Properties is
                         Base     : access Util.Beans.Basic.Bean'Class;
                         Name     : in Unbounded_String;
                         Value    : in EL.Objects.Object) is
+      pragma Unreferenced (Context);
    begin
       if Base /= null then
          Base.Set_Value (To_String (Name), Value);
