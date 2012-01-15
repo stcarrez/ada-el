@@ -1869,8 +1869,8 @@ test -n "$target_alias" &&
 
 # Current release settings
 EL_MAJOR_VERSION=1
-EL_MINOR_VERSION=2
-EL_MICRO_VERSION=1-dev
+EL_MINOR_VERSION=3
+EL_MICRO_VERSION=0
 EL_VERSION=$EL_MAJOR_VERSION.$EL_MINOR_VERSION.$EL_MICRO_VERSION
 
 
@@ -2666,8 +2666,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-# AM_PATH_GNAT
-# AM_PATH_PERL
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5
 $as_echo_n "checking whether ${MAKE-make} sets \$(MAKE)... " >&6; }
 set x ${MAKE-make}
@@ -2885,7 +2883,7 @@ else
 fi
 
 
-# Set the version number of GtkAda
+# Set the version number of Ada EL
 
 
 
