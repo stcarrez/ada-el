@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -194,6 +194,33 @@ package body EL.Utils is
    exception
       when others =>
          return Util.Beans.Objects.To_Object (Value);
+   end Eval;
+
+   --  ------------------------------
+   --  Evaluate the possible EL expressions used in <b>Value</b> and return an
+   --  object that correspond to that evaluation.
+   --  ------------------------------
+   function Eval (Value   : in Util.Beans.Objects.Object;
+                  Context : in EL.Contexts.ELContext'Class) return Util.Beans.Objects.Object is
+   begin
+      case Util.Beans.Objects.Get_Type (Value) is
+         when Util.Beans.Objects.TYPE_STRING | Util.Beans.Objects.TYPE_WIDE_STRING =>
+            declare
+               S    : constant String := Util.Beans.Objects.To_String (Value);
+               Expr : EL.Expressions.Expression;
+            begin
+               Expr := EL.Expressions.Create_Expression (S, Context);
+               return Expr.Get_Value (Context);
+            end;
+
+         when others =>
+            return Value;
+      end case;
+
+      --  Ignore any exception and copy the value verbatim.
+   exception
+      when others =>
+         return Value;
    end Eval;
 
 end EL.Utils;

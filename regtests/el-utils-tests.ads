@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils-tests - Tests the EL utils
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,5 +26,7 @@ package EL.Utils.Tests is
    procedure Test_Expand_Properties (T : in out Test);
 
    procedure Test_Expand_Recursion (T : in out Test);
+
+   procedure Test_Eval (T : in out Test);
 
 end EL.Utils.Tests;

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,6 +39,11 @@ package EL.Utils is
    --  Evaluate the possible EL expressions used in <b>Value</b> and return an
    --  object that correspond to that evaluation.
    function Eval (Value   : in String;
+                  Context : in EL.Contexts.ELContext'Class) return Util.Beans.Objects.Object;
+
+   --  Evaluate the possible EL expressions used in <b>Value</b> and return an
+   --  object that correspond to that evaluation.
+   function Eval (Value   : in Util.Beans.Objects.Object;
                   Context : in EL.Contexts.ELContext'Class) return Util.Beans.Objects.Object;
 
 end EL.Utils;

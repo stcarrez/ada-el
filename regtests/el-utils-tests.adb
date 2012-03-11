@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-contexts-tests - Tests the EL contexts
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,8 @@ package body EL.Utils.Tests is
                        Test_Expand_Properties'Access);
       Caller.Add_Test (Suite, "Test EL.Utils.Expand (recursion)",
                        Test_Expand_Recursion'Access);
+      Caller.Add_Test (Suite, "Test EL.Utils.Eval",
+                       Test_Eval'Access);
    end Add_Tests;
 
    --  ------------------------------
@@ -82,5 +84,31 @@ package body EL.Utils.Tests is
                      String '(Result.Get ("homedir")),
                      "Invalid expansion");
    end Test_Expand_Recursion;
+
+   --  ------------------------------
+   --  Test expand list of properties
+   --  ------------------------------
+   procedure Test_Eval (T : in out Test) is
+      Context : EL.Contexts.Default.Default_Context;
+   begin
+      Assert_Equals (T, "1", EL.Utils.Eval (Value   => "1",
+                                           Context => Context), "Invalid eval <empty string>");
+      Assert_Equals (T, "3", EL.Utils.Eval (Value   => "#{2+1}",
+                                            Context => Context), "Invalid eval <valid expr>");
+      declare
+         Value, Result : Util.Beans.Objects.Object;
+
+      begin
+         Value := Util.Beans.Objects.To_Object (Integer '(123));
+         Result := EL.Utils.Eval (Value  => Value,
+                                  Context => Context);
+         T.Assert (Value = Result, "Eval should return the same object");
+
+         Value := Util.Beans.Objects.To_Object (String '("345"));
+         Result := EL.Utils.Eval (Value  => Value,
+                                  Context => Context);
+         T.Assert (Value = Result, "Eval should return the same object");
+      end;
+   end Test_Eval;
 
 end EL.Utils.Tests;
