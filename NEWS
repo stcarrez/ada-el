@@ -1,0 +1,14 @@
+Version 1.4     -
+  - New Eval function which accepts an Object as value
+
+Version 1.3     - Fev 2012
+  - New helpers to evaluate the EL expressions of a list of properties
+
+Version 1.2     - Sep 2011
+  - Add support for Method expression
+
+Version 1.1	- May 2011
+  - Move the Ada EL beans framework in Ada Util
+
+Version 1.0	- Apr 2010
+  - Implement JSR 245
