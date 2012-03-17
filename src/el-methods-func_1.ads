@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Func_1 -- Function Bindings with 1 argument
---  Copyright (C) 2010, 2011 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ with EL.Contexts;
 with Util.Beans.Methods;
 with Util.Beans.Basic;
 generic
-   type Param1_Type (<>) is private;
+   type Param1_Type (<>) is limited private;
    type Return_Type (<>) is private;
 package EL.Methods.Func_1 is
 
