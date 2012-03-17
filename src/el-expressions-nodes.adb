@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -356,7 +356,12 @@ package body EL.Expressions.Nodes is
             declare
                Value : constant Expression := Mapper.Get_Variable (Expr.Name);
             begin
-               return Value.Get_Value (Context);
+               --  If the returned expression is null, assume the variable was not found.
+               --  A variable mapper that returns a null expression is faster than raising
+               --  the No_Variable exception (arround 30us on Intel Core @ 2.6Ghz!).
+               if not Value.Is_Null then
+                  return Value.Get_Value (Context);
+               end if;
             end;
 
          exception
@@ -389,8 +394,10 @@ package body EL.Expressions.Nodes is
          declare
             Value : constant Expression := Mapper.Get_Variable (Expr.Name);
          begin
-            return Reduction '(Value => Value.Get_Value (Context),
-                               Node  => null);
+            if not Value.Is_Null then
+               return Reduction '(Value => Value.Get_Value (Context),
+                                  Node  => null);
+            end if;
 
          exception
             when others =>
@@ -422,8 +429,19 @@ package body EL.Expressions.Nodes is
                                                      Ref_Counter => Counters.ONE),
                             Value => EL.Objects.Null_Object);
       end if;
-      return Reduction '(Value => Resolver.all.Get_Value (Context, null, Expr.Name),
-                         Node => null);
+      declare
+         Value : constant EL.Objects.Object := Resolver.all.Get_Value (Context, null, Expr.Name);
+      begin
+         --  If the resolver could not find the variable, do not reduce this variable.
+         if EL.Objects.Is_Null (Value) then
+            return Reduction '(Node => new ELVariable '(Name => Expr.Name,
+                                                        Ref_Counter => Counters.ONE),
+                               Value => EL.Objects.Null_Object);
+         else
+            return Reduction '(Value => Value,
+                               Node  => null);
+         end if;
+      end;
    exception
       when others =>
          return Reduction '(Node => new ELVariable '(Name => Expr.Name,
