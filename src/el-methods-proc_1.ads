@@ -21,7 +21,7 @@ with EL.Contexts;
 with Util.Beans.Methods;
 with Util.Beans.Basic;
 generic
-   type Param1_Type (<>) is private;
+   type Param1_Type (<>) is limited private;
 package EL.Methods.Proc_1 is
 
    use Util.Beans.Methods;

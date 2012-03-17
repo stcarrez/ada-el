@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Proc_2 -- Procedure Binding with 2 arguments
---  Copyright (C) 2010, 2011 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +21,8 @@ with EL.Contexts;
 with Util.Beans.Methods;
 with Util.Beans.Basic;
 generic
-   type Param1_Type (<>) is private;
-   type Param2_Type (<>) is private;
+   type Param1_Type (<>) is limited private;
+   type Param2_Type (<>) is limited private;
 package EL.Methods.Proc_2 is
 
    use Util.Beans.Methods;
