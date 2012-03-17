@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Variables -- Default Variable Mapper
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +39,10 @@ package body EL.Variables.Default is
          if Mapper.Next_Mapper /= null then
             return Mapper.Next_Mapper.Get_Variable (Name);
          end if;
-         raise No_Variable
-           with "Variable not found: '" & To_String (Name) & "'";
+         --  Avoid raising an exception if we can't resolve a variable.
+         --  Instead, return a null expression.  This speeds up the resolution and
+         --  creation of Ada bean in ASF framework (cost of exception is high compared to this).
+         return E : EL.Expressions.Expression;
       end if;
       return Variable_Maps.Element (C);
    end Get_Variable;
