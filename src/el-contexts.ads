@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Contexts -- Contexts for evaluating an expression
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ package EL.Contexts is
    --  ------------------------------
    --  Enables customization of variable and property resolution
    --  behavior for EL expression evaluation.
-   type ELResolver is interface;
+   type ELResolver is limited interface;
    type ELResolver_Access is access all ELResolver'Class;
 
    --  Get the value associated with a base object and a given property.
