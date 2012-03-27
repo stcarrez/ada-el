@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Contexts -- Default contexts for evaluating an expression
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -187,13 +187,15 @@ package body EL.Contexts.Default is
                        Base     : access Util.Beans.Basic.Readonly_Bean'Class;
                        Name     : Unbounded_String) return Object is
       pragma Unreferenced (Context);
+
+      Key : constant String := To_String (Name);
    begin
       if Base /= null then
-         return Base.Get_Value (To_String (Name));
+         return Base.Get_Value (Key);
       end if;
 
       declare
-         Pos : constant Objects.Maps.Cursor := Resolver.Map.Find (Name);
+         Pos : constant Objects.Maps.Cursor := Resolver.Map.Find (Key);
       begin
          if Objects.Maps.Has_Element (Pos) then
             return Objects.Maps.Element (Pos);
@@ -231,8 +233,9 @@ package body EL.Contexts.Default is
    procedure Register (Resolver : in out Default_ELResolver;
                        Name     : in Unbounded_String;
                        Value    : in EL.Objects.Object) is
+      Key : constant String := To_String (Name);
    begin
-      Objects.Maps.Include (Resolver.Map, Name, Value);
+      Objects.Maps.Include (Resolver.Map, Key, Value);
    end Register;
 
 
