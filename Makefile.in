@@ -6,12 +6,15 @@ GNATCLEAN=gnatclean
 GPRPATH=el.gpr
 SVN=svn
 
+version=@EL_VERSION@
+
 distdir=ada-el-@EL_VERSION@
 
 DIST_FILE=ada-el-@EL_VERSION@.tar.gz
 
 MKDIR=mkdir
 CP=cp
+LN=ln -s
 
 srcdir = .
 top_srcdir = @top_srcdir@
@@ -40,6 +43,7 @@ autobuild:
 clean:
 	$(GNATCLEAN) -q -P "$(GPRPATH)"
 	$(GNATCLEAN) -q -Ptests
+	-rm -f lib/*.a lib/*.so
 
 # Clean root project and all imported projects too.
 clean_tree:
@@ -61,7 +65,7 @@ test:	build
 # Files to package in source distribution
 DISTFILES=README LICENSE.txt NOTICE.txt CHANGES ChangeLog config.guess configure config.sub \
 configure.in Makefile.in install-sh \
-el.gpr.in tests.gpr.in samples.gpr config.gpr \
+el.gpr.in tests.gpr.in samples.gpr config.gpr.in \
 src samples regtests \
 bin obj lib doc distrib
 
@@ -93,10 +97,17 @@ install:
 	$(MKDIR) -p ${includedir}/el
 	$(MKDIR) -p ${projectdir}/
 	${MKDIR} -p ${alidir}/el
-	${CP} src/*.ad[bs] ${includedir}/el
+	${CP} -p src/*.ad[bs] ${includedir}/el
 	sed -e "s,INSTALL,${prefix},g" < distrib/el.gpr > ${projectdir}/el.gpr
-	${CP} lib/*.ali ${alidir}/el
-	${CP} lib/libadael.a ${libdir}/
+	${CP} -p lib/*.ali ${alidir}/el
+	if test T@LIB_SHARED@ != Trelocatable ; then \
+	   ${CP} lib/libadael.a ${libdir}/ ; \
+	else \
+	   ${CP} -p lib/libadael.so.${version} ${libdir}/ && \
+	   cd ${libdir} && \
+	   rm -f libadael.so && \
+	   ${LN} libadael.so.${version} libadael.so ; \
+        fi
 
 uninstall:
 	rm -rf ${includedir}/el

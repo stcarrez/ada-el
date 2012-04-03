@@ -42,6 +42,22 @@ AC_SUBST(EL_MAJOR_VERSION)
 AC_SUBST(EL_MINOR_VERSION)
 AC_SUBST(EL_MICRO_VERSION)
 
+##########################################
+# Check to enable/disable shared library
+##########################################
+
+AC_MSG_CHECKING([library type])
+ac_enable_shared=relocatable
+AC_ARG_ENABLE(shared,
+[  --enable-shared         Enable the shared libraries (disabled)],
+[case "${enableval}" in
+  no|none)  ac_enable_shared=static ;;
+  *)        ac_enable_shared=relocatable ;;
+esac])dnl
+
+AC_MSG_RESULT(${ac_enable_shared})
+LIB_SHARED=$ac_enable_shared
+AC_SUBST(LIB_SHARED)
 
 ##########################################
 # Ada Util library
@@ -81,5 +97,5 @@ EL_LIBDIR="lib"
 AC_SUBST(EL_LIBDIR)
 
 AC_OUTPUT(
-Makefile el.gpr tests.gpr
+Makefile el.gpr config.gpr tests.gpr distrib/el.gpr
 )

@@ -1,11 +1,11 @@
 with "util";
 
 project El is
-   Version := "1.1.0";
+   Version := "@EL_VERSION@";
 
    for Library_Name use "adael";
    for Library_Dir use "INSTALL/lib";
-   for Library_Kind use "static";
+   for Library_Kind use "@LIB_SHARED@";
 
    for Source_Dirs use ("INSTALL/share/ada/adainclude/el");
    for Library_ALI_Dir use "INSTALL/share/ada/adainclude/el";
