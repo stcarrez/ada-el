@@ -1,10 +1,17 @@
+## The type of library we want to build. Possible values:
+##   relocatable
+##   static
+LIBRARY_TYPE=static
+
 # You may edit this makefile as long as you keep these original 
 # target names defined.
 MODE=distrib
-GNATMAKE=gnatmake -XMODE=${MODE} -XPROCESSORS=4
+GNATMAKE=@GNATMAKE@ -XMODE=${MODE} -XPROCESSORS=4
 GNATCLEAN=gnatclean
-GPRPATH=el.gpr
 SVN=svn
+INSTALL=@INSTALL@
+
+BUILDS_SHARED=@BUILDS_SHARED@
 
 version=@EL_VERSION@
 
@@ -12,9 +19,18 @@ distdir=ada-el-@EL_VERSION@
 
 DIST_FILE=ada-el-@EL_VERSION@.tar.gz
 
+LN_S=@LN_S@
 MKDIR=mkdir
 CP=cp
 LN=ln -s
+
+ifeq (${OS},Windows_NT)
+LIBEXT=dll
+LIBVER=dll
+else
+LIBEXT=so
+LIBVER=so.$(version)
+endif
 
 srcdir = .
 top_srcdir = @top_srcdir@
@@ -26,11 +42,29 @@ top_builddir = .
 includedir=${prefix}/share/ada/adainclude
 projectdir=${prefix}/share/ada/adainclude
 libdir=${prefix}/lib
-alidir=${prefix}/share/ada/adainclude
+alidir=${prefix}/lib/ada/adalib
+
+MAKE_ARGS=-XMODE=${MODE} -XLIBRARY_TYPE=${LIBRARY_TYPE} -XPROCESSORS=4
+
+GPRPATH=el.gpr
+
+ifeq (${BUILDS_SHARED},yes)
+all:     static shared
+install: install_static install_shared
+else
+all:     static
+install: install_static
+endif
 
 # Build executables for all mains defined by the project.
 build:
-	$(GNATMAKE) -p -P "$(GPRPATH)"
+	$(GNATMAKE) -m -p -P"$(GPRPATH)" $(MAKE_ARGS)
+
+static:
+	$(MAKE) LIBRARY_TYPE=static build
+
+shared:
+	$(MAKE) LIBRARY_TYPE=relocatable build
 
 # Not intended for manual invocation.
 # Invoked if automatic builds are enabled.
@@ -41,9 +75,10 @@ autobuild:
 
 # Clean the root project of all build products.
 clean:
-	$(GNATCLEAN) -q -P "$(GPRPATH)"
-	$(GNATCLEAN) -q -Ptests
-	-rm -f lib/*.a lib/*.so
+	-$(GNATCLEAN) -q -P "$(GPRPATH)" -XLIBRARY_TYPE=static
+	-$(GNATCLEAN) -q -P "$(GPRPATH)" -XLIBRARY_TYPE=relocatable
+	-$(GNATCLEAN) -q -Ptests
+	-rm -f lib/*.a lib/*.$(DLLEXT)
 
 # Clean root project and all imported projects too.
 clean_tree:
@@ -93,25 +128,32 @@ dist:
 	    --exclude="*.log" --exclude="*.a" \
 	    -cvzf $(DIST_FILE) $(distdir)
 
-install:
+install_static:
+	$(MAKE) LIBRARY_TYPE=static install_lib
+
+install_shared:
+	$(MAKE) LIBRARY_TYPE=relocatable install_lib
+
+install_lib:
 	$(MKDIR) -p ${includedir}/el
 	$(MKDIR) -p ${projectdir}/
-	${MKDIR} -p ${alidir}/el
+	${MKDIR} -p ${alidir}/el/$(LIBRARY_TYPE)
 	${CP} -p src/*.ad[bs] ${includedir}/el
-	sed -e "s,INSTALL,${prefix},g" < distrib/el.gpr > ${projectdir}/el.gpr
-	${CP} -p lib/*.ali ${alidir}/el
-	if test T@LIB_SHARED@ != Trelocatable ; then \
-	   ${CP} lib/libadael.a ${libdir}/ ; \
-	else \
-	   ${CP} -p lib/libadael.so.${version} ${libdir}/ && \
-	   cd ${libdir} && \
-	   rm -f libadael.so && \
-	   ${LN} libadael.so.${version} libadael.so ; \
-        fi
+	sed -e "s,INSTALL,${prefix},g" -e "s,LIBRARY_TYPE,$(LIBRARY_TYPE),g" < distrib/el.gpr > ${projectdir}/el.gpr
+	${CP} -p lib/$(LIBRARY_TYPE)/*.ali ${alidir}/el/$(LIBRARY_TYPE)/
+ifeq ($(LIBRARY_TYPE),static)
+	${CP} lib/$(LIBRARY_TYPE)/libadael.a ${libdir}/
+else
+	${CP} -p lib/$(LIBRARY_TYPE)/libadael.$(LIBVER) ${libdir}/
+	cd ${libdir} && \
+	   rm -f libadael.$(LIBEXT) && \
+	   ${LN} libadael.$(LIBVER) libadael.$(LIBEXT)
+endif
 
 uninstall:
 	rm -rf ${includedir}/el
 	rm -f ${libdir}/libadael.a
+	rm -f ${libdir}/libadael.$(LIBEXT)
 	rm -f ${projectdir}/el.gpr
 
 # prepare before releasing a new version of the package

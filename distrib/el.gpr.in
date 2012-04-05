@@ -5,9 +5,9 @@ project El is
 
    for Library_Name use "adael";
    for Library_Dir use "INSTALL/lib";
-   for Library_Kind use "@LIB_SHARED@";
+   for Library_Kind use "LIBRARY_TYPE";
 
    for Source_Dirs use ("INSTALL/share/ada/adainclude/el");
-   for Library_ALI_Dir use "INSTALL/share/ada/adainclude/el";
+   for Library_ALI_Dir use "INSTALL/lib/ada/adalib/el/" & Project'Library_Kind;
    for Externally_Built use "true";
 end El;
