@@ -76,7 +76,15 @@ package body EL.Utils is
             return Base.Get_Value (To_String (Name));
 
          elsif Into.Exists (Name) then
-            return Util.Beans.Objects.To_Object (String '(Into.Get (Name)));
+            declare
+               Value  : constant String := Into.Get (Name);
+            begin
+               if Util.Strings.Index (Value, '{') = 0 or Util.Strings.Index (Value, '}') = 0 then
+                  return Util.Beans.Objects.To_Object (Value);
+               end if;
+
+               return Expand (Value, Context);
+            end;
 
          elsif Source.Exists (Name) then
             declare
