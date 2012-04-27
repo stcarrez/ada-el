@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Functions -- Functions to be plugged in expressions
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,6 +41,7 @@ package EL.Functions is
    type Function_4_Access is access function (P1, P2, P3, P4 : Object) return Object;
 
    type Function_Access (Of_Type : Function_Type := F_1_ARG) is record
+      Optimize : Boolean := True;
       case Of_Type is
          when F_1_ARG =>
             Func1 : Function_1_Access;
@@ -79,25 +80,29 @@ package EL.Functions is
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_1_Access);
+                           Func      : in Function_1_Access;
+                           Optimize  : in Boolean := True);
 
    --  Bind a name to a function.
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_2_Access);
+                           Func      : in Function_2_Access;
+                           Optimize  : in Boolean := True);
 
    --  Bind a name to a function.
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_3_Access);
+                           Func      : in Function_3_Access;
+                           Optimize  : in Boolean := True);
 
    --  Bind a name to a function.
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_4_Access);
+                           Func      : in Function_4_Access;
+                           Optimize  : in Boolean := True);
 
    --  Register some pre-defined functions in the function mapper.
    procedure Register_Predefined (Mapper : in out Function_Mapper'Class);

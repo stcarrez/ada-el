@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Functions -- Functions to be plugged in expressions
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,10 +24,13 @@ package body EL.Functions is
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_1_Access) is
+                           Func      : in Function_1_Access;
+                           Optimize  : in Boolean := True) is
    begin
       Mapper.Set_Function (Namespace, Name,
-                           Function_Access '(Of_Type => F_1_ARG, Func1 => Func));
+        Function_Access '(Of_Type  => F_1_ARG,
+                          Func1    => Func,
+                          Optimize => Optimize));
    end Set_Function;
 
    --  ------------------------------
@@ -36,10 +39,13 @@ package body EL.Functions is
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_2_Access) is
+                           Func      : in Function_2_Access;
+                           Optimize  : in Boolean := True) is
    begin
       Mapper.Set_Function (Namespace, Name,
-                           Function_Access '(Of_Type => F_2_ARG, Func2 => Func));
+        Function_Access '(Of_Type  => F_2_ARG,
+                          Func2    => Func,
+                          Optimize => Optimize));
    end Set_Function;
 
    --  ------------------------------
@@ -48,10 +54,13 @@ package body EL.Functions is
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_3_Access) is
+                           Func      : in Function_3_Access;
+                           Optimize  : in Boolean := True) is
    begin
       Mapper.Set_Function (Namespace, Name,
-                           Function_Access '(Of_Type => F_3_ARG, Func3 => Func));
+        Function_Access '(Of_Type  => F_3_ARG,
+                          Func3    => Func,
+                          Optimize => Optimize));
    end Set_Function;
 
    --  ------------------------------
@@ -60,10 +69,13 @@ package body EL.Functions is
    procedure Set_Function (Mapper    : in out Function_Mapper'Class;
                            Namespace : in String;
                            Name      : in String;
-                           Func      : in Function_4_Access) is
+                           Func      : in Function_4_Access;
+                           Optimize  : in Boolean := True) is
    begin
       Mapper.Set_Function (Namespace, Name,
-                           Function_Access '(Of_Type => F_4_ARG, Func4 => Func));
+        Function_Access '(Of_Type  => F_4_ARG,
+                          Func4    => Func,
+                          Optimize => Optimize));
    end Set_Function;
 
    --  ------------------------------
