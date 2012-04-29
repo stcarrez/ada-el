@@ -96,7 +96,7 @@ package body EL.Contexts.Default is
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
-                           Value   : access Util.Beans.Basic.Readonly_Bean'Class) is
+                           Value   : in Util.Beans.Basic.Readonly_Bean_Access) is
       use EL.Variables;
    begin
       if Context.Var_Mapper = null then
@@ -222,7 +222,7 @@ package body EL.Contexts.Default is
    --  ------------------------------
    procedure Register (Resolver : in out Default_ELResolver;
                        Name     : in Unbounded_String;
-                       Value    : access Util.Beans.Basic.Readonly_Bean'Class) is
+                       Value    : in Util.Beans.Basic.Readonly_Bean_Access) is
    begin
       Resolver.Register (Name, To_Object (Value));
    end Register;
