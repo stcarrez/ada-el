@@ -60,7 +60,7 @@ package EL.Contexts.Default is
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
-                           Value   : in Util.Beans.Basic.Readonly_Bean_Access);
+                           Value   : access Util.Beans.Basic.Readonly_Bean'Class);
 
    --  Handle the exception during expression evaluation.
    overriding

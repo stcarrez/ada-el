@@ -96,7 +96,7 @@ package body EL.Contexts.Default is
 
    procedure Set_Variable (Context : in out Default_Context;
                            Name    : in String;
-                           Value   : in Util.Beans.Basic.Readonly_Bean_Access) is
+                           Value   : access Util.Beans.Basic.Readonly_Bean'Class) is
       use EL.Variables;
    begin
       if Context.Var_Mapper = null then
