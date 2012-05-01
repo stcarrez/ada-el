@@ -387,10 +387,8 @@ package body EL.Expressions.Nodes is
    function Reduce (Expr    : ELVariable;
                     Context : ELContext'Class) return Reduction is
       Mapper   : constant access Variable_Mapper'Class := Context.Get_Variable_Mapper;
-      Resolver : constant ELResolver_Access := Context.Get_Resolver;
    begin
       if Mapper /= null then
-
          declare
             Value : constant Expression := Mapper.Get_Variable (Expr.Name);
          begin
@@ -424,24 +422,11 @@ package body EL.Expressions.Nodes is
 
          end;
       end if;
-      if Resolver = null then
-         return Reduction '(Node => new ELVariable '(Name => Expr.Name,
-                                                     Ref_Counter => Counters.ONE),
-                            Value => EL.Objects.Null_Object);
-      end if;
-      declare
-         Value : constant EL.Objects.Object := Resolver.all.Get_Value (Context, null, Expr.Name);
-      begin
-         --  If the resolver could not find the variable, do not reduce this variable.
-         if EL.Objects.Is_Null (Value) then
-            return Reduction '(Node => new ELVariable '(Name => Expr.Name,
-                                                        Ref_Counter => Counters.ONE),
-                               Value => EL.Objects.Null_Object);
-         else
-            return Reduction '(Value => Value,
-                               Node  => null);
-         end if;
-      end;
+
+      return Reduction '(Node => new ELVariable '(Name => Expr.Name,
+                                                  Ref_Counter => Counters.ONE),
+                         Value => EL.Objects.Null_Object);
+
    exception
       when others =>
          return Reduction '(Node => new ELVariable '(Name => Expr.Name,
