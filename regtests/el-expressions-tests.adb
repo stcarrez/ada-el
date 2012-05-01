@@ -20,6 +20,7 @@ with EL.Functions;
 with EL.Functions.Default;
 with EL.Expressions;
 with EL.Functions.Namespaces;
+with EL.Variables.Default;
 
 with Test_Bean;
 with Action_Bean;
@@ -607,6 +608,27 @@ package body EL.Expressions.Tests is
                                 "Invalid reduction");
    end Test_Reduce_Expression;
 
+   --  ------------------------------
+   --  Test some reductions.
+   --  ------------------------------
+   procedure Test_Reduce_Expression_Variable (T : in out Test) is
+      Expr : EL.Expressions.Expression;
+      Red  : EL.Expressions.Expression;
+      Var  : aliased EL.Variables.Default.Default_Variable_Mapper;
+   begin
+      Expr := Create_Expression (" this is a sting ", T.Context.all);
+      Var.Set_Variable (To_Unbounded_String ("param_name"), Expr);
+
+      T.Context.Set_Variable_Mapper (Var'Unchecked_Access);
+
+      Expr := Create_Expression ("|#{param_name}|", T.Context.all);
+      Red  := Reduce_Expression (Expr, T.Context.all);
+      T.Assert (Red.Is_Constant, "Expression was not constant");
+      Util.Tests.Assert_Equals (T, "| this is a sting |",
+                                Util.Beans.Objects.To_String (Red.Get_Value (T.Context.all)),
+                                "Invalid reduction");
+   end Test_Reduce_Expression_Variable;
+
    package Caller is new Util.Test_Caller (Test);
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
@@ -643,6 +665,8 @@ package body EL.Expressions.Tests is
                        Test_Function_Namespace'Access);
       Caller.Add_Test (Suite, "Test EL.Expressions.Reduce_Expression",
                        Test_Reduce_Expression'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Reduce_Expression (reduce variable)",
+                       Test_Reduce_Expression_Variable'Access);
    end Add_Tests;
 
 end EL.Expressions.Tests;

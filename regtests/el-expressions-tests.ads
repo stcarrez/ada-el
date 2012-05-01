@@ -56,4 +56,6 @@ package EL.Expressions.Tests is
    --  Test some reductions.
    procedure Test_Reduce_Expression (T : in out Test);
 
+   procedure Test_Reduce_Expression_Variable (T : in out Test);
+
 end EL.Expressions.Tests;
