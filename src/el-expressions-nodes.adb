@@ -392,8 +392,13 @@ package body EL.Expressions.Nodes is
          declare
             Value : constant Expression := Mapper.Get_Variable (Expr.Name);
          begin
-            if not Value.Is_Null then
+            if Value.Node /= null then
                return Value.Node.Reduce (Context);
+
+            elsif not EL.Objects.Is_Null (Value.Value) then
+               return Reduction '(Value => Value.Value,
+                                  Node  => null);
+
             end if;
 
          exception
@@ -421,18 +426,12 @@ package body EL.Expressions.Nodes is
       Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
       return Reduction '(Value => EL.Objects.Null_Object,
                          Node  => Expr.all'Access);
---        return Reduction '(Node => new ELVariable '(Name => Expr.Name,
---                                                    Ref_Counter => Counters.ONE),
---                           Value => EL.Objects.Null_Object);
 
    exception
       when others =>
          Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
          return Reduction '(Value => EL.Objects.Null_Object,
                             Node  => Expr.all'Access);
---           return Reduction '(Node => new ELVariable '(Name => Expr.Name,
---                                                       Ref_Counter => Counters.ONE),
---                              Value => EL.Objects.Null_Object);
    end Reduce;
 
    --  ------------------------------
@@ -557,17 +556,22 @@ package body EL.Expressions.Nodes is
             end if;
          end;
       end if;
+
+      --  If the reduction returned the same variable, return the same ELvalue.
+      --  Release the counter for the returned variable and increment the other one.
       if Var.Node = Expr.Variable then
          Util.Concurrent.Counters.Decrement (Var.Node.Ref_Counter);
+         Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
+         return Reduction '(Node  => Expr.all'Access,
+                            Value => EL.Objects.Null_Object);
+      else
+         --  Otherwise, replace the variable.
+         return Reduction '(Node => new ELValue '(Variable => Var.Node,
+                                                  Len      => Expr.Len,
+                                                  Name     => Expr.Name,
+                                                  Ref_Counter => Counters.ONE),
+                            Value => EL.Objects.Null_Object);
       end if;
-      Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
-      return Reduction '(Node  => Expr.all'Access,
-                         Value => EL.Objects.Null_Object);
---        return Reduction '(Node => new ELValue '(Variable => Var.Node,
---                                                 Len      => Expr.Len,
---                                                 Name     => Expr.Name,
---                                                 Ref_Counter => Counters.ONE),
---                          Value => EL.Objects.Null_Object);
    end Reduce;
 
    --  ------------------------------
