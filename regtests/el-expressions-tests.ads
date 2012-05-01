@@ -53,4 +53,7 @@ package EL.Expressions.Tests is
                     Expr   : in String;
                     Expect : in String);
 
+   --  Test some reductions.
+   procedure Test_Reduce_Expression (T : in out Test);
+
 end EL.Expressions.Tests;

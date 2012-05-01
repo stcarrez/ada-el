@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL testsuite - EL Testsuite
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,8 @@ with Ada.Strings.Unbounded;
 with Ada.Unchecked_Deallocation;
 with Util.Log.Loggers;
 with Util.Test_Caller;
+with Util.Measures;
+with Util.Beans.Objects;
 
 package body EL.Expressions.Tests is
 
@@ -570,6 +572,41 @@ package body EL.Expressions.Tests is
       LOG.Info ("EL.Expression.Expression size = {0} bytes", Integer'Image (Expr'Size / 8));
    end Test_Object_Sizes;
 
+   --  ------------------------------
+   --  Test some reductions.
+   --  ------------------------------
+   procedure Test_Reduce_Expression (T : in out Test) is
+      Expr : EL.Expressions.Expression;
+      Red  : EL.Expressions.Expression;
+   begin
+      declare
+         S : Util.Measures.Stamp;
+      begin
+         for I in 1 .. 1_000 loop
+            Expr := Create_Expression ("#{bean.name}", T.Context.all);
+         end loop;
+         Util.Measures.Report (S, "Create_Expression (1000)");
+      end;
+      declare
+         S : Util.Measures.Stamp;
+      begin
+         for I in 1 .. 1_000 loop
+            Red := Reduce_Expression (Expr, T.Context.all);
+         end loop;
+         Util.Measures.Report (S, "Reduce_Expression (1000)");
+         T.Assert (not Red.Is_Null, "Null expr after reduce");
+         T.Assert (not Red.Is_Constant, "Expression was not constant");
+      end;
+
+      Expr := Create_Expression ("#{1+2+3+4+5}", T.Context.all);
+      Red  := Reduce_Expression (Expr, T.Context.all);
+      T.Assert (not Red.Is_Null, "Null expr after reduce");
+      T.Assert (Red.Is_Constant, "Expression was not constant");
+      Util.Tests.Assert_Equals (T, 15,
+                                Util.Beans.Objects.To_Integer (Red.Get_Value (T.Context.all)),
+                                "Invalid reduction");
+   end Test_Reduce_Expression;
+
    package Caller is new Util.Test_Caller (Test);
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
@@ -604,6 +641,8 @@ package body EL.Expressions.Tests is
                        Test_Invalid_Method'Access);
       Caller.Add_Test (Suite, "Test EL.Functions.Namespaces.Set_Namespace (and evaluation)",
                        Test_Function_Namespace'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Reduce_Expression",
+                       Test_Reduce_Expression'Access);
    end Add_Tests;
 
 end EL.Expressions.Tests;
