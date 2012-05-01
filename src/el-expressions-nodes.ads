@@ -56,7 +56,7 @@ private package EL.Expressions.Nodes is
    --  Reduce the expression by eliminating variables which are known
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
-   function Reduce (Expr    : in ELNode;
+   function Reduce (Expr    : access ELNode;
                     Context : in ELContext'Class) return Reduction is abstract;
 
    --  Delete the expression tree (calls Delete (ELNode_Access) recursively).
@@ -82,8 +82,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELUnary;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELUnary;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELUnary);
@@ -105,8 +105,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELBinary;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELBinary;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELBinary);
@@ -125,8 +125,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELTernary;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELTernary;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELTernary);
@@ -145,8 +145,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELVariable;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELVariable;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELVariable);
@@ -182,8 +182,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELValue;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELValue;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELValue);
@@ -202,8 +202,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELObject;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELObject;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELObject);
@@ -222,8 +222,8 @@ private package EL.Expressions.Nodes is
    --  and computing constant expressions.  Returns either a new expression
    --  tree or a constant value.
    overriding
-   function Reduce (Expr    : ELFunction;
-                    Context : ELContext'Class) return Reduction;
+   function Reduce (Expr    : access ELFunction;
+                    Context : in ELContext'Class) return Reduction;
 
    overriding
    procedure Delete (Node : in out ELFunction);

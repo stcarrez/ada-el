@@ -80,8 +80,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELUnary;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELUnary;
+                    Context : in ELContext'Class) return Reduction is
       Value : Reduction := Expr.Node.Reduce (Context);
    begin
       if Value.Node /= null then
@@ -189,8 +189,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELBinary;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELBinary;
+                    Context : in ELContext'Class) return Reduction is
       Left  : Reduction := Expr.Left.Reduce (Context);
       Right : Reduction := Expr.Right.Reduce (Context);
    begin
@@ -295,8 +295,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELTernary;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELTernary;
+                    Context : in ELContext'Class) return Reduction is
       Cond : constant Reduction := Expr.Cond.Reduce (Context);
    begin
       --  Condition value is known, evaluate one or the other part.
@@ -384,8 +384,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELVariable;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELVariable;
+                    Context : in ELContext'Class) return Reduction is
       Mapper   : constant access Variable_Mapper'Class := Context.Get_Variable_Mapper;
    begin
       if Mapper /= null then
@@ -393,8 +393,7 @@ package body EL.Expressions.Nodes is
             Value : constant Expression := Mapper.Get_Variable (Expr.Name);
          begin
             if not Value.Is_Null then
-               return Reduction '(Value => Value.Get_Value (Context),
-                                  Node  => null);
+               return Value.Node.Reduce (Context);
             end if;
 
          exception
@@ -416,22 +415,24 @@ package body EL.Expressions.Nodes is
                   Util.Concurrent.Counters.Increment (Value.Node.Ref_Counter);
                   return Reduction '(Value => EL.Objects.Null_Object,
                                      Node  => Value.Node.all'Access);
-               else
-                  raise;
                end if;
-
          end;
       end if;
-
-      return Reduction '(Node => new ELVariable '(Name => Expr.Name,
-                                                  Ref_Counter => Counters.ONE),
-                         Value => EL.Objects.Null_Object);
+      Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
+      return Reduction '(Value => EL.Objects.Null_Object,
+                         Node  => Expr.all'Access);
+--        return Reduction '(Node => new ELVariable '(Name => Expr.Name,
+--                                                    Ref_Counter => Counters.ONE),
+--                           Value => EL.Objects.Null_Object);
 
    exception
       when others =>
-         return Reduction '(Node => new ELVariable '(Name => Expr.Name,
-                                                     Ref_Counter => Counters.ONE),
-                            Value => EL.Objects.Null_Object);
+         Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
+         return Reduction '(Value => EL.Objects.Null_Object,
+                            Node  => Expr.all'Access);
+--           return Reduction '(Node => new ELVariable '(Name => Expr.Name,
+--                                                       Ref_Counter => Counters.ONE),
+--                              Value => EL.Objects.Null_Object);
    end Reduce;
 
    --  ------------------------------
@@ -540,8 +541,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELValue;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELValue;
+                    Context : in ELContext'Class) return Reduction is
       Var : Reduction := Expr.Variable.Reduce (Context);
    begin
       if Var.Node = null then
@@ -556,11 +557,17 @@ package body EL.Expressions.Nodes is
             end if;
          end;
       end if;
-      return Reduction '(Node => new ELValue '(Variable => Var.Node,
-                                               Len      => Expr.Len,
-                                               Name     => Expr.Name,
-                                               Ref_Counter => Counters.ONE),
-                        Value => EL.Objects.Null_Object);
+      if Var.Node = Expr.Variable then
+         Util.Concurrent.Counters.Decrement (Var.Node.Ref_Counter);
+      end if;
+      Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
+      return Reduction '(Node  => Expr.all'Access,
+                         Value => EL.Objects.Null_Object);
+--        return Reduction '(Node => new ELValue '(Variable => Var.Node,
+--                                                 Len      => Expr.Len,
+--                                                 Name     => Expr.Name,
+--                                                 Ref_Counter => Counters.ONE),
+--                          Value => EL.Objects.Null_Object);
    end Reduce;
 
    --  ------------------------------
@@ -592,8 +599,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELObject;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELObject;
+                    Context : in ELContext'Class) return Reduction is
       pragma Unreferenced (Context);
    begin
       return Reduction '(Value => Expr.Value,
@@ -647,8 +654,8 @@ package body EL.Expressions.Nodes is
    --  tree or a constant value.
    --  ------------------------------
    overriding
-   function Reduce (Expr    : ELFunction;
-                    Context : ELContext'Class) return Reduction is
+   function Reduce (Expr    : access ELFunction;
+                    Context : in ELContext'Class) return Reduction is
       Arg1, Arg2, Arg3, Arg4 : Reduction;
    begin
       Arg1 := Expr.Arg1.Reduce (Context);
