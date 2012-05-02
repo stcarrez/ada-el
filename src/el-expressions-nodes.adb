@@ -668,7 +668,8 @@ package body EL.Expressions.Nodes is
             Arg1.Value := Expr.Func.Func1 (Arg1.Value);
             return Arg1;
          end if;
-         Arg1.Node := Create_Node (Expr.Func, Arg1.Node);
+         Util.Concurrent.Counters.Increment (Expr.Ref_Counter);
+         Arg1.Node := Expr.all'Access;
          return Arg1;
       end if;
 
