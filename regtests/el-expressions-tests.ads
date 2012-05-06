@@ -40,6 +40,9 @@ package EL.Expressions.Tests is
    procedure Test_Function_Evaluation (T : in out Test);
    procedure Test_Object_Sizes (T : in out Test);
 
+   --  Test to verify the Is_Valid operation
+   procedure Test_Method_Is_Valid (T : in out Test);
+
    --  Test function namespace
    procedure Test_Function_Namespace (T : in out Test);
 

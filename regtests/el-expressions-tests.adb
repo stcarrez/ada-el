@@ -376,6 +376,36 @@ package body EL.Expressions.Tests is
    end Test_Function_Namespace;
 
    --  ------------------------------
+   --  Test to verify the Is_Valid operation
+   --  ------------------------------
+   procedure Test_Method_Is_Valid (T : in out Test) is
+      use Action_Bean;
+
+      A1 : aliased Action;
+      A2 : aliased Action;
+      P  : Person_Access := Create_Person ("Joe", "Black", 42);
+      M  : EL.Expressions.Method_Expression :=
+        Create_Expression (Context => T.Context.all,
+                           Expr    => "#{action.notify}");
+      E  : constant EL.Expressions.Expression :=
+        Create_Expression (Context => T.Context.all,
+                           Expr    => "#{action.notify}");
+   begin
+      declare
+         Method : Method_Info;
+      begin
+         T.Assert (not Proc_Action.Is_Valid (Method), "Method is invalid");
+      end;
+      T.Context.all.Set_Variable ("action", A1'Unchecked_Access);
+      declare
+         Method : constant Method_Info := M.Get_Method_Info (T.Context.all);
+      begin
+         T.Assert (Proc_Action.Is_Valid (Method), "Method is invalid");
+         T.Assert (not Proc2_Action.Is_Valid (Method), "Method is invalid");
+      end;
+   end Test_Method_Is_Valid;
+
+   --  ------------------------------
    --  Test evaluation of method expression
    --  ------------------------------
    procedure Test_Method_Evaluation (T : in out Test) is
@@ -667,6 +697,8 @@ package body EL.Expressions.Tests is
                        Test_Reduce_Expression'Access);
       Caller.Add_Test (Suite, "Test EL.Expressions.Reduce_Expression (reduce variable)",
                        Test_Reduce_Expression_Variable'Access);
+      Caller.Add_Test (Suite, "Test EL.Methods.Proc_1.Is_Valid",
+                       Test_Method_Is_Valid'Access);
    end Add_Tests;
 
 end EL.Expressions.Tests;
