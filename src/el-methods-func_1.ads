@@ -27,6 +27,10 @@ package EL.Methods.Func_1 is
 
    use Util.Beans.Methods;
 
+   --  Returns True if the method is a valid method which accepts the arguments
+   --  defined by the package instantiation.
+   function Is_Valid (Method : in EL.Expressions.Method_Info) return Boolean;
+
    --  Execute the method describe by the method expression
    --  and with the given context.  The method signature is:
    --

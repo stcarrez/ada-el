@@ -21,6 +21,19 @@ package body EL.Methods.Proc_In is
    use EL.Expressions;
 
    --  ------------------------------
+   --  Returns True if the method is a valid method which accepts the arguments
+   --  defined by the package instantiation.
+   --  ------------------------------
+   function Is_Valid (Method : in EL.Expressions.Method_Info) return Boolean is
+   begin
+      if Method.Binding = null then
+         return False;
+      else
+         return Method.Binding.all in Binding'Class;
+      end if;
+   end Is_Valid;
+
+   --  ------------------------------
    --  Execute the method describe by the method binding object.
    --  The method signature is:
    --
