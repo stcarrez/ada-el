@@ -1,4 +1,4 @@
-Version 1.4.1   -
+Version 1.4.1   - Dec 2012
   - Fix compilation to use -gnatn instead of -gnatN
 
 Version 1.4     - May 2012
