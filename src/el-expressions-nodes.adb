@@ -662,9 +662,11 @@ package body EL.Expressions.Nodes is
                     Context : in ELContext'Class) return Reduction is
       Arg1, Arg2, Arg3, Arg4 : Reduction;
    begin
-      Arg1 := Expr.Arg1.Reduce (Context);
+      if Expr.Arg1 /= null then
+         Arg1 := Expr.Arg1.Reduce (Context);
+      end if;
       if Expr.Func.Of_Type = F_1_ARG then
-         if Arg1.Node = null and Expr.Func.Optimize then
+         if Arg1.Node = null and Expr.Func.Optimize and Expr.Func.Func1 /= null then
             Arg1.Value := Expr.Func.Func1 (Arg1.Value);
             return Arg1;
          end if;
@@ -672,9 +674,12 @@ package body EL.Expressions.Nodes is
          return Arg1;
       end if;
 
-      Arg2 := Expr.Arg2.Reduce (Context);
+      if Expr.Arg2 /= null then
+         Arg2 := Expr.Arg2.Reduce (Context);
+      end if;
       if Expr.Func.Of_Type = F_2_ARG then
-         if Arg1.Node = null and Arg2.Node = null and Expr.Func.Optimize then
+         if Arg1.Node = null and Arg2.Node = null and Expr.Func.Optimize
+           and Expr.Func.Func2 /= null then
             Arg1.Value := Expr.Func.Func2 (Arg1.Value, Arg2.Value);
             return Arg1;
          end if;
@@ -691,9 +696,12 @@ package body EL.Expressions.Nodes is
          return Arg1;
       end if;
 
-      Arg3 := Expr.Arg3.Reduce (Context);
+      if Expr.Arg3 /= null then
+         Arg3 := Expr.Arg3.Reduce (Context);
+      end if;
       if Expr.Func.Of_Type = F_3_ARG then
-         if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null and Expr.Func.Optimize then
+         if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null and Expr.Func.Optimize
+           and Expr.Func.Func3 /= null then
             Arg1.Value := Expr.Func.Func3 (Arg1.Value, Arg2.Value, Arg3.Value);
             return Arg1;
          end if;
@@ -714,9 +722,11 @@ package body EL.Expressions.Nodes is
          return Arg1;
       end if;
 
-      Arg4 := Expr.Arg4.Reduce (Context);
+      if Expr.Arg4 /= null then
+         Arg4 := Expr.Arg4.Reduce (Context);
+      end if;
       if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null
-        and Arg4.Node = null and Expr.Func.Optimize then
+        and Arg4.Node = null and Expr.Func.Optimize and Expr.Func.Func4 /= null then
          Arg1.Value := Expr.Func.Func4 (Arg1.Value, Arg2.Value, Arg3.Value, Arg4.Value);
          return Arg1;
       end if;
