@@ -625,6 +625,9 @@ package body EL.Expressions.Nodes is
                        Context : ELContext'Class) return Object is
       Arg1, Arg2, Arg3, Arg4 : Object;
    begin
+      if Expr.Arg1 = null then
+         raise Missing_Argument with "Missing argument 1";
+      end if;
       Arg1 := Expr.Arg1.Get_Safe_Value (Context);
       if Expr.Func.Of_Type = F_1_ARG then
          return Expr.Func.Func1 (Arg1);
@@ -669,6 +672,10 @@ package body EL.Expressions.Nodes is
          if Arg1.Node = null and Expr.Func.Optimize and Expr.Func.Func1 /= null then
             Arg1.Value := Expr.Func.Func1 (Arg1.Value);
             return Arg1;
+         end if;
+         if Arg1.Node = null then
+            Arg1.Node := new ELObject '(Value       => Arg1.Value,
+                                        Ref_Counter => Counters.ONE);
          end if;
          Arg1.Node := Create_Node (Expr.Func, Arg1.Node);
          return Arg1;
