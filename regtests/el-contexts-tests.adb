@@ -28,7 +28,7 @@ package body EL.Contexts.Tests is
 
    use Util.Tests;
 
-   package Caller is new Util.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test, "EL.Contexts");
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
