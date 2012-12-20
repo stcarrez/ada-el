@@ -27,7 +27,7 @@ package body EL.Utils.Tests is
    use Util.Tests;
    use Util.Beans.Objects;
 
-   package Caller is new Util.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test, "EL.Utils");
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
