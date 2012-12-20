@@ -105,7 +105,7 @@ package body EL.Testsuite is
 
    end Test_Expression;
 
-   package Caller is new Util.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test, "EL");
 
    Tests : aliased Util.Tests.Test_Suite;
 
