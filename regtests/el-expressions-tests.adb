@@ -659,7 +659,7 @@ package body EL.Expressions.Tests is
                                 "Invalid reduction");
    end Test_Reduce_Expression_Variable;
 
-   package Caller is new Util.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test, "EL.Expressions");
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
