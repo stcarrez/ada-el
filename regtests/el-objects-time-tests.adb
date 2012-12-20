@@ -82,7 +82,7 @@ package body EL.Objects.Time.Tests is
       T.Assert (V3 < V2, "Invalid comparison for time");
    end Test_Time_Add;
 
-   package Caller is new Util.Test_Caller (Test);
+   package Caller is new Util.Test_Caller (Test, "EL.Objects.Time");
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
