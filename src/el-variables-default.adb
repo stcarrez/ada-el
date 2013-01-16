@@ -37,7 +37,7 @@ package body EL.Variables.Default is
    begin
       if not Variable_Maps.Has_Element (C) then
          if Mapper.Next_Mapper /= null then
-            return Mapper.Next_Mapper.Get_Variable (Name);
+            return Mapper.Next_Mapper.all.Get_Variable (Name);
          end if;
          --  Avoid raising an exception if we can't resolve a variable.
          --  Instead, return a null expression.  This speeds up the resolution and
