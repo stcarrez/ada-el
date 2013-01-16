@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Variables -- Variable mapper
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2012, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +24,9 @@ package body EL.Variables is
    function Get_Variable (Mapper : in Variable_Mapper'Class;
                           Name   : in Unbounded_String)
                           return EL.Expressions.Value_Expression is
+      VE : constant EL.Expressions.Expression := Mapper.Get_Variable (Name);
    begin
-      return EL.Expressions.Create_Expression (Mapper.Get_Variable (Name));
+      return EL.Expressions.Create_Expression (VE);
    end Get_Variable;
 
    --  ------------------------------
