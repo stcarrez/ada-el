@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Proc_2 -- Procedure Binding with 2 arguments
---  Copyright (C) 2010, 2011, 2012 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2012, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -72,7 +72,7 @@ package EL.Methods.Proc_2 is
       Name : String;
 
       --  The bean type
-      type Bean is new Util.Beans.Basic.Readonly_Bean with private;
+      type Bean is abstract new Util.Beans.Basic.Readonly_Bean with private;
 
       --  The bean method to invoke
       with procedure Method (O  : in out Bean;
