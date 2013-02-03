@@ -1,4 +1,4 @@
-Version 1.4.1   - Jan 2013
+Version 1.4.2   - Feb 2013
   - Fix compilation to use -gnatn instead of -gnatN
   - Fix compilation with gcc 4.7
 
