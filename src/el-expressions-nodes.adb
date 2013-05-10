@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
+with Ada.Characters.Conversions;
 with EL.Variables;
 with Util.Beans.Methods;
 with Util.Strings;
@@ -811,19 +812,27 @@ package body EL.Expressions.Nodes is
       return new ELObject '(Value => To_Object (Value), Ref_Counter => Counters.ONE);
    end Create_Node;
 
-   function Create_Variable (Name : Unbounded_String) return ELNode_Access is
+   function Create_Variable (Name : in Wide_Wide_String) return ELNode_Access is
+      Result : constant ELVariable_Access := new ELVariable '(Name        => Null_Unbounded_String,
+                                                              Ref_Counter => Counters.ONE);
    begin
-      return new ELVariable '(Name => Name,
-                              Ref_Counter => Counters.ONE);
+      Append (Result.Name, Ada.Characters.Conversions.To_String (Name));
+      return Result.all'Access;
    end Create_Variable;
 
    function Create_Value (Variable : in ELNode_Access;
-                          Name     : in String) return ELNode_Access is
+                          Name     : in Wide_Wide_String) return ELNode_Access is
+      Result : constant ELValue_Access := new ELValue '(Len         => Name'Length,
+                                                        Variable    => Variable,
+                                                        Ref_Counter => Counters.ONE,
+                                                        Name        => (others => <>));
+      Pos    : Positive := 1;
    begin
-      return new ELValue '(Len         => Name'Length,
-                           Name        => Name,
-                           Variable    => Variable,
-                           Ref_Counter => Counters.ONE);
+      for I in Name'Range loop
+         Result.Name (Pos) := Ada.Characters.Conversions.To_Character (Name (I));
+         Pos := Pos + 1;
+      end loop;
+      return Result.all'Access;
    end Create_Value;
 
    --  ------------------------------
@@ -832,18 +841,6 @@ package body EL.Expressions.Nodes is
    function Create_Node (Of_Type : Unary_Node;
                          Expr    : ELNode_Access) return ELNode_Access is
    begin
-      if Expr.all in ELObject'Class then
-         case Of_Type is
-            when EL_NOT =>
-               null;
-
-            when EL_MINUS =>
-               null;
-
-            when others =>
-               null;
-         end case;
-      end if;
       return new ELUnary '(Kind => Of_Type, Node => Expr, Ref_Counter => Counters.ONE);
    end Create_Node;
 

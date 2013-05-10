@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -235,9 +235,9 @@ private package EL.Expressions.Nodes is
    function Create_Node (Value : Wide_Wide_String) return ELNode_Access;
    function Create_Node (Value : Long_Float) return ELNode_Access;
    function Create_Node (Value : Unbounded_Wide_Wide_String) return ELNode_Access;
-   function Create_Variable (Name : Unbounded_String) return ELNode_Access;
+   function Create_Variable (Name : in Wide_Wide_String) return ELNode_Access;
    function Create_Value (Variable : in ELNode_Access;
-                          Name     : in String) return ELNode_Access;
+                          Name     : in Wide_Wide_String) return ELNode_Access;
 
    --  Create unary expressions
    function Create_Node (Of_Type : Unary_Node;
@@ -308,6 +308,7 @@ private
    type ELVariable is new ELNode with record
       Name     : Unbounded_String;
    end record;
+   type ELVariable_Access is access all ELVariable;
 
    type ELValue (Len : Natural) is new ELNode with record
       Variable : ELNode_Access;
