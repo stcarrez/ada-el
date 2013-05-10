@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  Parser -- Parser for Expression Language
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,17 +17,24 @@
 -----------------------------------------------------------------------
 
 with Ada.Characters.Conversions;
-with Ada.Strings.Wide_Wide_Unbounded;
-with Ada.Strings.Unbounded;
+with Util.Texts.Builders;
 with EL.Functions;
 package body EL.Expressions.Parser is
 
    use Ada.Characters.Conversions;
-   use Ada.Strings.Wide_Wide_Unbounded;
    use Ada.Strings.Unbounded;
 
    use EL.Expressions.Nodes;
    use EL.Functions;
+
+   package Wide_Builder is new Util.Texts.Builders (Element_Type => Wide_Wide_Character,
+                                                    Input        => Wide_Wide_String,
+                                                    Chunk_Size   => 100);
+
+   function To_Wide_Wide_String (Source : in Wide_Builder.Builder) return Wide_Wide_String
+                                 renames Wide_Builder.To_Array;
+
+   use Wide_Builder;
 
    type Token_Type is (T_EOL,
                        T_LEFT_PARENT,
@@ -42,20 +49,19 @@ package body EL.Expressions.Parser is
                        T_BRACE_END,
                        T_UNKNOWN);
 
-   type Parser is record
-      Pos  : Natural;
-      Last : Natural;
-      Token_Start : Natural;
-      Token_End   : Natural;
-      Expr : access Wide_Wide_String;
-      Token : Unbounded_Wide_Wide_String;
-      Value : Long_Long_Integer;
+   type Parser is limited record
+      Pos           : Natural;
+      Last          : Natural;
+      Token_Start   : Natural;
+      Token_End     : Natural;
+      Expr          : access Wide_Wide_String;
+      Value         : Long_Long_Integer;
       Pending_Token : Token_Type := T_EOL;
-      Mapper : Function_Mapper_Access;
+      Mapper        : Function_Mapper_Access;
+      Token         : Wide_Builder.Builder (100);
    end record;
 
-   function To_Unbounded_String (Str : Unbounded_Wide_Wide_String)
-     return Unbounded_String;
+   function Create_Node (Value : in Wide_Builder.Builder) return ELNode_Access;
 
    procedure Put_Back (P : in out Parser; Token : in Token_Type);
 
@@ -72,8 +78,8 @@ package body EL.Expressions.Parser is
    procedure Parse_Multiply (P : in out Parser; Result : out ELNode_Access);
    procedure Parse_Unary (P : in out Parser; Result : out ELNode_Access);
    procedure Parse_Function (P         : in out Parser;
-                             Namespace : in Unbounded_String;
-                             Name      : in Unbounded_String;
+                             Namespace : in String;
+                             Name      : in String;
                              Result    : out ELNode_Access);
 
    --  Parse the expression buffer to find the next token.
@@ -81,11 +87,10 @@ package body EL.Expressions.Parser is
    procedure Parse_Number (P      : in out Parser;
                            Result : out Long_Long_Integer);
 
-   function To_Unbounded_String (Str : Unbounded_Wide_Wide_String)
-                                 return Unbounded_String is
+   function Create_Node (Value : in Wide_Builder.Builder) return ELNode_Access is
    begin
-      return To_Unbounded_String (To_String (To_Wide_Wide_String (Str)));
-   end To_Unbounded_String;
+      return Create_Node (To_Wide_Wide_String (Value));
+   end Create_Node;
 
    --  #{bean.name}
    --  #{12 + 23}
@@ -146,7 +151,7 @@ package body EL.Expressions.Parser is
                raise Invalid_Expression with "Missing '}' to close expression";
             end if;
             P.Pending_Token := T_EOL;
-            Delete (P.Token, 1, Length (P.Token));
+            Clear (P.Token);
             if Literal /= null then
                Literal := Create_Node (EL_CONCAT, Literal, Node);
             else
@@ -519,9 +524,7 @@ package body EL.Expressions.Parser is
                --  name[expr]
                --  name.name[expr]
                --  name(expr,...,expr)
-               --  Result := Create_Node (P.Token);
                declare
-                  Name : Unbounded_String := To_Unbounded_String (P.Token);
                   C    : Wide_Wide_Character;
                begin
                   if P.Pos <= P.Last then
@@ -530,16 +533,15 @@ package body EL.Expressions.Parser is
                      C := ' ';
                   end if;
                   if C = '.' then
-                     Result := Create_Variable (Name);
+                     Result := Create_Variable (P.Expr (P.Token_Start .. P.Token_End));
 
                      --  Parse one or several property extensions
                      while C = '.' loop
                         P.Pos := P.Pos + 1;
                         Peek (P, Token);
                         exit when Token /= T_NAME;
-                        Name := To_Unbounded_String (P.Token);
                         Result := Create_Value (Variable => Result,
-                                                Name => To_String (Name));
+                                                Name     => P.Expr (P.Token_Start .. P.Token_End));
                         if P.Pos <= P.Last then
                            C := P.Expr (P.Pos);
                         else
@@ -549,24 +551,31 @@ package body EL.Expressions.Parser is
 
                      --  Parse a function call
                   elsif C = ':' then
-                     P.Pos := P.Pos + 1;
-                     Peek (P, Token);
-                     if P.Pos <= P.Last then
-                        C := P.Expr (P.Pos);
-                     else
-                        C := ' ';
-                     end if;
-                     if Token /= T_NAME or C /= '(' then
-                        raise Invalid_Expression with "Missing function name after ':'";
-                     end if;
-                     Parse_Function (P, Name, To_Unbounded_String (P.Token), Result);
+                     declare
+                        Name : constant String
+                          := To_String (P.Expr (P.Token_Start .. P.Token_End));
+                     begin
+                        P.Pos := P.Pos + 1;
+                        Peek (P, Token);
+                        if P.Pos <= P.Last then
+                           C := P.Expr (P.Pos);
+                        else
+                           C := ' ';
+                        end if;
+                        if Token /= T_NAME or C /= '(' then
+                           raise Invalid_Expression with "Missing function name after ':'";
+                        end if;
+                        Parse_Function (P, Name, To_String (P.Expr (P.Token_Start .. P.Token_End)),
+                                        Result);
+                     end;
 
                   --  Parse a function call
                   elsif C = '(' then
-                     Parse_Function (P, To_Unbounded_String (""), Name, Result);
+                     Parse_Function (P, "", To_String (P.Expr (P.Token_Start .. P.Token_End)),
+                                     Result);
 
                   else
-                     Result := Create_Variable (Name);
+                     Result := Create_Variable (P.Expr (P.Token_Start .. P.Token_End));
                   end if;
 
                   --  Recognize a basic form of array index.
@@ -576,9 +585,8 @@ package body EL.Expressions.Parser is
                      if Token /= T_NAME and Token /= T_LITERAL then
                         raise Invalid_Expression with "Missing string in array index []";
                      end if;
-                     Name := To_Unbounded_String (P.Token);
                      Result := Create_Value (Variable => Result,
-                                             Name => To_String (Name));
+                                             Name     => P.Expr (P.Token_Start .. P.Token_End));
                      if P.Pos > P.Last or else P.Expr (P.Pos) /= ']' then
                         raise Invalid_Expression with "Missing ']' to close array index";
                      end if;
@@ -640,7 +648,7 @@ package body EL.Expressions.Parser is
          --  Collect up to the end of the string and put
          --  the result in the parser token result.
          when ''' | '"' =>
-            Delete (P.Token, 1, Length (P.Token));
+            Clear (P.Token);
             while P.Pos <= P.Last loop
                C1 := P.Expr (P.Pos);
                P.Pos := P.Pos + 1;
@@ -682,93 +690,92 @@ package body EL.Expressions.Parser is
 
          --  Parse a name composed of letters or digits.
          when 'a' .. 'z' | 'A' .. 'Z' =>
-            Delete (P.Token, 1, Length (P.Token));
-            Append (P.Token, C);
+            P.Token_Start := P.Pos - 1;
             while P.Pos <= P.Last loop
-               C := P.Expr (P.Pos);
-               exit when not (C in 'a' .. 'z' or C in 'A' .. 'Z'
-                              or C in '0' .. '9' or C = '_');
-               Append (P.Token, C);
+               C1 := P.Expr (P.Pos);
+               exit when not (C1 in 'a' .. 'z' or C1 in 'A' .. 'Z'
+                              or C1 in '0' .. '9' or C1 = '_');
                P.Pos := P.Pos + 1;
             end loop;
+            P.Token_End := P.Pos - 1;
 
             --  and empty eq false ge gt le lt ne not null true
-            case Element (P.Token, 1) is
-               when 'a' | 'A' =>
-                  if P.Token = "and" then
+            case C is
+               when 'a' =>
+                  if P.Expr (P.Token_Start .. P.Token_End) = "and" then
                      Token := T_LOGICAL_AND;
                      return;
                   end if;
 
-               when 'd' | 'D' =>
-                  if P.Token = "div" then
+               when 'd' =>
+                  if P.Expr (P.Token_Start .. P.Token_End) = "div" then
                      Token := T_DIV;
                      return;
                   end if;
 
-               when 'e' | 'E' =>
-                  if P.Token = "eq" then
+               when 'e' =>
+                  if P.Expr (P.Token_Start .. P.Token_End) = "eq" then
                      Token := T_EQ;
                      return;
-                  elsif P.Token = "empty" then
+                  elsif P.Expr (P.Token_Start .. P.Token_End) = "empty" then
                      Token := T_EMPTY;
                      return;
                   end if;
 
                when 'f' | 'F' =>
-                  if P.Token = "false" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "false" then
                      Token := T_FALSE;
                      return;
                   end if;
 
                when 'g' | 'G' =>
-                  if P.Token = "ge" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "ge" then
                      Token := T_GE;
                      return;
 
-                  elsif P.Token = "gt" then
+                  elsif P.Expr (P.Token_Start .. P.Token_End) = "gt" then
                      Token := T_GT;
                      return;
                   end if;
 
                when 'm' | 'M' =>
-                  if P.Token = "mod" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "mod" then
                      Token := T_MOD;
                      return;
                   end if;
 
                when 'l' | 'L' =>
-                  if P.Token = "le" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "le" then
                      Token := T_LE;
                      return;
 
-                  elsif P.Token = "lt" then
+                  elsif P.Expr (P.Token_Start .. P.Token_End) = "lt" then
                      Token := T_LT;
                      return;
                   end if;
 
                when 'n' | 'N' =>
-                  if P.Token = "not" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "not" then
                      Token := T_NOT;
                      return;
 
-                  elsif P.Token = "ne" then
+                  elsif P.Expr (P.Token_Start .. P.Token_End) = "ne" then
                      Token := T_NE;
                      return;
 
-                  elsif P.Token = "null" then
+                  elsif P.Expr (P.Token_Start .. P.Token_End) = "null" then
                      Token := T_NULL;
                      return;
                   end if;
 
                when 'o' =>
-                  if P.Token = "or" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "or" then
                      Token := T_OR;
                      return;
                   end if;
 
                when 't' | 'T' =>
-                  if P.Token = "true" then
+                  if P.Expr (P.Token_Start .. P.Token_End) = "true" then
                      Token := T_TRUE;
                      return;
                   end if;
@@ -925,21 +932,19 @@ package body EL.Expressions.Parser is
    --  The function call can have up to 4 arguments.
    --  ------------------------------
    procedure Parse_Function (P         : in out Parser;
-                             Namespace : in Unbounded_String;
-                             Name      : in Unbounded_String;
+                             Namespace : in String;
+                             Name      : in String;
                              Result    : out ELNode_Access) is
       Token : Token_Type;
       Arg1, Arg2, Arg3, Arg4 : ELNode_Access;
       Func : Function_Access;
-      NS   : constant String := To_String (Namespace);
-      N    : constant String := To_String (Name);
    begin
 
       if P.Mapper = null then
          raise Invalid_Expression with "There is no function mapper";
       end if;
 
-      Func := P.Mapper.Get_Function (NS, N);
+      Func := P.Mapper.Get_Function (Namespace, Name);
       --  if Func = null then
       --   raise Invalid_Expression with "Function '" & N & "' not found";
       --  end if;
@@ -997,6 +1002,7 @@ package body EL.Expressions.Parser is
       P : Parser;
       S : aliased Wide_Wide_String := To_Wide_Wide_String (Expr);
    begin
+      Result   := null;
       P.Mapper := Context.Get_Function_Mapper;
       P.Expr   := S'Unchecked_Access;
       P.Pos    := P.Expr.all'First;
@@ -1018,6 +1024,7 @@ package body EL.Expressions.Parser is
       S : aliased Wide_Wide_String := Expr;
       P : Parser;
    begin
+      Result   := null;
       P.Mapper := Context.Get_Function_Mapper;
       P.Expr := S'Unchecked_Access;
       P.Pos := P.Expr.all'First;

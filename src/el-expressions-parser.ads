@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el -- Expression Language
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
---  package EL
---  package EL.Expressions
---  package EL.Objects
 with EL.Expressions.Nodes;
 private package EL.Expressions.Parser is
 
@@ -31,5 +28,6 @@ private package EL.Expressions.Parser is
    procedure Parse (Expr   : in Wide_Wide_String;
                     Context : in ELContext'Class;
                     Result : out EL.Expressions.Nodes.ELNode_Access);
+
 
 end EL.Expressions.Parser;
