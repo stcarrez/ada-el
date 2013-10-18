@@ -103,7 +103,7 @@ DISTFILES=README LICENSE.txt NOTICE.txt NEWS CHANGES ChangeLog config.guess conf
 configure.in Makefile.in install-sh \
 el.gpr.in tests.gpr.in samples.gpr config.gpr.in \
 src samples regtests \
-bin obj lib doc distrib
+bin obj lib doc distrib debian
 
 dist:
 	-rm -rf $(distdir)
@@ -136,25 +136,26 @@ install_shared:
 	$(MAKE) LIBRARY_TYPE=relocatable install_lib
 
 install_lib:
-	$(MKDIR) -p ${includedir}/el
+	$(MKDIR) -p ${includedir}/ada-el
 	$(MKDIR) -p ${projectdir}/
-	${MKDIR} -p ${alidir}/el/$(LIBRARY_TYPE)
-	${CP} -p src/*.ad[bs] ${includedir}/el
+	${MKDIR} -p ${alidir}/ada-el
+	${CP} -p src/*.ad[bs] ${includedir}/ada-el
 	sed -e "s,INSTALL,${prefix},g" -e "s,LIBRARY_TYPE,$(LIBRARY_TYPE),g" < distrib/el.gpr > ${projectdir}/el.gpr
-	${CP} -p lib/$(LIBRARY_TYPE)/*.ali ${alidir}/el/$(LIBRARY_TYPE)/
+	${CP} -p lib/$(LIBRARY_TYPE)/*.ali ${alidir}/ada-el/
 ifeq ($(LIBRARY_TYPE),static)
-	${CP} lib/$(LIBRARY_TYPE)/libadael.a ${libdir}/
+	${CP} lib/$(LIBRARY_TYPE)/libada-el.a ${libdir}/
 else
-	${CP} -p lib/$(LIBRARY_TYPE)/libadael.$(LIBVER) ${libdir}/
+	${CP} -p lib/$(LIBRARY_TYPE)/libada-el.$(LIBVER) ${libdir}/
 	cd ${libdir} && \
-	   rm -f libadael.$(LIBEXT) && \
-	   ${LN} libadael.$(LIBVER) libadael.$(LIBEXT)
+	   rm -f libada-el.$(LIBEXT) && \
+	   ${LN} libada-el.$(LIBVER) libada-el.$(LIBEXT)
 endif
 
 uninstall:
-	rm -rf ${includedir}/el
-	rm -f ${libdir}/libadael.a
-	rm -f ${libdir}/libadael.$(LIBEXT)
+	rm -rf ${includedir}/ada-el
+	rm -rf ${alidir}/ada-el
+	rm -f ${libdir}/libada-el.a
+	rm -f ${libdir}/libada-el.$(LIBEXT)
 	rm -f ${projectdir}/el.gpr
 
 # prepare before releasing a new version of the package
