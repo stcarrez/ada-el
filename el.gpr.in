@@ -7,7 +7,7 @@ project El is
    Library_Type : Config.Library_Type_Type := external ("LIBRARY_TYPE", "static");
 
    for Source_Dirs use ("src");
-   for Library_Name use "adael";
+   for Library_Name use "ada-el";
    for Library_Kind use Library_Type;
    for Library_Version use "lib" & Project'Library_Name & ".so." & Version;
 
