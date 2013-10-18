@@ -45,8 +45,10 @@ projectdir=${prefix}/share/ada/adainclude
 bindir=${prefix}/bin
 libdir=${prefix}/lib
 alidir=${libdir}/ada/adalib/
+docdir=libada-el
+samplesdir=${prefix}/share/doc/$(docdir)
 
-MAKE_ARGS=-XMODE=${MODE} -XLIBRARY_TYPE=${LIBRARY_TYPE} -XPROCESSORS=4
+MAKE_ARGS=-XMODE=${MODE} -XLIBRARY_TYPE=${LIBRARY_TYPE}
 
 GPRPATH=el.gpr
 
@@ -151,6 +153,12 @@ else
 	   rm -f libada-el.$(LIBEXT) && \
 	   ${LN} libada-el.$(LIBVER) libada-el.$(LIBEXT)
 endif
+
+install_samples:
+	$(MKDIR) -p $(samplesdir)/samples
+	cp -rp $(srcdir)/samples/*.ad[sb] $(samplesdir)/samples/
+	cp -p $(srcdir)/samples.gpr $(samplesdir)
+	cp -p $(srcdir)/config.gpr $(samplesdir)
 
 uninstall:
 	rm -rf ${includedir}/ada-el
