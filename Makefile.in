@@ -6,7 +6,8 @@ LIBRARY_TYPE=static
 # You may edit this makefile as long as you keep these original 
 # target names defined.
 MODE=distrib
-GNATMAKE=@GNATMAKE@ -XMODE=${MODE} -XPROCESSORS=4
+CPUS := $(shell getconf _NPROCESSORS_ONLN)
+GNATMAKE=@GNATMAKE@ -XMODE=${MODE} -XPROCESSORS=$(CPUS)
 GNATCLEAN=gnatclean
 SVN=svn
 INSTALL=@INSTALL@
