@@ -1,35 +1,37 @@
 Source: libada-el
 Priority: extra
 Maintainer: Stephane Carrez <Stephane.Carrez@gmail.com>
-Build-Depends: debhelper (>= 8.0.0), autotools-dev, gnat, gnat-4.6
+Build-Depends: debhelper (>= 8.0.0), autotools-dev, gnat, gnat-4.6,
+ libada-util1.7-dev, libada-testutil1.7-dev
 Standards-Version: 3.9.2
 Section: libs
 Homepage: http://code.google.com/p/ada-el/
 #Vcs-Git: git://git.debian.org/collab-maint/libada-el.git
 #Vcs-Browser: http://git.debian.org/?p=collab-maint/libada-el.git;a=summary
 
-Package: libada-el
+Package: libada-el1.5
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libada-util, ${misc:Depends}
+Pre-Depends: multiarch-support
+Depends: ${shlibs:Depends}, libada-util1.7, ${misc:Depends}
 Description: Ada implementation of Java Unified Expression Language
  The library provides an Ada implementation of the Java Unified Expression
  Language shared by the JSP 2.1 and JSF 1.2 technologies.
  Refer to the Expression Language specification in JSR245
  (http://jcp.org/en/jsr/summary?id=245)
 
-Package: libada-el-dev
+Package: libada-el1.5-dev
 Section: libdevel
 Architecture: any
-Depends: libada-el (= ${binary:Version}), libada-util-dev, ${misc:Depends}
+Depends: libada-el1.5 (= ${binary:Version}), libada-util1.7-dev, ${misc:Depends}
 Description: Ada implementation of Java Unified Expression Language
  The package contains the Ada development files to develop application
  using the libada-el library.
 
-Package: libada-el-dbg
+Package: libada-el1.5-dbg
 Section: debug
 Architecture: any
-Depends: libada-el (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libada-el1.5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Debugging symbols for the Ada EL library
  Ada EL is an Ada implementation of the Java Unified Expression
  Language described in JSR245.
