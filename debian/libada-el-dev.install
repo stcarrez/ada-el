@@ -3,7 +3,4 @@ usr/lib/ada/adalib/ada-el/*.ali
 usr/share/ada/adainclude/ada-el/*.ads
 usr/share/ada/adainclude/ada-el/*.adb
 usr/share/ada/adainclude/el.gpr
-usr/share/doc/libada-el-dev/samples/*.ads
-usr/share/doc/libada-el-dev/samples/*.adb
-usr/share/doc/libada-el-dev/*.gpr
 
