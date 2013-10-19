@@ -40,6 +40,9 @@ override_dh_auto_install:
 	sed -e "s,INSTALL,/usr,g" -e "s,LIBRARY_TYPE,$(LIBRARY_TYPE),g" \
 		< $(CURDIR)/distrib/el.gpr > $(CURDIR)/debian/tmp/usr/share/ada/adainclude/el.gpr
 
+override_dh_compress:
+	dh_compress -X.ads -X.adb -XMakefile
+
 override_dh_strip:
 	dh_strip --dbg-package=libada-el-dbg
 
