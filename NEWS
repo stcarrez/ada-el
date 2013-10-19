@@ -1,5 +1,6 @@
 Version 1.5     -
   - EL parser optimization (20% to 30% speed up)
+  - Support for the creation of Debian packages
 
 Version 1.4.2   - Feb 2013
   - Fix compilation to use -gnatn instead of -gnatN
