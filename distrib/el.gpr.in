@@ -7,7 +7,7 @@ project El is
    for Library_Dir use "INSTALL/lib";
    for Library_Kind use "LIBRARY_TYPE";
 
-   for Source_Dirs use ("INSTALL/share/ada/adainclude/adal-el");
+   for Source_Dirs use ("INSTALL/share/ada/adainclude/ada-el");
    for Library_ALI_Dir use "INSTALL/lib/ada/adalib/ada-el/";
    for Externally_Built use "true";
 end El;
