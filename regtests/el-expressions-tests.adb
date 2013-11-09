@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL testsuite - EL Testsuite
---  Copyright (C) 2009, 2010, 2011, 2012 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -607,24 +607,25 @@ package body EL.Expressions.Tests is
    --  Test some reductions.
    --  ------------------------------
    procedure Test_Reduce_Expression (T : in out Test) is
-      Expr : EL.Expressions.Expression;
-      Red  : EL.Expressions.Expression;
+      Expr  : EL.Expressions.Expression;
+      Red   : EL.Expressions.Expression;
+      Count : constant Positive := 100_000;
    begin
       declare
          S : Util.Measures.Stamp;
       begin
-         for I in 1 .. 1_000 loop
+         for I in 1 .. Count loop
             Expr := Create_Expression ("#{bean.name}", T.Context.all);
          end loop;
-         Util.Measures.Report (S, "Create_Expression (1000)");
+         Util.Measures.Report (S, "Create_Expression", Count);
       end;
       declare
          S : Util.Measures.Stamp;
       begin
-         for I in 1 .. 1_000 loop
+         for I in 1 .. Count loop
             Red := Reduce_Expression (Expr, T.Context.all);
          end loop;
-         Util.Measures.Report (S, "Reduce_Expression (1000)");
+         Util.Measures.Report (S, "Reduce_Expression", Count);
          T.Assert (not Red.Is_Null, "Null expr after reduce");
          T.Assert (not Red.Is_Constant, "Expression was not constant");
       end;
