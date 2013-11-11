@@ -382,12 +382,7 @@ package body EL.Expressions.Tests is
       use Action_Bean;
 
       A1 : aliased Action;
-      A2 : aliased Action;
-      P  : Person_Access := Create_Person ("Joe", "Black", 42);
-      M  : EL.Expressions.Method_Expression :=
-        Create_Expression (Context => T.Context.all,
-                           Expr    => "#{action.notify}");
-      E  : constant EL.Expressions.Expression :=
+      M  : constant EL.Expressions.Method_Expression :=
         Create_Expression (Context => T.Context.all,
                            Expr    => "#{action.notify}");
    begin
