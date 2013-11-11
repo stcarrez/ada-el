@@ -6,8 +6,7 @@ LIBRARY_TYPE=static
 # You may edit this makefile as long as you keep these original 
 # target names defined.
 MODE=distrib
-CPUS := $(shell getconf _NPROCESSORS_ONLN)
-GNATMAKE=@GNATMAKE@ -XMODE=${MODE} -XPROCESSORS=$(CPUS)
+GNATMAKE=@GNATMAKE@
 GNATCLEAN=gnatclean
 SVN=svn
 INSTALL=@INSTALL@
@@ -45,10 +44,12 @@ projectdir=${prefix}/share/ada/adainclude
 bindir=${prefix}/bin
 libdir=${prefix}/lib
 alidir=${libdir}/ada/adalib/
+libname=libada_el
 docdir=libada-el
 samplesdir=${prefix}/share/doc/$(docdir)
 
-MAKE_ARGS=-XMODE=${MODE} -XLIBRARY_TYPE=${LIBRARY_TYPE}
+CPUS := @NR_CPUS@
+MAKE_ARGS=-XMODE=${MODE} -XLIBRARY_TYPE=${LIBRARY_TYPE} -XPROCESSORS=$(CPUS)
 
 GPRPATH=el.gpr
 
@@ -146,12 +147,12 @@ install_lib:
 	sed -e "s,INSTALL,${prefix},g" -e "s,LIBRARY_TYPE,$(LIBRARY_TYPE),g" < distrib/el.gpr > ${projectdir}/el.gpr
 	${CP} -p lib/$(LIBRARY_TYPE)/*.ali ${alidir}/ada-el/
 ifeq ($(LIBRARY_TYPE),static)
-	${CP} lib/$(LIBRARY_TYPE)/libada-el.a ${libdir}/
+	${CP} lib/$(LIBRARY_TYPE)/$(libname).a ${libdir}/
 else
-	${CP} -p lib/$(LIBRARY_TYPE)/libada-el.$(LIBVER) ${libdir}/
+	${CP} -p lib/$(LIBRARY_TYPE)/$(libname).$(LIBVER) ${libdir}/
 	cd ${libdir} && \
-	   rm -f libada-el.$(LIBEXT) && \
-	   ${LN} libada-el.$(LIBVER) libada-el.$(LIBEXT)
+	   rm -f $(libname).$(LIBEXT) && \
+	   ${LN} $(libname).$(LIBVER) $(libname).$(LIBEXT)
 endif
 
 install_samples:
@@ -163,8 +164,8 @@ install_samples:
 uninstall:
 	rm -rf ${includedir}/ada-el
 	rm -rf ${alidir}/ada-el
-	rm -f ${libdir}/libada-el.a
-	rm -f ${libdir}/libada-el.$(LIBEXT)
+	rm -f ${libdir}/$(libname).a
+	rm -f ${libdir}/$(libname)l.$(LIBEXT)
 	rm -f ${projectdir}/el.gpr
 
 # prepare before releasing a new version of the package
