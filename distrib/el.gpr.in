@@ -3,7 +3,7 @@ with "util";
 project El is
    Version := "@EL_VERSION@";
 
-   for Library_Name use "ada-el";
+   for Library_Name use "ada_el";
    for Library_Dir use "INSTALL/lib";
    for Library_Kind use "LIBRARY_TYPE";
 
