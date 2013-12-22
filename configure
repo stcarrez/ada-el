@@ -2878,7 +2878,7 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking number of processors" >&5
 $as_echo_n "checking number of processors... " >&6; }
-NR_CPUS=`getconf _NPROCESSORS_CONF 2>/dev/null || getconf _NPROCESSORS_CONF 2>/dev/null || echo 1`
+NR_CPUS=`getconf _NPROCESSORS_CONF 2>/dev/null || getconf NPROCESSORS_CONF 2>/dev/null || echo 1`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $NR_CPUS" >&5
 $as_echo "$NR_CPUS" >&6; }
 
@@ -2936,8 +2936,8 @@ if test $? -ne 0 ; then
    as_fn_error $? "Ada Utility library not found in ${UTIL_DIR}" "$LINENO" 5
 fi
 rm -f t.gpr
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${UTIL_DIR}" >&5
-$as_echo "${UTIL_DIR}" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ok ${UTIL_DIR}" >&5
+$as_echo "ok ${UTIL_DIR}" >&6; }
 
 
 EXEC_PREFIX="$prefix"
