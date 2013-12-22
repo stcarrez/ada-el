@@ -44,7 +44,7 @@ AC_SUBST(EL_MINOR_VERSION)
 AC_SUBST(EL_MICRO_VERSION)
 
 AC_MSG_CHECKING([number of processors])
-NR_CPUS=`getconf _NPROCESSORS_CONF 2>/dev/null || getconf _NPROCESSORS_CONF 2>/dev/null || echo 1`
+NR_CPUS=`getconf _NPROCESSORS_CONF 2>/dev/null || getconf NPROCESSORS_CONF 2>/dev/null || echo 1`
 AC_MSG_RESULT($NR_CPUS)
 AC_SUBST(NR_CPUS)
 
@@ -93,7 +93,7 @@ if test $? -ne 0 ; then
    AC_MSG_ERROR([Ada Utility library not found in ${UTIL_DIR}])
 fi
 rm -f t.gpr
-AC_MSG_RESULT(${UTIL_DIR})
+AC_MSG_RESULT(ok ${UTIL_DIR})
 AC_SUBST(UTIL_DIR)
 
 EXEC_PREFIX="$prefix"
