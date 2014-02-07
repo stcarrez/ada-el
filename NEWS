@@ -1,4 +1,4 @@
-Version 1.5     -
+Version 1.5     - Feb 2014
   - EL parser optimization (20% to 30% speed up)
   - Support for the creation of Debian packages
 
