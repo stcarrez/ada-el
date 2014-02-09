@@ -107,7 +107,7 @@ DISTFILES=README LICENSE.txt NOTICE.txt NEWS CHANGES ChangeLog config.guess conf
 configure.in Makefile.in install-sh \
 el.gpr.in tests.gpr.in samples.gpr config.gpr \
 src samples regtests \
-bin obj lib doc distrib debian
+doc distrib debian
 
 dist:
 	-rm -rf $(distdir)
@@ -126,9 +126,11 @@ dist:
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-	-rm -f $(distdir)/bin/*
-	-rm -f $(distdir)/obj/*
-	-rm -f $(distdir)/lib/*
+	rm -f $(distdir)/distrib/*.gpr
+	rm -rf $(distdir)/regtests/result
+	mkdir $(distdir)/bin
+	mkdir $(distdir)/obj
+	mkdir $(distdir)/lib
 	tar --exclude=.svn --exclude="*~" --exclude="*.o" --exclude="*.ali" \
 	    --exclude="*.log" --exclude="*.a" \
 	    -cvzf $(DIST_FILE) $(distdir)
