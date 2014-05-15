@@ -49,7 +49,7 @@ docdir=libada-el
 samplesdir=${prefix}/share/doc/$(docdir)
 
 CPUS := @NR_CPUS@
-MAKE_ARGS=-XMODE=${MODE} -XLIBRARY_TYPE=${LIBRARY_TYPE} -XPROCESSORS=$(CPUS)
+MAKE_ARGS=-XMODE=${MODE} -XEL_LIBRARY_TYPE=${LIBRARY_TYPE} -XPROCESSORS=$(CPUS)
 
 GPRPATH=el.gpr
 
@@ -80,8 +80,8 @@ autobuild:
 
 # Clean the root project of all build products.
 clean:
-	-$(GNATCLEAN) -q -P "$(GPRPATH)" -XLIBRARY_TYPE=static
-	-$(GNATCLEAN) -q -P "$(GPRPATH)" -XLIBRARY_TYPE=relocatable
+	-$(GNATCLEAN) -q -P "$(GPRPATH)" -XEL_LIBRARY_TYPE=static
+	-$(GNATCLEAN) -q -P "$(GPRPATH)" -XEL_LIBRARY_TYPE=relocatable
 	-$(GNATCLEAN) -q -Ptests
 	-rm -f lib/*.a lib/*.$(DLLEXT)
 
