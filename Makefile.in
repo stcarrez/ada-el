@@ -1,7 +1,7 @@
 ## The type of library we want to build. Possible values:
 ##   relocatable
 ##   static
-LIBRARY_TYPE=static
+EL_LIBRARY_TYPE=static
 
 # You may edit this makefile as long as you keep these original 
 # target names defined.
@@ -49,7 +49,7 @@ docdir=libada-el
 samplesdir=${prefix}/share/doc/$(docdir)
 
 CPUS := @NR_CPUS@
-MAKE_ARGS=-XMODE=${MODE} -XEL_LIBRARY_TYPE=${LIBRARY_TYPE} -XPROCESSORS=$(CPUS)
+MAKE_ARGS=-XMODE=${MODE} -XEL_LIBRARY_TYPE=${EL_LIBRARY_TYPE} -XPROCESSORS=$(CPUS) 
 
 GPRPATH=el.gpr
 
@@ -66,10 +66,10 @@ build:
 	$(GNATMAKE) -m -p -P"$(GPRPATH)" $(MAKE_ARGS)
 
 static:
-	$(MAKE) LIBRARY_TYPE=static build
+	$(MAKE) EL_LIBRARY_TYPE=static build
 
 shared:
-	$(MAKE) LIBRARY_TYPE=relocatable build
+	$(MAKE) EL_LIBRARY_TYPE=relocatable build
 
 # Not intended for manual invocation.
 # Invoked if automatic builds are enabled.
@@ -136,28 +136,28 @@ dist:
 	    -cvzf $(DIST_FILE) $(distdir)
 
 install_static:
-	$(MAKE) LIBRARY_TYPE=static install_lib
+	$(MAKE) EL_LIBRARY_TYPE=static install_lib
 
 install_shared:
-	$(MAKE) LIBRARY_TYPE=relocatable install_lib
+	$(MAKE) EL_LIBRARY_TYPE=relocatable install_lib
 
 install_lib:
 	$(MKDIR) -p ${includedir}/ada-el
 	$(MKDIR) -p ${projectdir}/
 	${MKDIR} -p ${alidir}/ada-el ${bindir}
 	${CP} -p src/*.ad[bs] ${includedir}/ada-el
-	sed -e "s,INSTALL,${prefix},g" -e "s,LIBRARY_TYPE,$(LIBRARY_TYPE),g" < distrib/el.gpr > ${projectdir}/el.gpr
-	${CP} -p lib/$(LIBRARY_TYPE)/*.ali ${alidir}/ada-el/
-ifeq ($(LIBRARY_TYPE),static)
-	${CP} lib/$(LIBRARY_TYPE)/$(libname).a ${libdir}/
+	sed -e "s,INSTALL,${prefix},g" -e "s,LIBRARY_TYPE,$(EL_LIBRARY_TYPE),g" < distrib/el.gpr > ${projectdir}/el.gpr
+	${CP} -p lib/$(EL_LIBRARY_TYPE)/*.ali ${alidir}/ada-el/
+ifeq ($(EL_LIBRARY_TYPE),static)
+	${CP} lib/$(EL_LIBRARY_TYPE)/$(libname).a ${libdir}/
 else
-	${CP} -p lib/$(LIBRARY_TYPE)/$(libname).$(LIBVER) ${libdir}/
+	${CP} -p lib/$(EL_LIBRARY_TYPE)/$(libname).$(LIBVER) ${libdir}/
 ifneq (${OS},Windows_NT)
 	cd ${libdir} && \
 	   rm -f $(libname).$(LIBEXT) && \
 	   ${LN} $(libname).$(LIBVER) $(libname).$(LIBEXT)
 else
-	${CP} -p lib/$(LIBRARY_TYPE)/$(libname).$(LIBVER) ${bindir}/
+	${CP} -p lib/$(EL_LIBRARY_TYPE)/$(libname).$(LIBVER) ${bindir}/
 endif
 endif
 
