@@ -1,3 +1,9 @@
+libada-el (1.5.1) testing; urgency=low
+
+  * Fix build for XmlAda 2014
+
+ -- Stephane Carrez <Stephane.Carrez@gmail.com>  Sat May 17 17:27:07 CEST 2014
+
 libada-el (1.5.0) unstable; urgency=low
 
   * Initial release to setup a debian library and development package
