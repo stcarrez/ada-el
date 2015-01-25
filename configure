@@ -2922,8 +2922,8 @@ $as_echo "${ac_enable_shared}" >&6; }
 # Ada Util library
 ##########################################
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Ada Utility library (code.google.com/p/ada-util)" >&5
-$as_echo_n "checking Ada Utility library (code.google.com/p/ada-util)... " >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Ada Utility Library" >&5
+$as_echo_n "checking Ada Utility Library... " >&6; }
 
 # Check whether --with-ada-util was given.
 if test "${with_ada_util+set}" = set; then :
@@ -2992,12 +2992,15 @@ $as_echo "no" >&6; }
     gnat_project_dir_util=
     gnat_project_name_util=
     as_fn_error $? "Building Ada EL requires the Ada Utility Library.
-You should build and install the Ada Utility Library component.
-It must be available and found by ${GNATMAKE}.
-The project was not found in the ADA_PROJECT_PATH environment variable.
-Using:
-  ${GNATMAKE}
-  ADA_PROJECT_PATH=$ADA_PROJECT_PATH
+  You should build and install the Ada Utility Library component.
+  It must be available and found by ${GNATMAKE}.
+  This project was not found in the ADA_PROJECT_PATH environment variable.
+  This project was not found in ../util nor in ../ada-util-*.
+  The component is available at git@github.com:stcarrez/ada-util.git.
+  Please, download and configure Ada Utility Library.
+  The current configuration was using:
+    ${GNATMAKE}
+    ADA_PROJECT_PATH=$ADA_PROJECT_PATH
 " "$LINENO" 5
   fi
 
