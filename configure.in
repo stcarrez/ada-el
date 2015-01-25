@@ -62,6 +62,8 @@ AM_GNAT_FIND_PROJECT([ada-util],[Ada Utility Library],[util],
   ])
 AC_SUBST(UTIL_DIR)
 
+AM_UTIL_CHECK_INSTALL
+
 EL_LIBDIR="lib"
 AC_SUBST(EL_LIBDIR)
 
