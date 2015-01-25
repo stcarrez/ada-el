@@ -1,13 +1,14 @@
 with "util";
+with "util_config";
 
 project El is
    Version := "@EL_VERSION@";
 
    for Library_Name use "ada_el";
-   for Library_Dir use "INSTALL/lib";
+   for Library_Dir use Util_Config.Libdir;
    for Library_Kind use "LIBRARY_TYPE";
 
-   for Source_Dirs use ("INSTALL/share/ada/adainclude/ada-el");
-   for Library_ALI_Dir use "INSTALL/lib/ada/adalib/ada-el/";
+   for Source_Dirs use (Util_Config.Includedir & "/ada-el");
+   for Library_ALI_Dir use Util_Config.Alidir & "/ada-el/";
    for Externally_Built use "true";
 end El;
