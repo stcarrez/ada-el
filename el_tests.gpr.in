@@ -3,7 +3,7 @@ with "@UTIL_DIR@util";
 with "@UTIL_DIR@util_unit";
 with "el";
 
-project Tests is
+project El_Tests is
 
    for Languages use ("Ada", "Project file");
 
@@ -21,4 +21,4 @@ project Tests is
    package Compiler renames Config.Compiler;
    package Linker renames Config.Linker;
 
-end Tests;
+end El_Tests;
