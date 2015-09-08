@@ -8,8 +8,11 @@ EL_LIBRARY_TYPE=static
 MODE=distrib
 GNATMAKE=@GNATMAKE@
 GNATCLEAN=gnatclean
+GPRINSTALL=@GPRINSTALL@
 SVN=svn
 INSTALL=@INSTALL@
+
+GPRPATH=el.gpr
 
 BUILDS_SHARED=@BUILDS_SHARED@
 
@@ -68,8 +71,6 @@ MAKE_ARGS += -XUTIL_BUILD=relocatable -XUTIL_LIBRARY_TYPE=relocatable
 MAKE_ARGS += -XXMLADA_BUILD=relocatable
 endif
 
-GPRPATH=el.gpr
-
 ifeq (${BUILDS_SHARED},yes)
 all:     static shared
 install: install_static install_shared install-info
@@ -116,7 +117,7 @@ rebuild: clean build
 
 # Build and run the unit tests
 test:	build
-	$(GNATMAKE) -p -Pel_tests
+	$(GNATMAKE) -p -Pel_tests $(MAKE_ARGS)
 	bin/el_harness -xml el-aunit.xml
 
 # Files to package in source distribution
@@ -124,7 +125,7 @@ DISTFILES=README LICENSE.txt NOTICE.txt NEWS CHANGES ChangeLog config.guess conf
 configure.in Makefile.in install-sh \
 el.gpr.in el_tests.gpr.in samples.gpr config.gpr \
 src samples regtests \
-doc distrib debian
+doc distrib
 
 dist:
 	-rm -rf $(distdir)
@@ -159,6 +160,10 @@ install_shared:
 	$(MAKE) EL_LIBRARY_TYPE=relocatable install_lib
 
 install_lib:
+ifneq (${GPRINSTALL},)
+	$(GPRINSTALL) -p -f --prefix=${prefix} $(MAKE_ARGS) \
+		--build-name=$(EL_LIBRARY_TYPE) $(GPRPATH)
+else
 	$(MKDIR) -p ${includedir}/ada-el
 	$(MKDIR) -p ${projectdir}/
 	${MKDIR} -p ${alidir}/ada-el ${bindir}
@@ -175,6 +180,7 @@ ifneq (${OS},Windows_NT)
 	   ${LN} $(libname).$(LIBVER) $(libname).$(LIBEXT)
 else
 	${CP} -p lib/$(EL_LIBRARY_TYPE)/$(libname).$(LIBVER) ${bindir}/
+endif
 endif
 endif
 
@@ -194,11 +200,15 @@ install_samples:
 	cp -p $(srcdir)/config.gpr $(samplesdir)
 
 uninstall:
+ifneq (${GPRINSTALL},)
+	-$(GPRINSTALL) -q -f --prefix=${prefix} $(MAKE_ARGS) --uninstall $(GPRPATH)
+else
 	rm -rf ${includedir}/ada-el
 	rm -rf ${alidir}/ada-el
 	rm -f ${libdir}/$(libname).a
 	rm -f ${libdir}/$(libname)l.$(LIBEXT)
 	rm -f ${projectdir}/el.gpr
+endif
 
 # prepare before releasing a new version of the package
 # (collect information about changes and SVN repository)
