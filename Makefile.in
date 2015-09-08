@@ -69,6 +69,7 @@ MAKE_ARGS=-XMODE=${MODE} -XEL_LIBRARY_TYPE=${EL_LIBRARY_TYPE} -XPROCESSORS=$(CPU
 ifeq ($(EL_LIBRARY_TYPE),relocatable)
 MAKE_ARGS += -XUTIL_BUILD=relocatable -XUTIL_LIBRARY_TYPE=relocatable
 MAKE_ARGS += -XXMLADA_BUILD=relocatable
+MAKE_ARGS += -XLIBRARY_TYPE=relocatable
 endif
 
 ifeq (${BUILDS_SHARED},yes)
