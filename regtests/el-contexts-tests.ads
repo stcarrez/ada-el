@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-contexts-tests - Tests the EL contexts
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2015 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,5 +24,8 @@ package EL.Contexts.Tests is
    type Test is new Util.Tests.Test with null record;
 
    procedure Test_Context_Properties (T : in out Test);
+
+   --  Test the thread local EL context.
+   procedure Test_Context_TLS (T : in out Test);
 
 end EL.Contexts.Tests;
