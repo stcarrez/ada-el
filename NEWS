@@ -1,3 +1,6 @@
+Version 1.6.0   -
+  - Added support for thread local EL context
+
 Version 1.5.1   - Jul 2014
   - Fix minor configuration issue with GNAT 2014
 
