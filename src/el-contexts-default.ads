@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Contexts -- Default contexts for evaluating an expression
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2015 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,9 @@ package EL.Contexts.Default is
    --  Context information for expression evaluation.
    type Default_Context is new Ada.Finalization.Controlled and ELContext with private;
    type Default_Context_Access is access all Default_Context'Class;
+
+   overriding
+   procedure Finalize (Obj : in out Default_Context);
 
    --  Retrieves the ELResolver associated with this ELcontext.
    overriding
@@ -149,9 +152,6 @@ private
       Function_Mapper    : EL.Functions.Function_Mapper_Access;
       Var_Mapper_Created : Boolean := False;
    end record;
-
-   overriding
-   procedure Finalize (Obj : in out Default_Context);
 
    type Default_ELResolver is new ELResolver with record
       Map : EL.Objects.Maps.Map;
