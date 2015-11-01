@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-contexts-tests - Tests the EL contexts
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2015 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,7 @@ with Util.Beans.Objects;
 with EL.Expressions;
 with EL.Contexts.Properties;
 with EL.Contexts.Default;
+with EL.Contexts.TLS;
 package body EL.Contexts.Tests is
 
    use Util.Tests;
@@ -34,6 +35,8 @@ package body EL.Contexts.Tests is
    begin
       Caller.Add_Test (Suite, "Test EL.Contexts.Properties.Get_Value",
                        Test_Context_Properties'Access);
+      Caller.Add_Test (Suite, "Test EL.Contexts.TLS.Current",
+                       Test_Context_TLS'Access);
    end Add_Tests;
 
    --  ------------------------------
@@ -65,5 +68,34 @@ package body EL.Contexts.Tests is
       Assert_Equals (T, "joe", Eval ("#{user}"), "Invalid evaluation of #{user}");
       Assert_Equals (T, "/home/joe", Eval ("#{home}"), "Invalid evaluation of #{home}");
    end Test_Context_Properties;
+
+   --  ------------------------------
+   --  Test the thread local EL context.
+   --  ------------------------------
+   procedure Test_Context_TLS (T : in out Test) is
+   begin
+      T.Assert (EL.Contexts.TLS.Current = null, "The TLS expression context must be null");
+      declare
+         C1 : EL.Contexts.TLS.TLS_Context;
+         T1 : EL.Contexts.ELContext_Access;
+      begin
+         T1 := EL.Contexts.TLS.Current;
+         T.Assert (T1 /= null, "The TLS expression context must not be null");
+         T.Assert (C1.Get_Variable_Mapper = T1.Get_Variable_Mapper,
+                   "The TLS expression context is not valid");
+         declare
+            C2 : EL.Contexts.TLS.TLS_Context;
+            T2 : EL.Contexts.ELContext_Access;
+         begin
+            T2 := EL.Contexts.TLS.Current;
+            T.Assert (T2 /= null, "The TLS expression context must not be null");
+            T.Assert (C2.Get_Variable_Mapper = T2.Get_Variable_Mapper,
+                      "The TLS expression context is not valid");
+            T.Assert (T1 /= T2, "The TLS expression context must be changed");
+         end;
+         T.Assert (T1 = EL.Contexts.TLS.Current, "The TLS expression context must be restored");
+      end;
+      T.Assert (EL.Contexts.TLS.Current = null, "The TLS expression context must be null");
+   end Test_Context_TLS;
 
 end EL.Contexts.Tests;
