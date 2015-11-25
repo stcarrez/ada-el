@@ -64,7 +64,7 @@ libname=libada_el
 docdir=libada-el
 samplesdir=${prefix}/share/doc/$(docdir)
 
-PROCESSORS := @NR_CPUS@
+PROCESSORS=@NR_CPUS@
 MAKE_ARGS=-XMODE=${MODE} -XEL_LIBRARY_TYPE=${EL_LIBRARY_TYPE} -XPROCESSORS=$(PROCESSORS)
 ifeq ($(EL_LIBRARY_TYPE),relocatable)
 MAKE_ARGS += -XUTIL_BUILD=relocatable -XUTIL_LIBRARY_TYPE=relocatable
