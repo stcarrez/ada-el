@@ -5,7 +5,7 @@ with "el";
 
 project El_Tests is
 
-   for Languages use ("Ada", "Project file");
+   for Languages use ("Ada");
 
    Mains := ("el_harness.adb");
 
