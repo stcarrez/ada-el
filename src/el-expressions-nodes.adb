@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012, 2013 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -171,7 +171,8 @@ package body EL.Expressions.Nodes is
                return Left;
             end if;
             if Get_Type (Left) = TYPE_WIDE_STRING
-              or Get_Type (Right) = TYPE_WIDE_STRING then
+              or Get_Type (Right) = TYPE_WIDE_STRING
+            then
                return To_Object (To_Wide_Wide_String (Left)
                                  & To_Wide_Wide_String (Right));
             else
@@ -251,7 +252,8 @@ package body EL.Expressions.Nodes is
 
             when EL_CONCAT =>
                if Get_Type (Left.Value) = TYPE_WIDE_STRING
-                 or Get_Type (Right.Value) = TYPE_WIDE_STRING then
+                 or Get_Type (Right.Value) = TYPE_WIDE_STRING
+               then
                   Left.Value := To_Object (To_Wide_Wide_String (Left.Value)
                                     & To_Wide_Wide_String (Right.Value));
                else
@@ -494,7 +496,8 @@ package body EL.Expressions.Nodes is
          begin
             for I in Bindings'Range loop
                if Bindings (I) /= null and then Bindings (I).Name /= null
-                 and then Node.Name = Bindings (I).Name.all then
+                 and then Node.Name = Bindings (I).Name.all
+               then
                   Result.Object := Bean;
                   Result.Binding := Bindings (I);
                   return Result;
@@ -687,7 +690,8 @@ package body EL.Expressions.Nodes is
       end if;
       if Expr.Func.Of_Type = F_2_ARG then
          if Arg1.Node = null and Arg2.Node = null and Expr.Func.Optimize
-           and Expr.Func.Func2 /= null then
+           and Expr.Func.Func2 /= null
+         then
             Arg1.Value := Expr.Func.Func2 (Arg1.Value, Arg2.Value);
             return Arg1;
          end if;
@@ -709,7 +713,8 @@ package body EL.Expressions.Nodes is
       end if;
       if Expr.Func.Of_Type = F_3_ARG then
          if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null and Expr.Func.Optimize
-           and Expr.Func.Func3 /= null then
+           and Expr.Func.Func3 /= null
+         then
             Arg1.Value := Expr.Func.Func3 (Arg1.Value, Arg2.Value, Arg3.Value);
             return Arg1;
          end if;
@@ -734,7 +739,8 @@ package body EL.Expressions.Nodes is
          Arg4 := Expr.Arg4.Reduce (Context);
       end if;
       if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null
-        and Arg4.Node = null and Expr.Func.Optimize and Expr.Func.Func4 /= null then
+        and Arg4.Node = null and Expr.Func.Optimize and Expr.Func.Func4 /= null
+      then
          Arg1.Value := Expr.Func.Func4 (Arg1.Value, Arg2.Value, Arg3.Value, Arg4.Value);
          return Arg1;
       end if;
