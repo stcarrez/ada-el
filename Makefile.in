@@ -9,7 +9,6 @@ MODE=distrib
 GNATMAKE=@GNATMAKE@
 GNATCLEAN=gnatclean
 GPRINSTALL=@GPRINSTALL@
-SVN=svn
 INSTALL=@INSTALL@
 
 GPRPATH=el.gpr
@@ -131,30 +130,7 @@ src samples regtests \
 doc distrib
 
 dist:
-	-rm -rf $(distdir)
-	mkdir $(distdir)
-	-chmod 777 $(distdir)
-	here=`cd $(top_builddir) && pwd`; \
-	top_distdir=`cd $(distdir) && pwd`; \
-	distdir=`cd $(distdir) && pwd`; \
-	for file in $(DISTFILES); do \
-	  d=$(srcdir); \
-	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
-	  else \
-	    test -f $(distdir)/$$file \
-	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
-	    || cp -p $$d/$$file $(distdir)/$$file || :; \
-	  fi; \
-	done
-	rm -f $(distdir)/distrib/*.gpr
-	rm -rf $(distdir)/regtests/result
-	mkdir $(distdir)/bin
-	mkdir $(distdir)/obj
-	mkdir $(distdir)/lib
-	tar --exclude=.svn --exclude=.git --exclude="*~" --exclude="*.o" --exclude="*.ali" \
-	    --exclude="*.log" --exclude="*.a" \
-	    -cvzf $(DIST_FILE) $(distdir)
+	git archive -o $(DIST_FILE) --prefix=$(distdir)/ HEAD
 
 install_static:
 	$(MAKE) EL_LIBRARY_TYPE=static install_lib
@@ -215,9 +191,3 @@ else
 	rm -f ${projectdir}/el.gpr
 endif
 
-# prepare before releasing a new version of the package
-# (collect information about changes and SVN repository)
-prepare-release:
-	# ${SVN} update
-	# ${SVN} info > CHANGES
-	# ${SVN} log -v > ChangeLog
