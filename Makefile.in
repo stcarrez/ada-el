@@ -99,7 +99,7 @@ obj/el/static lib/static:
 # Analyzes only on those sources that have changed.
 # Does not build executables.
 autobuild:
-	$(GNATMAKE) -gnatc -c -k  -P "$(GPRPATH)"
+	$(GNATMAKE) $(MAKE_ARGS) -gnatc -c -k  -P "$(GPRPATH)"
 
 # Clean the root project of all build products.
 clean:
@@ -112,7 +112,7 @@ clean_tree:
 # Check *all* sources for errors, even those not changed.
 # Does not build executables.
 analyze:
-	$(GNATMAKE) -f  -gnatc -c -k  -P "$(GPRPATH)"
+	$(GNATMAKE) $(MAKE_ARGS) -f  -gnatc -c -k  -P "$(GPRPATH)"
 
 # Clean, then build executables for all mains defined by the project.
 rebuild: clean build
@@ -122,12 +122,6 @@ test:	build
 	$(GNATMAKE) -p -Pel_tests $(MAKE_ARGS)
 	bin/el_harness -xml el-aunit.xml
 
-# Files to package in source distribution
-DISTFILES=README.md LICENSE.txt NOTICE.txt NEWS CHANGES ChangeLog config.guess configure config.sub \
-configure.in Makefile.in install-sh aclocal.m4 \
-el.gpr.in el_tests.gpr.in samples.gpr config.gpr \
-src samples regtests \
-doc distrib
 
 dist:
 	git archive -o $(DIST_FILE) --prefix=$(distdir)/ HEAD
