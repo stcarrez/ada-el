@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Language
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2017 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -96,6 +96,10 @@ package EL.Expressions is
                                Context : ELContext'Class)
                                return Expression;
 
+   --  Create an EL expression from an object.
+   function Create_Expression (Bean : in EL.Objects.Object)
+                               return Expression;
+
    --  ------------------------------
    --  ValueExpression
    --  ------------------------------   --
@@ -128,10 +132,6 @@ package EL.Expressions is
    --  Raises Invalid_Expression if the expression in not an lvalue.
    function Create_Expression (Expr    : Expression'Class)
                                return Value_Expression;
-
-   --  Create an EL expression from an object.
-   function Create_Expression (Bean : in EL.Objects.Object)
-                                    return Expression;
 
    --  ------------------------------
    --  Method Expression
