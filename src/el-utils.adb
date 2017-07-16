@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011, 2012 Stephane Carrez
+--  Copyright (C) 2011, 2012, 2017 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +28,11 @@ with EL.Contexts.Default;
 with EL.Contexts.Properties;
 package body EL.Utils is
 
-   use Util.Log;
    use Ada.Strings.Unbounded;
    use Util.Beans.Objects;
 
    --  The logger
-   Log : constant Loggers.Logger := Loggers.Create ("EL.Utils");
+   Log : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("EL.Utils");
 
    --  ------------------------------
    --  Expand the properties stored in <b>Source</b> by evaluating the EL expressions
@@ -51,7 +50,8 @@ package body EL.Utils is
 
       --  Copy the property identified by <b>Name</b> into the application config properties.
       --  The value passed in <b>Item</b> is expanded if it contains an EL expression.
-      procedure Process (Name, Item : in Util.Properties.Value);
+      procedure Process (Name : in String;
+                         Item : in Util.Beans.Objects.Object);
 
       type Local_Resolver is new EL.Contexts.Properties.Property_Resolver with null record;
 
@@ -139,23 +139,26 @@ package body EL.Utils is
       --  Copy the property identified by <b>Name</b> into the application config properties.
       --  The value passed in <b>Item</b> is expanded if it contains an EL expression.
       --  ------------------------------
-      procedure Process (Name, Item : in Util.Properties.Value) is
+      procedure Process (Name : in String;
+                         Item : in Util.Properties.Value) is
          use Ada.Strings;
+         Value : constant String := Util.Properties.To_String (Item);
       begin
-         if Unbounded.Index (Item, "{") = 0 or Unbounded.Index (Item, "{") = 0 then
-            Log.Debug ("Adding config {0} = {1}", Name, Item);
+         if Util.Strings.Index (Value, '{') = 0 or Util.Strings.Index (Value, '}') = 0 then
+            Log.Debug ("Adding config {0} = {1}", Name, Value);
 
-            Into.Set (Name, Item);
+            Into.Set_Value (Name, Item);
          else
             declare
-               Value : constant Object := Expand (To_String (Item), Local_Context);
-               Val   : Unbounded_String;
+               New_Value : constant Object := Expand (Value, Local_Context);
             begin
-               if not Util.Beans.Objects.Is_Null (Value) then
-                  Val := Util.Beans.Objects.To_Unbounded_String (Value);
+               Log.Debug ("Adding config {0} = {1}",
+                          Name, Util.Beans.Objects.To_String (New_Value));
+               if Util.Beans.Objects.Is_Null (New_Value) then
+                  Into.Set (Name, "");
+               else
+                  Into.Set_Value (Name, New_Value);
                end if;
-               Log.Debug ("Adding config {0} = {1}", Name, Val);
-               Into.Set (Name, Val);
             end;
          end if;
       end Process;
