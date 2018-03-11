@@ -11,17 +11,10 @@ GNATCLEAN=gnatclean
 GPRINSTALL=@GPRINSTALL@
 INSTALL=@INSTALL@
 
+-include Makefile.conf
+
 GPRPATH=el.gpr
 
-BUILDS_SHARED=@BUILDS_SHARED@
-
-version=@EL_VERSION@
-
-distdir=ada-el-@EL_VERSION@
-
-DIST_FILE=ada-el-@EL_VERSION@.tar.gz
-
-LN_S=@LN_S@
 MKDIR=mkdir
 CP=cp
 LN=ln -s
@@ -35,23 +28,7 @@ LIBVER=so.$(version)
 endif
 
 srcdir = .
-top_srcdir = @top_srcdir@
-VPATH = @srcdir@
-prefix = @prefix@
-exec_prefix = @exec_prefix@
 top_builddir = .
-
-# share/ada/adainclude
-infix_inc=@ADA_INC_BASE@
-
-# share/ada/adainclude
-infix_prj=@ADA_PRJ_BASE@
-
-# lib
-infix_lib=@ADA_LIB_BASE@
-
-# lib/ada/adalib
-infix_ali=@ADA_ALI_BASE@
 
 includedir=${prefix}/${infix_inc}
 projectdir=${prefix}/${infix_prj}
@@ -63,7 +40,6 @@ libname=libada_el
 docdir=libada-el
 samplesdir=${prefix}/share/doc/$(docdir)
 
-PROCESSORS=@NR_CPUS@
 MAKE_ARGS=-XMODE=${MODE} -XEL_LIBRARY_TYPE=${EL_LIBRARY_TYPE} -XPROCESSORS=$(PROCESSORS)
 ifeq ($(EL_LIBRARY_TYPE),relocatable)
 MAKE_ARGS += -XUTIL_BUILD=relocatable -XUTIL_LIBRARY_TYPE=relocatable
@@ -121,7 +97,6 @@ rebuild: clean build
 test:	build
 	$(GNATMAKE) -p -Pel_tests $(MAKE_ARGS)
 	bin/el_harness -xml el-aunit.xml
-
 
 dist:
 	git archive -o $(DIST_FILE) --prefix=$(distdir)/ HEAD
