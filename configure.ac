@@ -69,5 +69,5 @@ EL_LIBDIR="lib"
 AC_SUBST(EL_LIBDIR)
 
 AC_OUTPUT(
-Makefile.conf el.gpr el_tests.gpr distrib/el.gpr
+Makefile el.gpr el_tests.gpr distrib/el.gpr
 )
