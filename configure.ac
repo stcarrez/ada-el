@@ -49,6 +49,8 @@ AC_SUBST(NR_CPUS)
 # Check to enable/disable shared library
 ##########################################
 AM_SHARED_LIBRARY_SUPPORT
+AM_DISTRIB_SUPPORT
+AM_COVERAGE_SUPPORT
 
 ##########################################
 # Ada Util library
@@ -67,5 +69,5 @@ EL_LIBDIR="lib"
 AC_SUBST(EL_LIBDIR)
 
 AC_OUTPUT(
-Makefile el.gpr el_tests.gpr distrib/el.gpr
+Makefile.conf el.gpr el_tests.gpr distrib/el.gpr
 )
