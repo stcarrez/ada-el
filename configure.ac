@@ -1,5 +1,5 @@
 dnl Autoconf configure script for Ada EL
-dnl Copyright (C) 2001, 2002, 2003, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Stephane Carrez
+dnl Copyright (C) 2001 - 2018 Stephane Carrez
 dnl Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 dnl
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,6 @@ EL_VERSION=$EL_MAJOR_VERSION.$EL_MINOR_VERSION.$EL_MICRO_VERSION
 AM_GNAT_CHECK_GPRBUILD
 
 # checking for local tools
-AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PROG_LN_S
