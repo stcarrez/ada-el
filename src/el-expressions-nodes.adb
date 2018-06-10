@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -517,7 +517,6 @@ package body EL.Expressions.Nodes is
                         Context : in ELContext'Class;
                         Value   : in Objects.Object) is
       use Util.Beans;
-      use type Util.Strings.Name_Access;
 
       Var  : constant Object := Node.Variable.Get_Value (Context);
       Bean : constant access Basic.Readonly_Bean'Class := To_Bean (Var);

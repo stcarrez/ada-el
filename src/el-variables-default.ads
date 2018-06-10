@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Variables -- Default Variable Mapper
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,6 @@ package EL.Variables.Default is
 
 private
 
-   use type EL.Objects.Object;
    use type EL.Expressions.Expression;
 
    package Variable_Maps is new

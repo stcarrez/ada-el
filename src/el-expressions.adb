@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Language
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -172,8 +172,6 @@ package body EL.Expressions is
    --  ------------------------------
    function Create_Expression (Expr : in Expression'Class)
                                return Value_Expression is
-      use type EL.Expressions.Nodes.ELNode_Access;
-
       Result : Value_Expression;
       Node   : constant access EL.Expressions.Nodes.ELNode'Class := Expr.Node;
    begin
@@ -295,8 +293,6 @@ package body EL.Expressions is
    --  ------------------------------
    function Create_Expression (Expr    : in Expression'Class)
                                return Method_Expression is
-      use type EL.Expressions.Nodes.ELNode_Access;
-
       Result : Method_Expression;
       Node   : constant access EL.Expressions.Nodes.ELNode'Class := Expr.Node;
    begin
