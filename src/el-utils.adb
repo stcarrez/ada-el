@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011, 2012, 2017 Stephane Carrez
+--  Copyright (C) 2011, 2012, 2017, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -141,7 +141,6 @@ package body EL.Utils is
       --  ------------------------------
       procedure Process (Name : in String;
                          Item : in Util.Properties.Value) is
-         use Ada.Strings;
          Value : constant String := Util.Properties.To_String (Item);
       begin
          if Util.Strings.Index (Value, '{') = 0 or Util.Strings.Index (Value, '}') = 0 then
