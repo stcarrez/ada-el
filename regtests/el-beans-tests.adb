@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Beans.Tests - Testsuite for EL.Beans
---  Copyright (C) 2011 Stephane Carrez
+--  Copyright (C) 2011, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,6 @@ with EL.Contexts.Default;
 package body EL.Beans.Tests is
 
    use Util.Tests;
-   use Util.Beans.Objects;
    use Test_Bean;
 
    package Caller is new Util.Test_Caller (Test, "EL.Beans");
