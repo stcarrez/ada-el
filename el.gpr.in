@@ -1,7 +1,7 @@
 with "@UTIL_DIR@config";
 with "@UTIL_DIR@util";
 
-project El is
+library project El is
    Version := "@EL_VERSION@";
    Library_Dir := "@EL_LIBDIR@";
    Library_Type : Config.Library_Type_Type := external ("EL_LIBRARY_TYPE", "static");
