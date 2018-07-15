@@ -2,9 +2,9 @@
 
 [![Build Status](https://img.shields.io/jenkins/s/http/jenkins.vacs.fr/Ada%20EL.svg)](http://jenkins.vacs.fr/job/Ada%20EL/)
 [![Test Status](https://img.shields.io/jenkins/t/http/jenkins.vacs.fr/Ada%20EL.svg)](http://jenkins.vacs.fr/job/Ada%20EL/)
-[![Download](https://img.shields.io/badge/download-1.6.0-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.6.0.tar.gz)
+[![Download](https://img.shields.io/badge/download-1.6.1-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.6.1.tar.gz)
 [![License](http://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
-![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.6.0.svg)
+![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.6.1.svg)
 
 This Ada05 library provides the support for a simple Expression Language
 close to the Java Unified Expression Language (EL).
