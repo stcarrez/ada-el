@@ -1,5 +1,5 @@
 dnl Autoconf configure script for Ada EL
-dnl Copyright (C) 2001 - 2018 Stephane Carrez
+dnl Copyright (C) 2001 - 2019 Stephane Carrez
 dnl Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 dnl
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,6 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/el.ads)
 
-AC_CANONICAL_SYSTEM
-dnl AM_MAINTAINER_MODE
-
 # Current release settings
 EL_MAJOR_VERSION=1
 EL_MINOR_VERSION=6
@@ -33,25 +30,19 @@ AC_SUBST(EL_MAJOR_VERSION)
 AC_SUBST(EL_MINOR_VERSION)
 AC_SUBST(EL_MICRO_VERSION)
 
-##########################################
-# Check to enable/disable shared library
-##########################################
-AM_GNAT_LIBRARY_PROJECT(el)
+AM_GNAT_LIBRARY_PROJECT(elada)
 
 ##########################################
 # Ada Util library
 ##########################################
-AM_GNAT_FIND_PROJECT([ada-util],[Ada Utility Library],[util],
+AM_GNAT_FIND_PROJECT([ada-util],[Ada Utility Library],[utilada_base],
   [git@github.com:stcarrez/ada-util.git],
   [Building Ada EL requires the Ada Utility Library.],
   [
-    UTIL_DIR=${gnat_project_dir_util}
+    UTIL_DIR=${gnat_project_dir_utilada_base}
   ])
 AC_SUBST(UTIL_DIR)
 
-EL_LIBDIR="lib"
-AC_SUBST(EL_LIBDIR)
-
 AC_OUTPUT(
-Makefile el.gpr el_tests.gpr distrib/el.gpr
+Makefile.conf elada.gpr elada_tests.gpr
 )
