@@ -1,9 +1,10 @@
 with "@UTIL_DIR@config";
-with "@UTIL_DIR@util";
-with "@UTIL_DIR@util_unit";
-with "el";
+with "@UTIL_DIR@utilada_base";
+with "@UTIL_DIR@utilada_sys";
+with "@UTIL_DIR@utilada_unit";
+with "elada";
 
-project El_Tests is
+project ElAda_Tests is
 
    for Languages use ("Ada");
 
@@ -21,4 +22,4 @@ project El_Tests is
    package Compiler renames Config.Compiler;
    package Linker renames Config.Linker;
 
-end El_Tests;
+end ElAda_Tests;
