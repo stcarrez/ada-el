@@ -1,6 +1,6 @@
 *~
 *.log
-Makefile
+Makefile.conf
 config.status
 CHANGES
 *.cproject
@@ -10,9 +10,8 @@ CHANGES
 ChangeLog
 .settings
 configure.lineno
-Makefile
-el.gpr
-el_tests.gpr
+elada.gpr
+elada_tests.gpr
 tests.xml
 el-tests.xml
 autom4te.cache
