@@ -15,7 +15,7 @@ build-test::	setup
 	$(GNATMAKE) $(GPRFLAGS) -p -P$(NAME)_tests $(MAKE_ARGS)
 
 # Build and run the unit tests
-test:	build-test
+test:	build
 	bin/el_harness -xml el-aunit.xml
 
 install-samples:
