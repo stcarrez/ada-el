@@ -10,6 +10,7 @@ CHANGES
 ChangeLog
 .settings
 configure.lineno
+t.gpr
 elada.gpr
 elada_tests.gpr
 tests.xml
