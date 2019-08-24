@@ -16,7 +16,7 @@ build-test::	setup
 
 # Build and run the unit tests
 test:	build
-	bin/el_harness -xml el-aunit.xml
+	bin/el_harness -l $(NAME): -xml el-aunit.xml
 
 install-samples:
 	$(MKDIR) -p $(samplesdir)/samples
