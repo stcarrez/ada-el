@@ -31,17 +31,7 @@ AC_SUBST(EL_MINOR_VERSION)
 AC_SUBST(EL_MICRO_VERSION)
 
 AM_GNAT_LIBRARY_PROJECT(elada)
-
-##########################################
-# Ada Util library
-##########################################
-AM_GNAT_FIND_PROJECT([ada-util],[Ada Utility Library],[utilada_base],
-  [git@github.com:stcarrez/ada-util.git],
-  [Building Ada EL requires the Ada Utility Library.],
-  [
-    UTIL_DIR=${gnat_project_dir_utilada_base}
-  ])
-AC_SUBST(UTIL_DIR)
+AM_GNAT_FIND_ADA_UTIL([Ada EL])
 
 AC_OUTPUT(
 Makefile.conf elada.gpr elada_tests.gpr
