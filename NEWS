@@ -1,4 +1,4 @@
-Version 1.7.0   -
+Version 1.7.0   - Dec 2019
   - Refactor to follow the Ada Debian policy, rename GNAT project into elada
 
 Version 1.6.1   - Jul 2018
