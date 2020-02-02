@@ -1,8 +1,8 @@
 # Expression Language
 
 [![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/elada.json)](https://alire.ada.dev/crates/elada)
-[![Build Status](https://img.shields.io/jenkins/s/http/jenkins.vacs.fr/Ada%20EL.svg)](https://jenkins.vacs.fr/job/Ada%20EL/)
-[![Test Status](https://img.shields.io/jenkins/t/http/jenkins.vacs.fr/Ada%20EL.svg)](https://jenkins.vacs.fr/job/Ada%20EL/)
+[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.vacs.fr/Ada%20EL.svg)](https://jenkins.vacs.fr/job/Ada%20EL/)
+[![Test Status](https://img.shields.io/jenkins/t/https/jenkins.vacs.fr/Ada%20EL.svg)](https://jenkins.vacs.fr/job/Ada%20EL/)
 [![Download](https://img.shields.io/badge/download-1.7.0-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.7.0.tar.gz)
 [![License](https://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
 ![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.7.0.svg)
