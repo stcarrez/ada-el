@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012, 2013 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -160,6 +160,9 @@ private package EL.Expressions.Nodes is
    --  Check if the target bean is a readonly bean.
    function Is_Readonly (Node    : in ELValue;
                          Context : in ELContext'Class) return Boolean;
+
+   --  Get the variable name.
+   function Get_Variable_Name (Node : in ELValue) return String;
 
    --  Evaluate the node and return a method info with
    --  the bean object and the method binding.
