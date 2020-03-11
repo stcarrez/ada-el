@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017, 2018 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017, 2018, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -471,6 +471,18 @@ package body EL.Expressions.Nodes is
    end Is_Readonly;
 
    --  ------------------------------
+   --  Get the variable name.
+   --  ------------------------------
+   function Get_Variable_Name (Node : in ELValue) return String is
+   begin
+      if Node.Variable.all in ELVariable'Class then
+         return To_String (ELVariable'Class (Node.Variable.all).Name);
+      else
+         return "?";
+      end if;
+   end Get_Variable_Name;
+
+   --  ------------------------------
    --  Evaluate the node and return a method info with
    --  the bean object and the method binding.
    --  ------------------------------
@@ -483,7 +495,11 @@ package body EL.Expressions.Nodes is
       Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
    begin
       if Bean = null then
-         raise Invalid_Variable;
+         if EL.Objects.Is_Null (Var) then
+            raise Invalid_Variable with "Variable '" & Node.Get_Variable_Name & "' not found";
+         else
+            raise Invalid_Variable with "Variable '" & Node.Get_Variable_Name & "' has no method";
+         end if;
       end if;
 
       --  If the bean is a method bean, get the methods that it exposes
@@ -522,7 +538,13 @@ package body EL.Expressions.Nodes is
       Bean : constant access Basic.Readonly_Bean'Class := To_Bean (Var);
    begin
       if Bean = null then
-         raise Invalid_Variable;
+         if EL.Objects.Is_Null (Var) then
+            raise Invalid_Variable
+              with "Variable '" & Node.Get_Variable_Name & "' not found";
+         else
+            raise Invalid_Variable
+              with "Variable '" & Node.Get_Variable_Name & "' cannot be set";
+         end if;
       end if;
 
       --  If the bean is a method bean, get the methods that it exposes
