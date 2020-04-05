@@ -1,5 +1,5 @@
 dnl Autoconf configure script for Ada EL
-dnl Copyright (C) 2001 - 2019 Stephane Carrez
+dnl Copyright (C) 2001 - 2020 Stephane Carrez
 dnl Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 dnl
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ AC_INIT(src/el.ads)
 
 # Current release settings
 EL_MAJOR_VERSION=1
-EL_MINOR_VERSION=7
+EL_MINOR_VERSION=8
 EL_MICRO_VERSION=0
 EL_VERSION=$EL_MAJOR_VERSION.$EL_MINOR_VERSION.$EL_MICRO_VERSION
 
