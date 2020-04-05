@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011, 2012 Stephane Carrez
+--  Copyright (C) 2011, 2012, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,8 @@ package EL.Utils is
    --  in <b>Into</b> (only the <b>Source</b> properties will be evaluated).
    procedure Expand (Source  : in Util.Properties.Manager'Class;
                      Into    : in out Util.Properties.Manager'Class;
+                     Context : in EL.Contexts.ELContext'Class);
+   procedure Expand (Config  : in out Util.Properties.Manager'Class;
                      Context : in EL.Contexts.ELContext'Class);
 
    --  Evaluate the possible EL expressions used in <b>Value</b> and return the
