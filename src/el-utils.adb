@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011, 2012, 2017, 2018 Stephane Carrez
+--  Copyright (C) 2011, 2012, 2017, 2018, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,11 @@ package body EL.Utils is
    --  The logger
    Log : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("EL.Utils");
 
+   procedure Expand (Source  : in Util.Properties.Manager'Class;
+                     Into    : in out Util.Properties.Manager'Class;
+                     Context : in EL.Contexts.ELContext'Class;
+                     Copy    : in Boolean);
+
    --  ------------------------------
    --  Expand the properties stored in <b>Source</b> by evaluating the EL expressions
    --  used in the property values.  The EL context passed in <b>Context</b> can be used
@@ -43,7 +48,8 @@ package body EL.Utils is
    --  ------------------------------
    procedure Expand (Source  : in Util.Properties.Manager'Class;
                      Into    : in out Util.Properties.Manager'Class;
-                     Context : in EL.Contexts.ELContext'Class) is
+                     Context : in EL.Contexts.ELContext'Class;
+                     Copy    : in Boolean) is
 
       function Expand (Value   : in String;
                        Context : in EL.Contexts.ELContext'Class) return EL.Objects.Object;
@@ -143,11 +149,7 @@ package body EL.Utils is
                          Item : in Util.Properties.Value) is
          Value : constant String := Util.Properties.To_String (Item);
       begin
-         if Util.Strings.Index (Value, '{') = 0 or Util.Strings.Index (Value, '}') = 0 then
-            Log.Debug ("Adding config {0} = {1}", Name, Value);
-
-            Into.Set_Value (Name, Item);
-         else
+         if Util.Strings.Index (Value, '{') > 0 or else Util.Strings.Index (Value, '}') > 0 then
             declare
                New_Value : constant Object := Expand (Value, Local_Context);
             begin
@@ -159,6 +161,10 @@ package body EL.Utils is
                   Into.Set_Value (Name, New_Value);
                end if;
             end;
+         elsif Copy then
+            Log.Debug ("Adding config {0} = {1}", Name, Value);
+
+            Into.Set_Value (Name, Item);
          end if;
       end Process;
 
@@ -168,6 +174,19 @@ package body EL.Utils is
       Local_Context.Set_Resolver (Resolver'Unchecked_Access);
 
       Source.Iterate (Process'Access);
+   end Expand;
+
+   procedure Expand (Config  : in out Util.Properties.Manager'Class;
+                     Context : in EL.Contexts.ELContext'Class) is
+   begin
+      Expand (Config, Config, Context, False);
+   end Expand;
+
+   procedure Expand (Source  : in Util.Properties.Manager'Class;
+                     Into    : in out Util.Properties.Manager'Class;
+                     Context : in EL.Contexts.ELContext'Class) is
+   begin
+      Expand (Source, Into, Context, True);
    end Expand;
 
    --  ------------------------------
