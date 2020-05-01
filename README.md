@@ -16,6 +16,14 @@ Unified Expression Language shared by the JSP 2.1 and JSF 1.2 technologies.
 See Expression Language specification in JSR245
 (https://jcp.org/en/jsr/summary?id=245)
 
+# Version 1.8.0 - May 2020
+
+* New Expand procedure to expand the properties in place
+
+(Other versions)[NEWS]
+
+# Build
+
 Build with the following commands:
 ```
    ./configure
