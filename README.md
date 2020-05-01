@@ -4,9 +4,9 @@
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
 [![Test Status](https://img.shields.io/jenkins/t/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
 [![codecov](https://codecov.io/gh/stcarrez/ada-el/branch/master/graph/badge.svg)](https://codecov.io/gh/stcarrez/ada-el)
-[![Download](https://img.shields.io/badge/download-1.7.0-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.7.0.tar.gz)
+[![Download](https://img.shields.io/badge/download-1.7.0-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.0.tar.gz)
 [![License](https://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
-![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.7.0.svg)
+![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.0.svg)
 
 This Ada05 library provides the support for a simple Expression Language
 close to the Java Unified Expression Language (EL).
@@ -15,6 +15,12 @@ The API provided by the EL library is inspired from the Java
 Unified Expression Language shared by the JSP 2.1 and JSF 1.2 technologies.
 See Expression Language specification in JSR245
 (https://jcp.org/en/jsr/summary?id=245)
+
+The EL expression is intensively used in web development applications built
+on top of various Java technologies but also on top of
+[Ada Web Application](https://github.com/stcarrez/ada-awa)
+and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
+
 
 ## Version 1.8.0 - May 2020
 
