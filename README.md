@@ -20,7 +20,7 @@ See Expression Language specification in JSR245
 
 * New Expand procedure to expand the properties in place
 
-[NEWS](Other versions)
+[Other versions](https://github.com/stcarrez/ada-el/NEWS)
 
 # Build
 
