@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Proc_In -- Procedure Binding with 1 in argument
---  Copyright (C) 2010, 2011, 2012 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2012, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Util.Beans.Objects;
 
 package body EL.Methods.Proc_In is
 
@@ -63,7 +64,7 @@ package body EL.Methods.Proc_In is
       declare
          Proxy  : constant Binding_Access := Binding (Method.Binding.all)'Access;
       begin
-         Proxy.Method (Method.Object, Param);
+         Proxy.Method (Util.Beans.Objects.To_Bean (Method.Object), Param);
       end;
    end Execute;
 
