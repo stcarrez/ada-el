@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Func_1 -- Function Bindings with 1 argument
---  Copyright (C) 2010, 2011, 2012 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2012, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Util.Beans.Objects;
 package body EL.Methods.Func_1 is
 
    use EL.Expressions;
@@ -62,9 +62,11 @@ package body EL.Methods.Func_1 is
          with "Invalid signature for method '" & Info.Binding.Name.all & "'";
       end if;
       declare
+         use Util.Beans.Objects;
+         Bean   : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Info.Object);
          Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
       begin
-         return Proxy.Method (Info.Object.all, Param);
+         return Proxy.Method (Bean.all, Param);
       end;
    end Execute;
 
