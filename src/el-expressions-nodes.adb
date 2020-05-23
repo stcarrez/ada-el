@@ -492,11 +492,13 @@ package body EL.Expressions.Nodes is
       use Util.Beans.Methods;
       use type Util.Strings.Name_Access;
 
-      Var  : constant Object := Node.Variable.Get_Value (Context);
-      Bean : constant access Util.Beans.Basic.Readonly_Bean'Class := To_Bean (Var);
+      Result : Method_Info;
+      Bean   : access Util.Beans.Basic.Readonly_Bean'Class;
    begin
+      Result.Object := Node.Variable.Get_Value (Context);
+      Bean := To_Bean (Result.Object);
       if Bean = null then
-         if EL.Objects.Is_Null (Var) then
+         if EL.Objects.Is_Null (Result.Object) then
             raise Invalid_Variable with "Variable '" & Node.Get_Variable_Name & "' not found";
          else
             raise Invalid_Variable with "Variable '" & Node.Get_Variable_Name & "' has no method";
@@ -509,13 +511,11 @@ package body EL.Expressions.Nodes is
          declare
             MBean    : constant access Method_Bean'Class := Method_Bean (Bean.all)'Access;
             Bindings : constant Method_Binding_Array_Access := MBean.Get_Method_Bindings;
-            Result   : Method_Info;
          begin
             for I in Bindings'Range loop
                if Bindings (I) /= null and then Bindings (I).Name /= null
                  and then Node.Name = Bindings (I).Name.all
                then
-                  Result.Object := Var;
                   Result.Binding := Bindings (I);
                   return Result;
                end if;
@@ -553,11 +553,7 @@ package body EL.Expressions.Nodes is
       if not (Bean.all in Basic.Bean'Class) then
          raise Invalid_Method with "Method '" & Node.Name & "' not found";
       end if;
-      declare
-         VBean : constant access Basic.Bean'Class := Basic.Bean'Class (Bean.all)'Unchecked_Access;
-      begin
-         VBean.Set_Value (Node.Name, Value);
-      end;
+      Basic.Bean'Class (Bean.all).Set_Value (Node.Name, Value);
    end Set_Value;
 
    --  ------------------------------
