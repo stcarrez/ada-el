@@ -1,3 +1,6 @@
+Version 1.8.1   -
+  - Fix compilation issue with GNAT 2020
+
 Version 1.8.0   - May 2020
   - New Expand procedure to expand the properties in place
 
