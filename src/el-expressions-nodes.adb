@@ -19,6 +19,7 @@ with Ada.Unchecked_Deallocation;
 with Ada.Characters.Conversions;
 with EL.Variables;
 with Util.Beans.Methods;
+with Util.Beans.Basic;
 with Util.Strings;
 package body EL.Expressions.Nodes is
 
@@ -514,7 +515,7 @@ package body EL.Expressions.Nodes is
                if Bindings (I) /= null and then Bindings (I).Name /= null
                  and then Node.Name = Bindings (I).Name.all
                then
-                  Result.Object := Bean;
+                  Result.Object := Var;
                   Result.Binding := Bindings (I);
                   return Result;
                end if;
