@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Methods.Proc_2 -- Procedure Binding with 2 arguments
---  Copyright (C) 2010, 2011, 2012 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2012, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Util.Beans.Objects;
 
 package body EL.Methods.Proc_2 is
 
@@ -67,7 +68,7 @@ package body EL.Methods.Proc_2 is
       declare
          Proxy  : constant Binding_Access := Binding (Info.Binding.all)'Access;
       begin
-         Proxy.Method (Info.Object, Param1, Param2);
+         Proxy.Method (Util.Beans.Objects.To_Bean (Info.Object), Param1, Param2);
       end;
    end Execute;
 
