@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Expressions -- Expression Language
---  Copyright (C) 2009, 2010, 2011, 2017 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2017, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,6 @@ with Ada.Strings.Unbounded;
 limited private with EL.Expressions.Nodes;
 with EL.Contexts;
 with Util.Beans.Methods;
-with Util.Beans.Basic;
 package EL.Expressions is
 
    pragma Preelaborate;
@@ -142,7 +141,7 @@ package EL.Expressions is
    type Method_Expression is new EL.Expressions.Expression with private;
 
    type Method_Info is record
-      Object  : access Util.Beans.Basic.Readonly_Bean'Class;
+      Object  : EL.Objects.Object;
       Binding : Util.Beans.Methods.Method_Binding_Access;
    end record;
 
