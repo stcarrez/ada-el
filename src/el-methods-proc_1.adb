@@ -15,6 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Util.Beans.Objects;
 
 package body EL.Methods.Proc_1 is
 
@@ -63,7 +64,7 @@ package body EL.Methods.Proc_1 is
       declare
          Proxy  : constant Binding_Access := Binding (Method.Binding.all)'Access;
       begin
-         Proxy.Method (Method.Object, Param);
+         Proxy.Method (Util.Beans.Objects.To_Bean (Method.Object), Param);
       end;
    end Execute;
 
