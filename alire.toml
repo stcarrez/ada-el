@@ -1,0 +1,18 @@
+description = "Expression Language Library (JSR245)"
+name = "elada"
+version = "1.8.1"
+licenses = ["Apache 2.0"]
+maintainers = ["Stephane.Carrez@gmail.com"]
+maintainers-logins = ["stcarrez"]
+project-files = [".alire/elada.gpr"]
+
+[[actions]]
+type = "post-fetch"
+command = ["rm", "-f", "config.gpr"]
+
+[[depends-on]]
+utilada = "^2.0.0"
+
+[gpr-externals]
+BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
+EL_LIBRARY_TYPE = ["relocatable", "static", "static-pic"]
