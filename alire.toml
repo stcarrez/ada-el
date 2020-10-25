@@ -6,7 +6,7 @@ authors = ["Stephane.Carrez@gmail.com"]
 maintainers = ["Stephane.Carrez@gmail.com"]
 maintainers-logins = ["stcarrez"]
 project-files = [".alire/elada.gpr"]
-tags = ["expressions", "EL"]
+tags = ["expressions", "el"]
 website = "https://gitlab.com/stcarrez/ada-el"
 
 [[actions]]
