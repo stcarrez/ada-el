@@ -9,12 +9,8 @@ project-files = [".alire/elada.gpr"]
 tags = ["expressions", "el"]
 website = "https://gitlab.com/stcarrez/ada-el"
 
-[[actions]]
-type = "post-fetch"
-command = ["rm", "-f", "config.gpr"]
-
 [[depends-on]]
-utilada = "^2.0.0"
+utilada = "^2.3.0"
 
 [gpr-externals]
 BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
