@@ -1,4 +1,4 @@
-Version 1.8.1   -
+Version 1.8.1   - Nov 2020
   - Fix compilation issue with GNAT 2020
 
 Version 1.8.0   - May 2020

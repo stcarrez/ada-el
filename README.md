@@ -4,9 +4,9 @@
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
 [![Test Status](https://img.shields.io/jenkins/t/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
 [![codecov](https://codecov.io/gh/stcarrez/ada-el/branch/master/graph/badge.svg)](https://codecov.io/gh/stcarrez/ada-el)
-[![Download](https://img.shields.io/badge/download-1.8.0-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.0.tar.gz)
+[![Download](https://img.shields.io/badge/download-1.8.1-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.1.tar.gz)
 [![License](https://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
-![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.0.svg)
+![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.1.svg)
 
 This Ada05 library provides the support for a simple Expression Language
 close to the Java Unified Expression Language (EL).
@@ -22,7 +22,8 @@ on top of various Java technologies but also on top of
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
 
-## Version 1.8.0 - May 2020
+## Version 1.8.1   - Nov 2020
+- Fix compilation issue with GNAT 2020
 
 * New Expand procedure to expand the properties in place
 
