@@ -1,0 +1,1 @@
+MODE=distrib EL_LIBRARY_TYPE=relocatable elada.gpr

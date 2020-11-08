@@ -1,11 +1,11 @@
-libada-el (1.5.1) testing; urgency=low
+libelada (1.8.1) unstable; urgency=medium
 
-  * Fix build for XmlAda 2014 and fix Facebook OAuth support
+  * Update for Ada util 1.8.1
 
- -- Stephane Carrez <Stephane.Carrez@gmail.com>  Sat, 17 May 2014 17:27:07 +0200
+ -- Stephane Carrez <Stephane.Carrez@gmail.com>  Sun, 8 Nov 2020 14:08:01 +0100
 
-libada-el (1.5.0) unstable; urgency=low
+libelada (1.7.0) unstable; urgency=medium
 
-  * Initial release to setup a debian library and development package
+  * Update for Ada util 1.6.1
 
- -- Stephane Carrez <Stephane.Carrez@gmail.com>  Fri, 18 Oct 2013 20:33:06 +0200
+ -- Stephane Carrez <Stephane.Carrez@gmail.com>  Sun, 24 Jun 2018 10:08:11 +0200
