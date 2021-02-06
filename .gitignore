@@ -20,3 +20,8 @@ bin/
 obj/
 lib/
 el-aunit.xml
+regtests/results
+cover
+alire
+wiki
+elada.cov
