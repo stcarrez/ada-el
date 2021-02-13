@@ -13,7 +13,7 @@ Homepage: https://github.com/stcarrez/ada-el/
 Vcs-Git: https://github.com/stcarrez/ada-el.git -b debian-gnat-7
 Vcs-Browser: https://github.com/stcarrez/ada-el/tree/debian-gnat-7
 
-Package: libelada1.8.1
+Package: libelada1.8.2
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}

@@ -1,3 +1,9 @@
+libelada (1.8.2) unstable; urgency=medium
+
+  * Update for Ada EL 1.8.2 and rebuild against Ada Util 2.4.0
+
+ -- Stephane Carrez <Stephane.Carrez@gmail.com>  Sat, 13 Feb 2021 16:08:01 +0100
+
 libelada (1.8.1) unstable; urgency=medium
 
   * Update for Ada util 1.8.1
