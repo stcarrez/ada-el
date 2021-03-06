@@ -7,8 +7,8 @@ Build-Depends: debhelper (>= 10), autotools-dev,
  gnat, gnat-9,
 # This line is parsed by debian/rules.
  gprbuild (>= 2015-2),
- libutilada-sys2-dev,
- libutilada-unit2-dev
+ libutilada-sys3-dev,
+ libutilada-unit3-dev
 Standards-Version: 4.1.4
 Homepage: https://github.com/stcarrez/ada-el/
 Vcs-Git: https://github.com/stcarrez/ada-el.gi -b debian-gnat-9
@@ -24,7 +24,7 @@ Description: Ada implementation of Java Unified Expression Language (runtime)
  Refer to the Expression Language specification in JSR245
  (http://jcp.org/en/jsr/summary?id=245)
 
-Package: libelada2-dev
+Package: libelada3-dev
 Section: libdevel
 Architecture: any
 Depends: ${misc:Depends}, ${ada:Depends}
