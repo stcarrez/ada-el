@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL.Contexts -- Contexts for evaluating an expression
---  Copyright (C) 2009, 2010, 2011, 2012, 2018 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2018, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ package EL.Contexts is
 
    use Ada.Strings.Unbounded;
 
-   type ELContext;
+   type ELContext is limited interface;
 
    --  ------------------------------
    --  Expression Resolver
@@ -59,7 +59,6 @@ package EL.Contexts is
    --  Expression Context
    --  ------------------------------
    --  Context information for expression evaluation.
-   type ELContext is limited interface;
    type ELContext_Access is access all ELContext'Class;
 
    --  Retrieves the ELResolver associated with this ELcontext.
