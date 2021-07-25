@@ -22,8 +22,8 @@ on top of various Java technologies but also on top of
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
 
-# Version 1.8.2   - Feb 2021
-- Minor build cleanup
+# Version 1.8.3   - Jul 2021
+- Fix compilation warning with GNAT 2021
 
 [List all versions](https://github.com/stcarrez/ada-el/blob/master/NEWS.md)
 
