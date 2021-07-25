@@ -2,7 +2,7 @@ with "elada_config";
 with "utilada_base";
 
 library project ElAda is
-   Version := "1.8.2";
+   Version := "1.8.3";
    Library_Dir := "lib";
    Library_Type : ElAda_Config.Library_Type_Type := external ("EL_LIBRARY_TYPE", "static");
 
