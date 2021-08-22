@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Functions -- Default function mapper
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  el-functions-default -- Default function mapper
+--  Copyright (C) 2009, 2010, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ package body EL.Functions.Default is
                           Namespace : String;
                           Name      : String) return Function_Access is
       Full_Name : constant String := Namespace & ":" & Name;
-      C : constant Cursor := Mapper.Map.Find (Key => To_Unbounded_String (Full_Name));
+      C : constant Cursor := Mapper.Map.Find (Key => Full_Name);
    begin
       if Has_Element (C) then
          return Element (C);
@@ -54,7 +54,7 @@ package body EL.Functions.Default is
                            Func      : in Function_Access) is
       Full_Name : constant String := Namespace & ":" & Name;
    begin
-      Mapper.Map.Include (Key => To_Unbounded_String (Full_Name), New_Item => Func);
+      Mapper.Map.Include (Key => Full_Name, New_Item => Func);
    end Set_Function;
 
    --  ------------------------------

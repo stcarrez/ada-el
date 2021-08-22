@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Functions -- Default function mapper
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  el-functions-default -- Default function mapper
+--  Copyright (C) 2009, 2010, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +21,8 @@
 --  information when evaluating an expression.  The context provides
 --  a resolver whose role is to find variables given their name.
 
-private with Ada.Strings.Unbounded;
 private with Ada.Containers.Indefinite_Hashed_Maps;
-private with Ada.Strings.Unbounded.Hash;
+private with Ada.Strings.Hash;
 package EL.Functions.Default is
 
    --  ------------------------------
@@ -50,12 +49,11 @@ package EL.Functions.Default is
 
 private
 
-   use Ada.Strings.Unbounded;
 
    package Function_Maps is new
-     Ada.Containers.Indefinite_Hashed_Maps (Key_Type => Unbounded_String,
+     Ada.Containers.Indefinite_Hashed_Maps (Key_Type => String,
                                             Element_Type => Function_Access,
-                                            Hash => Ada.Strings.Unbounded.Hash,
+                                            Hash => Ada.Strings.Hash,
                                             Equivalent_Keys => "=");
 
    type Default_Function_Mapper is new Function_Mapper with record
