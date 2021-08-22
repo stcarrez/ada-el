@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  Parser -- Parser for Expression Language
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018, 2019 Stephane Carrez
+--  el-expressions-parsers -- Parser for Expression Language
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018, 2019, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -116,11 +116,12 @@ package body EL.Expressions.Parser is
       Literal, Node : ELNode_Access;
       C : Wide_Wide_Character;
    begin
+      scan :
       while P.Pos <= P.Expr'Last loop
          C := P.Expr (P.Pos);
          if C = '\' then
             P.Pos := P.Pos + 1;
-            exit when P.Pos > P.Expr'Last;
+            exit scan when P.Pos > P.Expr'Last;
             C := P.Expr (P.Pos);
             Append (P.Token, C);
             P.Pos := P.Pos + 1;
@@ -160,7 +161,7 @@ package body EL.Expressions.Parser is
             Append (P.Token, C);
             P.Pos := P.Pos + 1;
          end if;
-      end loop;
+      end loop scan;
       if Length (P.Token) > 0 then
          Node := Create_Node (P.Token);
          if Literal /= null then
@@ -469,6 +470,7 @@ package body EL.Expressions.Parser is
       Token : Token_Type;
       Node  : ELNode_Access;
    begin
+      scan_unary :
       loop
          Peek (P, Token);
          case Token is
@@ -601,7 +603,7 @@ package body EL.Expressions.Parser is
             when others =>
                raise Invalid_Expression with "Syntax error in expression";
          end case;
-      end loop;
+      end loop scan_unary;
 
    exception
       when others =>
@@ -624,6 +626,7 @@ package body EL.Expressions.Parser is
    procedure Peek (P : in out Parser; Token : out Token_Type) is
       C, C1 : Wide_Wide_Character;
    begin
+      Token := T_UNKNOWN;
       --  If a token was put back, return it.
       if P.Pending_Token /= T_EOL then
          Token := P.Pending_Token;
