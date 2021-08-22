@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Contexts -- Contexts for evaluating an expression
+--  el-contexts -- Contexts for evaluating an expression
 --  Copyright (C) 2009, 2010, 2011, 2012, 2018, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --

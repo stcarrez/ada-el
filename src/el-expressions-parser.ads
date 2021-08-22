@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  el -- Expression Language
---  Copyright (C) 2009, 2010, 2013 Stephane Carrez
+--  el-expressions-parsers -- Parser for Expression Language
+--  Copyright (C) 2009, 2010, 2013, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

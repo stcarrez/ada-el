@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Methods -- Bean methods
---  Copyright (C) 2010 Stephane Carrez
+--  el-methods -- Bean methods
+--  Copyright (C) 2010, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

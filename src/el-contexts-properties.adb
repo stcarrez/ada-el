@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Contexts.Properties -- EL Resolver using util properties
---  Copyright (C) 2011 Stephane Carrez
+--  el-contexts-properties -- EL Resolver using util properties
+--  Copyright (C) 2011, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

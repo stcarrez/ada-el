@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Variables -- Variable mapper
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  el-variables -- Variable mapper
+--  Copyright (C) 2009, 2010, 2011, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

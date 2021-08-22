@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Functions -- Functions to be plugged in expressions
---  Copyright (C) 2009, 2010, 2012 Stephane Carrez
+--  el-functions -- Functions to be plugged in expressions
+--  Copyright (C) 2009, 2010, 2012, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

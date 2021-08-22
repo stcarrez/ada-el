@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Objects -- Generic Typed Data Representation
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  el-objects -- Generic Typed Data Representation
+--  Copyright (C) 2009, 2010, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

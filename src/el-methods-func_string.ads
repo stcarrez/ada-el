@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Methods.Func_String -- Pre-defined binding
---  Copyright (C) 2010 Stephane Carrez
+--  el-methods-func_string -- Pre-defined binding
+--  Copyright (C) 2010, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

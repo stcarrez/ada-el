@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Methods.Proc_2 -- Procedure Binding with 2 arguments
---  Copyright (C) 2010, 2011, 2012, 2013, 2015 Stephane Carrez
+--  el-methods-proc_2 -- Procedure Binding with 2 arguments
+--  Copyright (C) 2010, 2011, 2012, 2013, 2015, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

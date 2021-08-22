@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Contexts -- Default contexts for evaluating an expression
---  Copyright (C) 2009, 2010, 2011, 2015 Stephane Carrez
+--  el-contexts-default -- Default contexts for evaluating an expression
+--  Copyright (C) 2009, 2010, 2011, 2015, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");

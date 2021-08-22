@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL.Expressions -- Expression Language
+--  el-expressions -- Expression Language
 --  Copyright (C) 2009, 2010, 2011, 2017, 2020 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -36,7 +36,7 @@
 
 with EL.Objects;
 with Ada.Finalization;
-with Ada.Strings.Unbounded;
+private with Ada.Strings.Unbounded;
 
 limited private with EL.Expressions.Nodes;
 with EL.Contexts;

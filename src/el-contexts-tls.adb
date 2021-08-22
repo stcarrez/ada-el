@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  EL.Contexts.TLS -- EL context and Thread Local Support
---  Copyright (C) 2015 Stephane Carrez
+--  el-contexts-tls -- EL context and Thread Local Support
+--  Copyright (C) 2015, 2021 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,8 @@
 
 package body EL.Contexts.TLS is
 
-   Context : EL.Contexts.ELContext_Access := null;
-   pragma Thread_Local_Storage (Context);
+   Context : EL.Contexts.ELContext_Access := null with Thread_Local_Storage;
+--   pragma Thread_Local_Storage (Context);
 
    --  ------------------------------
    --  Get the current EL context associated with the current thread.
