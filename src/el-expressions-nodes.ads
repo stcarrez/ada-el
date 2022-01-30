@@ -176,7 +176,7 @@ private package EL.Expressions.Nodes is
 
    --  Evaluate the node and set the value on the associated bean.
    --  Raises Invalid_Variable if the target object is not a bean.
-   --  Raises Invalid_Expression if the target bean is not writeable.
+   --  Raises Invalid_Expression if the target bean is not writable.
    procedure Set_Value (Node    : in ELValue;
                         Context : in ELContext'Class;
                         Value   : in Objects.Object);
