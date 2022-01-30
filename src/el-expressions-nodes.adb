@@ -362,7 +362,7 @@ package body EL.Expressions.Nodes is
             begin
                --  If the returned expression is null, assume the variable was not found.
                --  A variable mapper that returns a null expression is faster than raising
-               --  the No_Variable exception (arround 30us on Intel Core @ 2.6Ghz!).
+               --  the No_Variable exception (around 30us on Intel Core @ 2.6GHz!).
                if not Value.Is_Null then
                   return Value.Get_Value (Context);
                end if;
