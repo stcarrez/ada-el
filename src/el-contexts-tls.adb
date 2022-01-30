@@ -41,7 +41,7 @@ package body EL.Contexts.TLS is
    end Initialize;
 
    --  ------------------------------
-   --  Restore the previouse per-thread EL context.
+   --  Restore the previous per-thread EL context.
    --  ------------------------------
    overriding
    procedure Finalize (Obj : in out TLS_Context) is

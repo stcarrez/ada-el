@@ -55,7 +55,7 @@ private
    overriding
    procedure Initialize (Obj : in out TLS_Context);
 
-   --  Restore the previouse per-thread EL context.
+   --  Restore the previous per-thread EL context.
    overriding
    procedure Finalize (Obj : in out TLS_Context);
 
