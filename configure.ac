@@ -1,5 +1,5 @@
 dnl Autoconf configure script for Ada EL
-dnl Copyright (C) 2001 - 2021 Stephane Carrez
+dnl Copyright (C) 2001 - 2022 Stephane Carrez
 dnl Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 dnl
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,12 +16,13 @@ dnl  limitations under the License.
 dnl 
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(src/el.ads)
+AC_INIT
+AC_CONFIG_SRCDIR([src/el.ads])
 
 # Current release settings
 EL_MAJOR_VERSION=1
 EL_MINOR_VERSION=8
-EL_MICRO_VERSION=3
+EL_MICRO_VERSION=4
 EL_VERSION=$EL_MAJOR_VERSION.$EL_MINOR_VERSION.$EL_MICRO_VERSION
 
 # Set the version number of Ada EL
@@ -33,6 +34,6 @@ AC_SUBST(EL_MICRO_VERSION)
 AM_GNAT_LIBRARY_PROJECT(elada)
 AM_GNAT_FIND_ADA_UTIL([Ada EL])
 
-AC_OUTPUT(
-Makefile.conf elada.gpr elada_tests.gpr
-)
+AC_CONFIG_FILES([Makefile.conf elada.gpr elada_tests.gpr
+])
+AC_OUTPUT
