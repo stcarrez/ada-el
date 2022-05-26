@@ -1,3 +1,6 @@
+Version 1.8.4   - May 2022
+  - Minor internal optimisation and build cleanup
+
 Version 1.8.3   - Jul 2021
   - Fix compilation warning with GNAT 2021
 
