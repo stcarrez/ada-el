@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL testsuite - EL Testsuite
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 
 with EL.Functions;
 with EL.Functions.Default;
-with EL.Expressions;
 with EL.Functions.Namespaces;
 with EL.Variables.Default;
 
