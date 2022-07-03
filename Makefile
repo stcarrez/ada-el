@@ -18,6 +18,9 @@ build-test::	setup
 test:	build
 	bin/el_harness -l $(NAME): -xml el-aunit.xml
 
+samples:
+	$(GNATMAKE) $(GPRFLAGS) -p samples.gpr $(MAKE_ARGS)
+
 install-samples:
 	$(MKDIR) -p $(samplesdir)/samples
 	cp -rp $(srcdir)/samples/*.ad[sb] $(samplesdir)/samples/
@@ -25,3 +28,5 @@ install-samples:
 	cp -p $(srcdir)/config.gpr $(samplesdir)
 
 $(eval $(call ada_library,$(NAME)))
+
+.PHONY: samples
