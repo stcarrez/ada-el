@@ -1,4 +1,3 @@
-with "config";
 with "elada";
 
 project Samples is
@@ -10,15 +9,23 @@ project Samples is
 
    for Source_Dirs use ("samples");
 
-   for Object_Dir use "./" & Config'Object_Dir & "/obj";
-   for Exec_Dir use "./" & Config'Exec_Dir & "/bin";
+   for Object_Dir use Elada'Object_Dir;
+   for Exec_Dir use Elada'Exec_Dir;
 
-   package Binder renames Config.Binder;
+   package binder is
+      case Elada.Mode is
+         when "debug" =>
+            for Default_Switches ("Ada") use ("-Es");
 
-   package Builder renames Config.Builder;
+	 when others =>
+            for Default_Switches ("Ada") use ("-E");
 
-   package Compiler renames Config.Compiler;
+      end case;
+   end binder;
 
-   package Linker renames Config.Linker;
+   package Builder  renames Elada.Builder;
+   package Compiler renames Elada.Compiler;
+   package Linker   renames Elada.Linker;
+   package Ide      renames Elada.Ide;
 
 end Samples;
