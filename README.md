@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/stcarrez/ada-el/branch/master/graph/badge.svg)](https://codecov.io/gh/stcarrez/ada-el)
 [![Download](https://img.shields.io/badge/download-1.8.3-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.3.tar.gz)
 [![License](https://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
+[![GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/stcarrez/ada-el)
 ![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.3.svg)
 
 This Ada05 library provides the support for a simple Expression Language
