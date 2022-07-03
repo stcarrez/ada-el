@@ -1,3 +1,6 @@
+Version 1.8.5   -
+  - Cleanup the examples
+
 Version 1.8.4   - May 2022
   - Minor internal optimisation and build cleanup
 
