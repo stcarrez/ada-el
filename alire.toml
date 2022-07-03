@@ -36,3 +36,6 @@ utilada = "^2.4.1"
 [gpr-externals]
 BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
 EL_LIBRARY_TYPE = ["relocatable", "static", "static-pic"]
+
+[configuration]
+disabled = true
