@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  methods -- Example of Method_Expression
---  Copyright (C) 2010 Free Software Foundation, Inc.
+--  Copyright (C) 2010, 2022 Free Software Foundation, Inc.
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  This file is part of ASF.
@@ -21,13 +21,15 @@
 --  Boston, MA 02111-1307, USA.
 -----------------------------------------------------------------------
 with EL.Expressions;
-with EL.Objects;
 with EL.Contexts.Default;
 with EL.Methods;
 with EL.Methods.Func_String;
 with Ada.Text_IO;
 with Bean;
 procedure Methods is
+
+   procedure Evaluate (Ctx : EL.Contexts.ELContext'Class;
+                       Msg : in String);
 
    use Bean;
    use EL.Methods;

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  bean - A simple bean example
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,6 @@ with Ada.Unchecked_Deallocation;
 package body Bean is
 
    use EL.Objects;
-   use Util.Beans.Methods;
    use EL.Methods;
 
    FIRST_NAME : constant String := "firstName";
@@ -78,7 +77,7 @@ package body Bean is
 
    function Compute (B  : Util.Beans.Basic.Bean'Class;
                      P1 : EL.Objects.Object) return EL.Objects.Object is
-      P : Person := Person (B);
+      pragma Unreferenced (B);
    begin
       return P1;
    end Compute;
@@ -123,7 +122,7 @@ package body Bean is
    overriding
    function Create (Def : in Bean_Definition)
                     return Util.Beans.Basic.Readonly_Bean_Access is
-     Result : Person_Access := new Person;
+      Result : constant Person_Access := new Person;
    begin
       return Result.all'Access;
    end Create;
@@ -133,13 +132,8 @@ package body Bean is
    procedure Destroy (Def  : in Bean_Definition;
                       Bean : in out Util.Beans.Basic.Readonly_Bean_Access) is
    begin
-     null;
+      null;
    end Destroy;
-
-   B : aliased Bean_Definition
-     := Bean_Definition '(Method_Count => 2,
-                          Methods => (Save_Binding.Proxy'Access, null)
-                          );
 
    Binding_Array : aliased constant Util.Beans.Methods.Method_Binding_Array
      := (Save_Binding.Proxy'Access, Print_Binding.Proxy'Access);
