@@ -25,7 +25,6 @@ project Samples is
 
    package Builder  renames Elada.Builder;
    package Compiler renames Elada.Compiler;
-   package Linker   renames Elada.Linker;
    package Ide      renames Elada.Ide;
 
 end Samples;
