@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  EL testsuite - EL Testsuite
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,9 +27,11 @@ package EL.Expressions.Tests is
    end record;
 
    --  Set up performed before each test case
+   overriding
    procedure Set_Up (T : in out Test);
 
    --  Tear down performed after each test case
+   overriding
    procedure Tear_Down (T : in out Test);
 
    procedure Test_Bean_Evaluation (T : in out Test);

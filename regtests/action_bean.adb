@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  Action_Bean - Simple bean with methods that can be called from EL
---  Copyright (C) 2010, 2011 Stephane Carrez
+--  Copyright (C) 2010, 2011, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ package body Action_Bean is
    --  ------------------------------
    --  Get the value identified by the name.
    --  ------------------------------
+   overriding
    function Get_Value (From : Action; Name : String) return EL.Objects.Object is
    begin
       if Name = "count" then
@@ -32,6 +33,7 @@ package body Action_Bean is
    --  ------------------------------
    --  Set the value identified by the name.
    --  ------------------------------
+   overriding
    procedure Set_Value (From  : in out Action;
                         Name  : in String;
                         Value : in EL.Objects.Object) is
@@ -87,6 +89,7 @@ package body Action_Bean is
    --  ------------------------------
    --  Get the EL method bindings exposed by the Action type.
    --  ------------------------------
+   overriding
    function Get_Method_Bindings (From : in Action)
                                  return Util.Beans.Methods.Method_Binding_Array_Access is
       pragma Unreferenced (From);

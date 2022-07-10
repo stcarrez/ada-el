@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  Test_Bean - A simple bean ffor unit tests
---  Copyright (C) 2009, 2010 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,9 +37,11 @@ package Test_Bean is
                            Age : Natural) return Person_Access;
 
    --  Get the value identified by the name.
+   overriding
    function Get_Value (From : Person; Name : String) return EL.Objects.Object;
 
    --  Set the value identified by the name.
+   overriding
    procedure Set_Value (From  : in out Person;
                         Name  : in String;
                         Value : in EL.Objects.Object);

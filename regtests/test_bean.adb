@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  Test_Bean - A simple bean for unit tests
---  Copyright (C) 2009, 2010, 2011 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,6 +36,7 @@ package body Test_Bean is
    end Create_Person;
 
    --  Get the value identified by the name.
+   overriding
    function Get_Value (From : Person; Name : String) return EL.Objects.Object is
    begin
       if Name = FIRST_NAME then
@@ -54,6 +55,7 @@ package body Test_Bean is
    end Get_Value;
 
    --  Set the value identified by the name.
+   overriding
    procedure Set_Value (From  : in out Person;
                         Name  : in String;
                         Value : in EL.Objects.Object) is

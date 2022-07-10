@@ -53,16 +53,16 @@ package body EL.Expressions.Tests is
                           Expr : in String);
 
    --  Set up performed before each test case
+   overriding
    procedure Set_Up (T : in out Test) is
    begin
---        Ada.Text_IO.Put_Line ("Allocate context");
       T.Context := new EL.Contexts.Default.Default_Context;
    end Set_Up;
 
    --  Tear down performed after each test case
+   overriding
    procedure Tear_Down (T : in out Test) is
    begin
---        Ada.Text_IO.Put_Line ("Free context");
       Free (T.Context);
    end Tear_Down;
 
