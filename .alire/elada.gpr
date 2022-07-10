@@ -18,7 +18,6 @@ library project ElAda is
 
    package Builder  renames ElAda_Config.Builder;
    package Compiler renames ElAda_Config.Compiler;
-   package Linker   renames ElAda_Config.Linker;
    package Ide      renames ElAda_Config.Ide;
 
    package Binder is
