@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-expressions-nodes -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017, 2018, 2020, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017, 2018, 2020, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    --  Evaluate a node on a given context.
    --  ------------------------------
+   overriding
    function Get_Value (Expr    : ELUnary;
                        Context : ELContext'Class) return Object is
    begin
@@ -118,6 +119,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    --  Evaluate a node on a given context.
    --  ------------------------------
+   overriding
    function Get_Value (Expr    : ELBinary;
                        Context : ELContext'Class) return Object is
       Left  : constant Object := Expr.Left.Get_Safe_Value (Context);
@@ -158,10 +160,10 @@ package body EL.Expressions.Nodes is
             return Left mod Right;
 
          when EL_LAND =>
-            return To_Object (To_Boolean (Left) and To_Boolean (Right));
+            return To_Object (To_Boolean (Left) and then To_Boolean (Right));
 
          when EL_LOR | EL_OR =>
-            return To_Object (To_Boolean (Left) or To_Boolean (Right));
+            return To_Object (To_Boolean (Left) or else To_Boolean (Right));
 
          when EL_CONCAT =>
             --  If one of the object is null, ignore it.
@@ -172,7 +174,7 @@ package body EL.Expressions.Nodes is
                return Left;
             end if;
             if Get_Type (Left) = TYPE_WIDE_STRING
-              or Get_Type (Right) = TYPE_WIDE_STRING
+              or else Get_Type (Right) = TYPE_WIDE_STRING
             then
                return To_Object (To_Wide_Wide_String (Left)
                                  & To_Wide_Wide_String (Right));
@@ -198,7 +200,7 @@ package body EL.Expressions.Nodes is
       Right : Reduction := Expr.Right.Reduce (Context);
    begin
       --  If at least one value is not constant, return an expression.
-      if Left.Node /= null or Right.Node /= null then
+      if Left.Node /= null or else Right.Node /= null then
          if Left.Node = null then
             Left.Node := new ELObject '(Value => Left.Value,
                                         Ref_Counter => Counters.ONE);
@@ -245,15 +247,15 @@ package body EL.Expressions.Nodes is
 
             when EL_LAND =>
                Left.Value := To_Object (To_Boolean (Left.Value)
-                                        and To_Boolean (Right.Value));
+                                        and then To_Boolean (Right.Value));
 
             when EL_LOR | EL_OR =>
                Left.Value := To_Object (To_Boolean (Left.Value)
-                                        or To_Boolean (Right.Value));
+                                        or else To_Boolean (Right.Value));
 
             when EL_CONCAT =>
                if Get_Type (Left.Value) = TYPE_WIDE_STRING
-                 or Get_Type (Right.Value) = TYPE_WIDE_STRING
+                 or else Get_Type (Right.Value) = TYPE_WIDE_STRING
                then
                   Left.Value := To_Object (To_Wide_Wide_String (Left.Value)
                                     & To_Wide_Wide_String (Right.Value));
@@ -273,6 +275,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    --  Delete the expression tree (calls Delete (ELNode_Access) recursively).
    --  ------------------------------
+   overriding
    procedure Delete (Node : in out ELBinary) is
    begin
       Delete (Node.Left);
@@ -282,6 +285,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    --  Evaluate a node on a given context.
    --  ------------------------------
+   overriding
    function Get_Value (Expr    : ELTernary;
                        Context : ELContext'Class) return Object is
       Cond : constant Object := Expr.Cond.Get_Safe_Value (Context);
@@ -346,6 +350,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    --  Evaluate a node on a given context.
    --  ------------------------------
+   overriding
    function Get_Value (Expr    : ELVariable;
                        Context : ELContext'Class) return Object is
       Mapper   : constant access Variable_Mapper'Class := Context.Get_Variable_Mapper;
@@ -612,6 +617,7 @@ package body EL.Expressions.Nodes is
    --  ------------------------------
    --  Evaluate a node on a given context.
    --  ------------------------------
+   overriding
    function Get_Value (Expr    : ELObject;
                        Context : ELContext'Class) return Object is
       pragma Unreferenced (Context);
@@ -691,7 +697,9 @@ package body EL.Expressions.Nodes is
          Arg1 := Expr.Arg1.Reduce (Context);
       end if;
       if Expr.Func.Of_Type = F_1_ARG then
-         if Arg1.Node = null and Expr.Func.Optimize and Expr.Func.Func1 /= null then
+         if Arg1.Node = null and then Expr.Func.Optimize
+           and then Expr.Func.Func1 /= null
+         then
             Arg1.Value := Expr.Func.Func1 (Arg1.Value);
             return Arg1;
          end if;
@@ -707,8 +715,9 @@ package body EL.Expressions.Nodes is
          Arg2 := Expr.Arg2.Reduce (Context);
       end if;
       if Expr.Func.Of_Type = F_2_ARG then
-         if Arg1.Node = null and Arg2.Node = null and Expr.Func.Optimize
-           and Expr.Func.Func2 /= null
+         if Arg1.Node = null and then Arg2.Node = null
+           and then Expr.Func.Optimize
+           and then Expr.Func.Func2 /= null
          then
             Arg1.Value := Expr.Func.Func2 (Arg1.Value, Arg2.Value);
             return Arg1;
@@ -730,8 +739,10 @@ package body EL.Expressions.Nodes is
          Arg3 := Expr.Arg3.Reduce (Context);
       end if;
       if Expr.Func.Of_Type = F_3_ARG then
-         if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null and Expr.Func.Optimize
-           and Expr.Func.Func3 /= null
+         if Arg1.Node = null and then Arg2.Node = null
+           and then Arg3.Node = null
+           and then Expr.Func.Optimize
+           and then Expr.Func.Func3 /= null
          then
             Arg1.Value := Expr.Func.Func3 (Arg1.Value, Arg2.Value, Arg3.Value);
             return Arg1;
@@ -756,8 +767,9 @@ package body EL.Expressions.Nodes is
       if Expr.Arg4 /= null then
          Arg4 := Expr.Arg4.Reduce (Context);
       end if;
-      if Arg1.Node = null and Arg2.Node = null and Arg3.Node = null
-        and Arg4.Node = null and Expr.Func.Optimize and Expr.Func.Func4 /= null
+      if Arg1.Node = null and then Arg2.Node = null and then Arg3.Node = null
+        and then Arg4.Node = null and then Expr.Func.Optimize
+        and then Expr.Func.Func4 /= null
       then
          Arg1.Value := Expr.Func.Func4 (Arg1.Value, Arg2.Value, Arg3.Value, Arg4.Value);
          return Arg1;

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-expressions -- Expression Language
---  Copyright (C) 2009, 2010, 2011, 2018, 2019, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2018, 2019, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ package body EL.Expressions is
    --  ------------------------------
    function Is_Null (Expr : in Expression'Class) return Boolean is
    begin
-      return Expr.Node = null and Util.Beans.Objects.Is_Null (Expr.Value);
+      return Expr.Node = null and then Util.Beans.Objects.Is_Null (Expr.Value);
    end Is_Null;
 
    --  ------------------------------
@@ -146,6 +146,7 @@ package body EL.Expressions is
    --  ------------------------------
    --  Parse an expression and return its representation ready for evaluation.
    --  ------------------------------
+   overriding
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
                                return Value_Expression is
@@ -205,6 +206,7 @@ package body EL.Expressions is
       return Expr;
    end Reduce_Expression;
 
+   overriding
    procedure Adjust (Object : in out Expression) is
    begin
       if Object.Node /= null then
@@ -212,6 +214,7 @@ package body EL.Expressions is
       end if;
    end Adjust;
 
+   overriding
    procedure Finalize (Object : in out Expression) is
       Node    : EL.Expressions.Nodes.ELNode_Access;
    begin

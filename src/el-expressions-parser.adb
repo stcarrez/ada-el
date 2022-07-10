@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-expressions-parsers -- Parser for Expression Language
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018, 2019, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018, 2019, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -126,7 +126,7 @@ package body EL.Expressions.Parser is
             Append (P.Token, C);
             P.Pos := P.Pos + 1;
 
-         elsif C = '#' or C = '$' then
+         elsif C = '#' or else C = '$' then
             P.Pos := P.Pos + 1;
             if P.Pos > P.Expr'Last then
                raise Invalid_Expression with "Missing '{' to start expression";
@@ -291,7 +291,7 @@ package body EL.Expressions.Parser is
       Parse_Compare (P, Result);
       loop
          Peek (P, Token);
-         exit when Token /= T_EQ and Token /= T_NE;
+         exit when Token /= T_EQ and then Token /= T_NE;
          Parse_Equality (P, Right);
          if Token = T_EQ then
             Result := Create_Node (EL_EQ, Result, Right);
@@ -562,7 +562,7 @@ package body EL.Expressions.Parser is
                         else
                            C := ' ';
                         end if;
-                        if Token /= T_NAME or C /= '(' then
+                        if Token /= T_NAME or else C /= '(' then
                            raise Invalid_Expression with "Missing function name after ':'";
                         end if;
                         Parse_Function (P, Name, To_String (P.Expr (P.Token_Start .. P.Token_End)),
@@ -637,7 +637,7 @@ package body EL.Expressions.Parser is
       --  Skip white spaces
       while P.Pos <= P.Expr'Last loop
          C := P.Expr (P.Pos);
-         exit when C /= ' ' and C /= ' ';
+         exit when C /= ' ';
          P.Pos := P.Pos + 1;
       end loop;
 
@@ -699,8 +699,8 @@ package body EL.Expressions.Parser is
             P.Token_Start := P.Pos - 1;
             while P.Pos <= P.Expr'Last loop
                C1 := P.Expr (P.Pos);
-               exit when not (C1 in 'a' .. 'z' or C1 in 'A' .. 'Z'
-                              or C1 in '0' .. '9' or C1 = '_');
+               exit when not (C1 in 'a' .. 'z' or else C1 in 'A' .. 'Z'
+                              or else C1 in '0' .. '9' or else C1 = '_');
                P.Pos := P.Pos + 1;
             end loop;
             P.Token_End := P.Pos - 1;
@@ -1012,7 +1012,7 @@ package body EL.Expressions.Parser is
       P.Expr   := To_Wide_Wide_String (Expr);
       P.Pos    := P.Expr'First;
       Parse_EL (P, Result);
-      if P.Pos <= P.Expr'Last or P.Pending_Token /= T_EOL then
+      if P.Pos <= P.Expr'Last or else P.Pending_Token /= T_EOL then
          raise Invalid_Expression with "Syntax error at end of expression";
       end if;
 
@@ -1032,7 +1032,7 @@ package body EL.Expressions.Parser is
       P.Expr := Expr;
       P.Pos := P.Expr'First;
       Parse_EL (P, Result);
-      if P.Pos <= P.Expr'Last or P.Pending_Token /= T_EOL then
+      if P.Pos <= P.Expr'Last or else P.Pending_Token /= T_EOL then
          raise Invalid_Expression with "Syntax error at end of expression";
       end if;
 

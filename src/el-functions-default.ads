@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-functions-default -- Default function mapper
---  Copyright (C) 2009, 2010, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,11 +32,13 @@ package EL.Functions.Default is
    type Default_Function_Mapper is new Function_Mapper with private;
 
    --  Find the function knowing its name.
+   overriding
    function Get_Function (Mapper    : Default_Function_Mapper;
                           Namespace : String;
                           Name      : String) return Function_Access;
 
    --  Bind a name to a function.
+   overriding
    procedure Set_Function (Mapper    : in out Default_Function_Mapper;
                            Namespace : in String;
                            Name      : in String;
@@ -48,7 +50,6 @@ package EL.Functions.Default is
                       Size  : EL.Objects.Object) return EL.Objects.Object;
 
 private
-
 
    package Function_Maps is new
      Ada.Containers.Indefinite_Hashed_Maps (Key_Type => String,

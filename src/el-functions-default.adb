@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-functions-default -- Default function mapper
---  Copyright (C) 2009, 2010, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +33,7 @@ package body EL.Functions.Default is
    --  ------------------------------
    --  Find the function knowing its name.
    --  ------------------------------
+   overriding
    function Get_Function (Mapper    : Default_Function_Mapper;
                           Namespace : String;
                           Name      : String) return Function_Access is
@@ -48,6 +49,7 @@ package body EL.Functions.Default is
    --  ------------------------------
    --  Bind a name to a function.
    --  ------------------------------
+   overriding
    procedure Set_Function (Mapper    : in out Default_Function_Mapper;
                            Namespace : in String;
                            Name      : in String;

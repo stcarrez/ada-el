@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-utils -- Utilities around EL
---  Copyright (C) 2011, 2012, 2017, 2018, 2020 Stephane Carrez
+--  Copyright (C) 2011, 2012, 2017, 2018, 2020, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,7 +85,9 @@ package body EL.Utils is
             declare
                Value  : constant String := Into.Get (Name);
             begin
-               if Util.Strings.Index (Value, '{') = 0 or Util.Strings.Index (Value, '}') = 0 then
+               if Util.Strings.Index (Value, '{') = 0
+                 or else Util.Strings.Index (Value, '}') = 0
+               then
                   return Util.Beans.Objects.To_Object (Value);
                end if;
 
@@ -96,7 +98,9 @@ package body EL.Utils is
             declare
                Value  : constant String := Source.Get (Name);
             begin
-               if Util.Strings.Index (Value, '{') = 0 or Util.Strings.Index (Value, '}') = 0 then
+               if Util.Strings.Index (Value, '{') = 0
+                 or else Util.Strings.Index (Value, '}') = 0
+               then
                   return Util.Beans.Objects.To_Object (Value);
                end if;
 

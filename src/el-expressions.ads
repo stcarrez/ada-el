@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-expressions -- Expression Language
---  Copyright (C) 2009, 2010, 2011, 2017, 2020 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2017, 2020, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -120,6 +120,7 @@ package EL.Expressions is
                                return Value_Expression;
 
    --  Parse an expression and return its representation ready for evaluation.
+   overriding
    function Create_Expression (Expr    : String;
                                Context : ELContext'Class)
                                return Value_Expression;
