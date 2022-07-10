@@ -30,7 +30,6 @@ package body Bean is
 
    Null_Object : Object;
 
-
    function Create_Person (First_Name, Last_Name : String;
                            Age : Natural) return Person_Access is
    begin
@@ -40,6 +39,7 @@ package body Bean is
    end Create_Person;
 
    --  Get the value identified by the name.
+   overriding
    function Get_Value (From : Person; Name : String) return EL.Objects.Object is
    begin
       if Name = FIRST_NAME then
@@ -54,6 +54,7 @@ package body Bean is
    end Get_Value;
 
    --  Set the value identified by the name.
+   overriding
    procedure Set_Value (From  : in out Person;
                         Name  : in String;
                         Value : in EL.Objects.Object) is
@@ -138,6 +139,7 @@ package body Bean is
    Binding_Array : aliased constant Util.Beans.Methods.Method_Binding_Array
      := (Save_Binding.Proxy'Access, Print_Binding.Proxy'Access);
 
+   overriding
    function Get_Method_Bindings (From : in Person)
                                  return Util.Beans.Methods.Method_Binding_Array_Access is
    begin
