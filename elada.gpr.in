@@ -14,7 +14,6 @@ library project ElAda is
 
    for Library_Dir use "lib/elada/" & Project'Library_Kind;
    for Object_Dir use "obj/elada/" & Project'Library_Kind;
-   for Exec_Dir use "bin/";
 
    package Builder  renames Config.Builder;
    package Compiler renames Config.Compiler;
