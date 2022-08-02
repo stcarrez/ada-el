@@ -25,3 +25,10 @@ cover
 alire
 wiki
 elada.cov
+*.substvars
+debian/lib*
+debian/.debhelper/
+debian/autoreconf.after
+debian/autoreconf.before
+debian/debhelper-build-stamp
+debian/files
