@@ -4,10 +4,10 @@
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
 [![Test Status](https://img.shields.io/jenkins/t/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
 [![codecov](https://codecov.io/gh/stcarrez/ada-el/branch/master/graph/badge.svg)](https://codecov.io/gh/stcarrez/ada-el)
-[![Download](https://img.shields.io/badge/download-1.8.3-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.3.tar.gz)
+[![Download](https://img.shields.io/badge/download-1.8.5-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.5.tar.gz)
 [![License](https://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
 [![GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/stcarrez/ada-el)
-![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.3.svg)
+![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.5.svg)
 
 This Ada05 library provides the support for a simple Expression Language
 close to the Java Unified Expression Language (EL).
@@ -23,11 +23,8 @@ on top of various Java technologies but also on top of
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
 
-# Version 1.8.5   - Under development
+# Version 1.8.5   - Aug 2022
   - Cleanup the examples
-
-# Version 1.8.4   - May 2022
-  - Minor internal optimisation and build cleanup
 
 [List all versions](https://github.com/stcarrez/ada-el/blob/master/NEWS.md)
 

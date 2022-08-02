@@ -1,4 +1,4 @@
-Version 1.8.5   -
+Version 1.8.5   - Aug 2022
   - Cleanup the examples
 
 Version 1.8.4   - May 2022
