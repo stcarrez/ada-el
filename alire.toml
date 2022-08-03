@@ -31,7 +31,7 @@ and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 """
 
 [[depends-on]]
-utilada = "^2.4.1"
+utilada = "^2.5.0"
 
 [gpr-externals]
 BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
