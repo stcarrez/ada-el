@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL testsuite - EL Testsuite
+--  el-expressions-tests - EL Testsuite
 --  Copyright (C) 2009, 2010, 2011, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -62,5 +62,8 @@ package EL.Expressions.Tests is
    procedure Test_Reduce_Expression (T : in out Test);
 
    procedure Test_Reduce_Expression_Variable (T : in out Test);
+
+   --  Test the method expression.
+   procedure Test_Method_Expression (T : in out Test);
 
 end EL.Expressions.Tests;

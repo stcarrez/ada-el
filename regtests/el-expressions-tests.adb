@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  EL testsuite - EL Testsuite
+--  el-expressions-tests - EL Testsuite
 --  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2018, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -29,6 +29,8 @@ with Util.Log.Loggers;
 with Util.Test_Caller;
 with Util.Measures;
 with Util.Beans.Objects;
+with Util.Serialize.IO.JSON;
+with Util.Beans.Objects.Readers;
 
 package body EL.Expressions.Tests is
 
@@ -48,6 +50,9 @@ package body EL.Expressions.Tests is
    function Format2 (Arg1, Arg2 : EL.Objects.Object) return EL.Objects.Object;
    function Format3 (Arg1, Arg2, Arg3 : EL.Objects.Object) return EL.Objects.Object;
    function Format4 (Arg1, Arg2, Arg3, Arg4 : EL.Objects.Object) return EL.Objects.Object;
+
+   --  Parse a JSON string and return the object.
+   function Parse_JSON (Value : in EL.Objects.Object) return EL.Objects.Object;
 
    procedure Check_Error (T    : in out Test'Class;
                           Expr : in String);
@@ -221,6 +226,9 @@ package body EL.Expressions.Tests is
       Check_Error (T, "#{@}");
       Check_Error (T, "#{name['index'}");
       Check_Error (T, "#{name[1+1]}");
+      Check_Error (T, "#{name:name(12).}");
+      Check_Error (T, "#{name:name(12).abc");
+      Check_Error (T, "#{name:name(12).abc()}");
 
    end Test_Parse_Error;
 
@@ -265,6 +273,22 @@ package body EL.Expressions.Tests is
    begin
       return To_Object ("[" & S1 & "-" & S2 & "-" & S3 & "-" & S4 & "]");
    end Format4;
+
+   --  ------------------------------
+   --  Parse a JSON string and return the object.
+   --  ------------------------------
+   function Parse_JSON (Value : in EL.Objects.Object) return EL.Objects.Object is
+      Content  : constant String := Util.Beans.Objects.To_String (Value);
+      Parser   : Util.Serialize.IO.JSON.Parser;
+      Reader   : Util.Beans.Objects.Readers.Reader;
+   begin
+      Parser.Parse_String (Content, Reader);
+      if Parser.Has_Error then
+         return Util.Beans.Objects.Null_Object;
+      else
+         return Reader.Get_Root;
+      end if;
+   end Parse_JSON;
 
    --  ------------------------------
    --  Test function evaluation
@@ -653,10 +677,36 @@ package body EL.Expressions.Tests is
                                 "Invalid reduction");
    end Test_Reduce_Expression_Variable;
 
+   --  ------------------------------
+   --  Test the method expression.
+   --  ------------------------------
+   procedure Test_Method_Expression (T : in out Test) is
+      Fn : aliased EL.Functions.Default.Default_Function_Mapper;
+      Ns : aliased EL.Functions.Namespaces.NS_Function_Mapper;
+      Var  : aliased EL.Variables.Default.Default_Variable_Mapper;
+   begin
+      --  Register the 'parseJSON' function.
+      Fn.Set_Function (Namespace => "http://code.google.com/p/ada-el",
+                       Name      => "parseJSON",
+                       Func      => Parse_JSON'Access);
+      Ns.Set_Function_Mapper (Fn'Unchecked_Access);
+      Ns.Set_Namespace (Prefix => "fn",
+                        URI    => "http://code.google.com/p/ada-el");
+      T.Context.Set_Function_Mapper (Ns'Unchecked_Access);
+      Var.Bind ("json", Util.Beans.Objects.To_Object (String '("{""command"":""make""}")));
+
+      T.Context.Set_Variable_Mapper (Var'Unchecked_Access);
+
+      --  Create the expression with function call and check the result
+      Check (T, "#{fn:parseJSON(json).command}", "make");
+   end Test_Method_Expression;
+
    package Caller is new Util.Test_Caller (Test, "EL.Expressions");
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
    begin
+      Caller.Add_Test (Suite, "Object method",
+                       Test_Method_Expression'Access);
       --  Test_Bean verifies several methods.  Register several times
       --  to enumerate what is tested.
       Caller.Add_Test (Suite, "Object sizes",
