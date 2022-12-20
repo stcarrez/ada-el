@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-variables -- Variable mapper
---  Copyright (C) 2009, 2010, 2011, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2011, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,18 +43,8 @@ package EL.Variables is
                           Name   : Unbounded_String)
                           return EL.Expressions.Expression is abstract;
 
-   --  Get the Value_Expression that corresponds to the given variable name.
-   function Get_Variable (Mapper : in Variable_Mapper'Class;
-                          Name   : in Unbounded_String)
-                          return EL.Expressions.Value_Expression;
-
    procedure Set_Variable (Mapper : in out Variable_Mapper;
                            Name   : in Unbounded_String;
                            Value  : in EL.Expressions.Expression) is abstract;
-
-   --  Set the variable to the given value expression.
-   procedure Set_Variable (Mapper : in out Variable_Mapper'Class;
-                           Name   : in Unbounded_String;
-                           Value  : in EL.Expressions.Value_Expression);
 
 end EL.Variables;
