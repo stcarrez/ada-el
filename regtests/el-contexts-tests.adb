@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-contexts-tests - Tests the EL contexts
---  Copyright (C) 2011, 2015 Stephane Carrez
+--  Copyright (C) 2011, 2015, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ with EL.Expressions;
 with EL.Contexts.Properties;
 with EL.Contexts.Default;
 with EL.Contexts.TLS;
+with EL.Variables.Default;
 package body EL.Contexts.Tests is
 
    use Util.Tests;
@@ -37,6 +38,8 @@ package body EL.Contexts.Tests is
                        Test_Context_Properties'Access);
       Caller.Add_Test (Suite, "Test EL.Contexts.TLS.Current",
                        Test_Context_TLS'Access);
+      Caller.Add_Test (Suite, "Test EL.Contexts.Guarded_Context",
+                       Test_Guarded_Context'Access);
    end Add_Tests;
 
    --  ------------------------------
@@ -97,5 +100,41 @@ package body EL.Contexts.Tests is
       end;
       T.Assert (EL.Contexts.TLS.Current = null, "The TLS expression context must be null");
    end Test_Context_TLS;
+
+   --  ------------------------------
+   --  Test the EL guarded context.
+   --  ------------------------------
+   procedure Test_Guarded_Context (T : in out Test) is
+      procedure Handle_Exception (E : in Ada.Exceptions.Exception_Occurrence);
+      function Eval (Item : in String) return String;
+
+      Count : Natural := 0;
+
+      procedure Handle_Exception (E : in Ada.Exceptions.Exception_Occurrence) is
+         pragma Unreferenced (E);
+      begin
+         Count := Count + 1;
+      end Handle_Exception;
+
+      Ctx           : aliased EL.Contexts.Default.Default_Context;
+      Var           : aliased EL.Variables.Default.Default_Variable_Mapper;
+      Context       : EL.Contexts.Default.Guarded_Context (Handle_Exception'Access,
+                                                           Ctx'Unchecked_Access);
+
+      function Eval (Item : in String) return String is
+         Expr   : constant Expressions.Expression
+           := EL.Expressions.Create_Expression (Item, Context);
+         Result : constant Util.Beans.Objects.Object := Expr.Get_Value (Context);
+      begin
+         return Util.Beans.Objects.To_String (Result);
+      end Eval;
+
+   begin
+      Ctx.Set_Variable_Mapper (Var'Unchecked_Access);
+
+      Assert_Equals (T, "null", Eval ("#{- bob}"), "Invalid evaluation of #{- bob}");
+      Assert_Equals (T, 1, Count, "No exception raised");
+
+   end Test_Guarded_Context;
 
 end EL.Contexts.Tests;
