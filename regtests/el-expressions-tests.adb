@@ -56,6 +56,8 @@ package body EL.Expressions.Tests is
 
    procedure Check_Error (T    : in out Test'Class;
                           Expr : in String);
+   procedure Check_Bad_Function (T    : in out Test'Class;
+                                 Expr : in String);
 
    --  Set up performed before each test case
    overriding
@@ -89,6 +91,25 @@ package body EL.Expressions.Tests is
       end;
 
    end Check_Error;
+
+   --  Check that evaluating an expression raises an exception
+   procedure Check_Bad_Function (T    : in out Test'Class;
+                                 Expr : in String) is
+      E : Expression;
+   begin
+      begin
+         E := Create_Expression (Context => T.Context.all, Expr => Expr);
+
+         T.Assert (Condition => False,
+                   Message => "Evaluation of '" & Expr & "' should raise an exception");
+
+      exception
+         when EL.Functions.No_Function =>
+            T.Assert (Condition => E.Is_Constant,
+                      Message   => "Invalid expression value");
+      end;
+
+   end Check_Bad_Function;
 
    --  ------------------------------
    --  Check that evaluating an expression returns the expected result
@@ -229,6 +250,14 @@ package body EL.Expressions.Tests is
       Check_Error (T, "#{name:name(12).}");
       Check_Error (T, "#{name:name(12).abc");
       Check_Error (T, "#{name:name(12).abc()}");
+      Check_Error (T, "#{name:name(12).abc()}");
+      Check_Error (T, "#{name:name(12).+}");
+      Check_Error (T, "#{name(12).}");
+      Check_Error (T, "#{name(12).abc");
+      Check_Error (T, "#{name(12).abc()}");
+      Check_Error (T, "#{name(12).abc()}");
+      Check_Error (T, "#{name(12).+}");
+      Check_Error (T, "#{name(12)[1}");
 
    end Test_Parse_Error;
 
@@ -388,11 +417,10 @@ package body EL.Expressions.Tests is
       Check (T, "#{fu:format4(user.age,10,user.age,user.age)}", "[42-10-42-42]");
       Check (T, "#{fu:format4(user.age,10,10,user.age)}", "[42-10-10-42]");
       Check (T, "#{fu:format4(user.age,10,10,10)}", "[42-10-10-10]");
---
---        Check_Error (T, "#{fx:format4(12(");
---        Check_Error (T, "#{fx:format4(12,12(");
---        Check_Error (T, "#{fx:format4(12,12,12(");
---        Check_Error (T, "#{fx:format4(12,12,12,12(");
+
+      --  Check function does not exist
+      Check_Bad_Function (T, "#{fn:unknown(12)}");
+      Check_Bad_Function (T, "#{fmiss:unknown(12)}");
 
       Free (P);
    end Test_Function_Namespace;
@@ -699,6 +727,7 @@ package body EL.Expressions.Tests is
 
       --  Create the expression with function call and check the result
       Check (T, "#{fn:parseJSON(json).command}", "make");
+      Check (T, "#{fn:parseJSON(json)['command']}", "make");
    end Test_Method_Expression;
 
    package Caller is new Util.Test_Caller (Test, "EL.Expressions");
