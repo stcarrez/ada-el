@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-functions -- Functions to be plugged in expressions
---  Copyright (C) 2009, 2010, 2012, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2012, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,17 +77,5 @@ package body EL.Functions is
                           Func4    => Func,
                           Optimize => Optimize));
    end Set_Function;
-
-   --  ------------------------------
-   --  Register some pre-defined functions in the function mapper.
-   --  ------------------------------
-   procedure Register_Predefined (Mapper : in out Function_Mapper'Class) is
-   begin
-      Mapper.Set_Function ("", "int", EL.Objects.Cast_Integer'Access);
-      Mapper.Set_Function ("", "float", EL.Objects.Cast_Float'Access);
---        Mapper.Set_Function ("", "time", EL.Objects.Time.Cast_Time'Access);
---        Mapper.Set_Function ("", "date", EL.Objects.Time.Cast_Time'Access);
-      Mapper.Set_Function ("", "string", EL.Objects.Cast_String'Access);
-   end Register_Predefined;
 
 end EL.Functions;

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-functions -- Functions to be plugged in expressions
---  Copyright (C) 2009, 2010, 2012, 2021 Stephane Carrez
+--  Copyright (C) 2009, 2010, 2012, 2021, 2022 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,8 +103,5 @@ package EL.Functions is
                            Name      : in String;
                            Func      : in Function_4_Access;
                            Optimize  : in Boolean := True);
-
-   --  Register some pre-defined functions in the function mapper.
-   procedure Register_Predefined (Mapper : in out Function_Mapper'Class);
 
 end EL.Functions;
