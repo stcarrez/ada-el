@@ -66,7 +66,7 @@ package body EL.Expressions.Nodes is
       end;
 
    exception
-      when E : EL.Variables.No_Variable =>
+      when E : EL.Variables.No_Variable | EL.Expressions.Invalid_Variable =>
          --  If we can't find the variable, empty predicate must return true.
          if Expr.Kind = EL_EMPTY then
             return To_Object (True);
