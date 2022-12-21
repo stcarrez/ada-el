@@ -1,7 +1,7 @@
 #!/bin/sh
 NAME=elada.cov
 lcov --quiet --base-directory . --directory . -c -o $NAME
-lcov --quiet --remove $NAME "/usr*" -o $NAME
+lcov --quiet --remove $NAME "/usr/lib*" -o $NAME
 lcov --quiet --remove $NAME "/build*" -o $NAME
 lcov --quiet --remove $NAME "/opt*" -o $NAME
 lcov --quiet --remove $NAME "*/adainclude*" -o $NAME
