@@ -524,6 +524,8 @@ package body EL.Expressions.Parser is
                --  name[expr]
                --  name.name[expr]
                --  name(expr,...,expr)
+               --  name(expr,...,expr).name
+               --  name(expr,...,expr)[expr]
                declare
                   C    : Wide_Wide_Character;
                begin
@@ -532,25 +534,9 @@ package body EL.Expressions.Parser is
                   else
                      C := ' ';
                   end if;
-                  if C = '.' then
-                     Result := Create_Variable (P.Expr (P.Token_Start .. P.Token_End));
-
-                     --  Parse one or several property extensions
-                     while C = '.' loop
-                        P.Pos := P.Pos + 1;
-                        Peek (P, Token);
-                        exit when Token /= T_NAME;
-                        Result := Create_Value (Variable => Result,
-                                                Name     => P.Expr (P.Token_Start .. P.Token_End));
-                        if P.Pos <= P.Expr'Last then
-                           C := P.Expr (P.Pos);
-                        else
-                           C := ' ';
-                        end if;
-                     end loop;
 
                      --  Parse a function call
-                  elsif C = ':' then
+                  if C = ':' then
                      declare
                         Name : constant String
                           := To_String (P.Expr (P.Token_Start .. P.Token_End));
@@ -567,15 +553,74 @@ package body EL.Expressions.Parser is
                         end if;
                         Parse_Function (P, Name, To_String (P.Expr (P.Token_Start .. P.Token_End)),
                                         Result);
+
                      end;
+                     if P.Pos > P.Expr'Last then
+                        return;
+                     end if;
+                     C := P.Expr (P.Pos);
+                     if C /= '.' and then C /= '[' then
+                        return;
+                     end if;
+                     if C = '.' then
+                        P.Pos := P.Pos + 1;
+                        Peek (P, Token);
+                        if Token /= T_NAME then
+                           raise Invalid_Expression with "Missing name name after '.'";
+                        end if;
+                     end if;
 
                   --  Parse a function call
                   elsif C = '(' then
                      Parse_Function (P, "", To_String (P.Expr (P.Token_Start .. P.Token_End)),
                                      Result);
+                     if P.Pos > P.Expr'Last then
+                        return;
+                     end if;
+                     C := P.Expr (P.Pos);
+                     if C /= '.' and then C /= '[' then
+                        return;
+                     end if;
+                     if C = '.' then
+                        P.Pos := P.Pos + 1;
+                        Peek (P, Token);
+                        if Token /= T_NAME then
+                           raise Invalid_Expression with "Missing name name after '.'";
+                        end if;
+                     end if;
 
-                  else
+                  elsif C /= '.' then
                      Result := Create_Variable (P.Expr (P.Token_Start .. P.Token_End));
+                  else
+                     Result := null;
+                  end if;
+
+                  if C = '.' then
+                     if Result /= null then
+                        Result := Create_Value (Variable => Result,
+                                                Name => P.Expr (P.Token_Start .. P.Token_End));
+                        if P.Pos > P.Expr'Last then
+                           C := ' ';
+                        else
+                           C := P.Expr (P.Pos);
+                        end if;
+                     else
+                        Result := Create_Variable (P.Expr (P.Token_Start .. P.Token_End));
+                     end if;
+
+                     --  Parse one or several property extensions
+                     while C = '.' loop
+                        P.Pos := P.Pos + 1;
+                        Peek (P, Token);
+                        exit when Token /= T_NAME;
+                        Result := Create_Value (Variable => Result,
+                                                Name     => P.Expr (P.Token_Start .. P.Token_End));
+                        if P.Pos <= P.Expr'Last then
+                           C := P.Expr (P.Pos);
+                        else
+                           C := ' ';
+                        end if;
+                     end loop;
                   end if;
 
                   --  Recognize a basic form of array index.
