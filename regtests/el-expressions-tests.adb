@@ -596,6 +596,27 @@ package body EL.Expressions.Tests is
                     "Value expression should not be readonly");
          end;
       end loop;
+      declare
+         VE : constant Value_Expression := Create_Expression ("#{user.age}", T.Context.all);
+      begin
+         VE.Set_Value (Context => T.Context.all,
+                       Value   => EL.Objects.To_Object (Integer (123)));
+
+         Assert_Equals (T, 123, P.Age, "The value expression did not set the age");
+         T.Assert (not VE.Is_Readonly (T.Context.all),
+                   "Value expression should not be readonly");
+      end;
+      declare
+         VE : constant Value_Expression := Create_Expression ("#{user.age.count}", T.Context.all);
+      begin
+         VE.Set_Value (Context => T.Context.all,
+                       Value   => EL.Objects.To_Object (Integer (123)));
+         T.Fail ("No Invalid_Variable exception was raised");
+
+      exception
+         when Invalid_Variable =>
+            null;
+      end;
       Free (P);
    end Test_Value_Expression;
 
@@ -631,6 +652,19 @@ package body EL.Expressions.Tests is
 
       exception
          when Invalid_Variable =>
+            null;
+      end;
+
+      begin
+         declare
+            VE : constant Value_Expression := Create_Expression ("{1+2}", T.Context.all);
+         begin
+            T.Fail ("No exception was raised for invalid value expression");
+            VE.Set_Value (Context => T.Context.all,
+                          Value   => EL.Objects.To_Object (Integer (2)));
+         end;
+      exception
+         when Invalid_Expression =>
             null;
       end;
    end Test_Invalid_Value_Expression;
