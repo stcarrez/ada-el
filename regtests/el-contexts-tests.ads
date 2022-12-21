@@ -31,4 +31,7 @@ package EL.Contexts.Tests is
    --  Test the EL guarded context.
    procedure Test_Guarded_Context (T : in out Test);
 
+   --  Test the default EL resolver.
+   procedure Test_Resolver_Context (T : in out Test);
+
 end EL.Contexts.Tests;

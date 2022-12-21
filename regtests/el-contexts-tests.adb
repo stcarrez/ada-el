@@ -40,6 +40,8 @@ package body EL.Contexts.Tests is
                        Test_Context_TLS'Access);
       Caller.Add_Test (Suite, "Test EL.Contexts.Guarded_Context",
                        Test_Guarded_Context'Access);
+      Caller.Add_Test (Suite, "Test EL.Contexts.Default_Resolver",
+                       Test_Resolver_Context'Access);
    end Add_Tests;
 
    --  ------------------------------
@@ -136,5 +138,30 @@ package body EL.Contexts.Tests is
       Assert_Equals (T, 1, Count, "No exception raised");
 
    end Test_Guarded_Context;
+
+   --  ------------------------------
+   --  Test the default EL resolver.
+   --  ------------------------------
+   procedure Test_Resolver_Context (T : in out Test) is
+      use EL.Expressions;
+
+      Resolver : aliased EL.Contexts.Default.Default_ELResolver;
+      Ctx      : aliased EL.Contexts.Default.Default_Context;
+   begin
+      Ctx.Set_Resolver (Resolver'Unchecked_Access);
+      Resolver.Register (To_Unbounded_String ("user"),
+                         Util.Beans.Objects.To_Object (Integer (123)));
+      begin
+         declare
+            VE : constant Value_Expression := Create_Expression ("#{user.age}", Ctx);
+         begin
+            VE.Set_Value (Context => Ctx,
+                          Value   => EL.Objects.To_Object (Integer (2)));
+         end;
+      exception
+         when Invalid_Variable =>
+            null;
+      end;
+   end Test_Resolver_Context;
 
 end EL.Contexts.Tests;
