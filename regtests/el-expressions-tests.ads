@@ -66,4 +66,7 @@ package EL.Expressions.Tests is
    --  Test the method expression.
    procedure Test_Method_Expression (T : in out Test);
 
+   --  Test calling Get_Value or Set_Value on un-initialized/empty expression.
+   procedure Test_No_Expression (T : in out Test);
+
 end EL.Expressions.Tests;

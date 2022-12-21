@@ -730,6 +730,36 @@ package body EL.Expressions.Tests is
       Check (T, "#{fn:parseJSON(json)['command']}", "make");
    end Test_Method_Expression;
 
+   --  ------------------------------
+   --  Test calling Get_Value or Set_Value on un-initialized/empty expression.
+   --  ------------------------------
+   procedure Test_No_Expression (T : in out Test) is
+      E : EL.Expressions.Value_Expression;
+      V : Util.Beans.Objects.Object;
+   begin
+      begin
+         E.Set_Value (T.Context.all, V);
+         T.Fail ("Invalid_Expression is not raised");
+
+      exception
+         when Invalid_Expression =>
+            null;
+      end;
+
+      E := E.Reduce_Expression (T.Context.all);
+      begin
+         E.Set_Value (T.Context.all, V);
+         T.Fail ("Invalid_Expression is not raised");
+
+      exception
+         when Invalid_Expression =>
+            null;
+      end;
+
+      V := E.Get_Value (T.Context.all);
+      T.Assert (Util.Beans.Objects.Is_Null (V), "value is not null");
+   end Test_No_Expression;
+
    package Caller is new Util.Test_Caller (Test, "EL.Expressions");
 
    procedure Add_Tests (Suite : in Util.Tests.Access_Test_Suite) is
@@ -772,6 +802,8 @@ package body EL.Expressions.Tests is
                        Test_Reduce_Expression_Variable'Access);
       Caller.Add_Test (Suite, "Test EL.Methods.Proc_1.Is_Valid",
                        Test_Method_Is_Valid'Access);
+      Caller.Add_Test (Suite, "Test EL.Expressions.Get_Value (not init)",
+                       Test_No_Expression'Access);
    end Add_Tests;
 
 end EL.Expressions.Tests;
