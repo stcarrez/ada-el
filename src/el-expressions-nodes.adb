@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-expressions-nodes -- Expression Nodes
---  Copyright (C) 2009, 2010, 2011, 2012, 2013, 2017, 2018, 2020, 2021, 2022 Stephane Carrez
+--  Copyright (C) 2009 - 2023 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -514,7 +514,7 @@ package body EL.Expressions.Nodes is
       --  and look for the binding that matches our method name.
       if Bean.all in Method_Bean'Class then
          declare
-            MBean    : constant access Method_Bean'Class := Method_Bean (Bean.all)'Access;
+            MBean    : constant access Method_Bean'Class := Method_Bean'Class (Bean.all)'Access;
             Bindings : constant Method_Binding_Array_Access := MBean.Get_Method_Bindings;
          begin
             for I in Bindings'Range loop
