@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-contexts-tests - Tests the EL contexts
---  Copyright (C) 2011, 2015, 2022 Stephane Carrez
+--  Copyright (C) 2011, 2015, 2022, 2023 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -157,6 +157,7 @@ package body EL.Contexts.Tests is
          begin
             VE.Set_Value (Context => Ctx,
                           Value   => EL.Objects.To_Object (Integer (2)));
+            T.Fail ("No Invalid_Variable exception was raised");
          end;
       exception
          when Invalid_Variable =>
