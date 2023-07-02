@@ -10,9 +10,9 @@ tags = ["web", "expression", "expander", "parser"]
 website = "https://gitlab.com/stcarrez/ada-el"
 long-description = """
 
-[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
-[![Test Status](https://img.shields.io/jenkins/t/https/jenkins.vacs.fr/Bionic-Ada-EL.svg)](https://jenkins.vacs.fr/job/Bionic-Ada-EL/)
-[![codecov](https://codecov.io/gh/stcarrez/ada-el/branch/master/graph/badge.svg)](https://codecov.io/gh/stcarrez/ada-el)
+[![Build Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/build.json)](https://porion.vacs.fr/porion/projects/view/ada-el/summary)
+[![Test Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/tests.json)](https://porion.vacs.fr/porion/projects/view/ada-el/xunits)
+[![Coverage](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/coverage.json)](https://porion.vacs.fr/porion/projects/view/ada-el/summary)
 
 This Ada05 library provides the support for a simple Expression Language
 close to the Java Unified Expression Language (EL).
@@ -24,8 +24,8 @@ See Expression Language specification in JSR245
 
 The EL expression is intensively used in web development applications built
 on top of various Java technologies but also on top of
-[Ada Web Application](https://github.com/stcarrez/ada-awa)
-and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
+[Ada Web Application](https://gitlab.com/stcarrez/ada-awa)
+and [Ada Server Faces](https://gitlab.com/stcarrez/ada-asf).
 
 
 """
@@ -34,7 +34,7 @@ and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 utilada = "^2.5.0"
 
 [gpr-externals]
-BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
+EL_BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
 EL_LIBRARY_TYPE = ["relocatable", "static", "static-pic"]
 
 [configuration]
