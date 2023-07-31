@@ -1,5 +1,5 @@
 dnl Autoconf configure script for Ada EL
-dnl Copyright (C) 2001 - 2022 Stephane Carrez
+dnl Copyright (C) 2001 - 2023 Stephane Carrez
 dnl Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 dnl
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ AC_CONFIG_SRCDIR([src/el.ads])
 # Current release settings
 EL_MAJOR_VERSION=1
 EL_MINOR_VERSION=8
-EL_MICRO_VERSION=5
+EL_MICRO_VERSION=6
 EL_VERSION=$EL_MAJOR_VERSION.$EL_MINOR_VERSION.$EL_MICRO_VERSION
 
 # Set the version number of Ada EL
