@@ -23,8 +23,10 @@ on top of various Java technologies but also on top of
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
 
-## Version 1.8.5   - Aug 2022
-  - Cleanup the examples
+## Version 1.8.5   - Jul 2023
+  - Fix compilation with GCC 13.1
+  - Fix support for EL expression with functions returning a bean object
+  - Fix Get_Value to handle the Invalid_Variable exception
 
 [List all versions](https://gitlab.com/stcarrez/ada-el/blob/master/NEWS.md)
 
@@ -44,12 +46,12 @@ Build with the following commands:
 
 The samples can be built using:
 ```
-   gnatmake -Psamples
+   gprbuild -Psamples
 ```
    
 The unit tests are built using:
 ```
-   gnatmake -Ptests
+   gprbuild -Ptests
 ```
 
 And unit tests are executed with:

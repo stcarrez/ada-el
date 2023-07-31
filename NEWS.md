@@ -1,3 +1,8 @@
+Version 1.8.5   - Jul 2023
+  - Fix compilation with GCC 13.1
+  - Fix support for EL expression with functions returning a bean object
+  - Fix Get_Value to handle the Invalid_Variable exception
+
 Version 1.8.5   - Aug 2022
   - Cleanup the examples
 
