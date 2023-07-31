@@ -199,7 +199,7 @@ The function will be registered as follows:
    Fm.Set_Function ("year", Year'Access);
 ```
 
-(See [el-functions.ads](blob/master/src/el-functions.ads))
+(See [el-functions.ads](https://github.com/stcarrez/ada-el/blob/master/src/el-functions.ads))
 
 ## EL.Variables
 
