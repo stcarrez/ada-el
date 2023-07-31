@@ -121,7 +121,7 @@ provided:
 
 The `To_`_type_ function will try to convert the value to the target type.
 
-(See [el-objects.ads](../blob/master/src/el-objects.ads) and [util-beans-objects.ads](../../ada-util/blob/master/src/util-beans-objects.ads)) 
+(See [el-objects.ads](blob/master/src/el-objects.ads) and [util-beans-objects.ads](../ada-util/blob/master/src/base/beans/util-beans-objects.ads)) 
 
 ## EL.Beans
 
@@ -145,7 +145,7 @@ The `Bean` interface redefines the `Readonly_Bean` to define the `Set_Value` pro
 This interface should be implemented when the expression evaluator has to modify
 a value.
 
-(See [util-beans-basic.ads](../../ada-util/blob/master/src/util-beans-basic.ads))
+(See [util-beans-basic.ads](../ada-util/blob/master/src/base/beans/util-beans-basic.ads))
 
 ## EL.Contexts
 
@@ -168,7 +168,7 @@ The resolver will resolve the variable to obtain the value from the property nam
 The `EL.Contexts` package defines the `ELResolver` and `ELContext` interfaces.
 The `EL.Contexts.Default` package provides default implementation of these interfaces.
 
-(See [el-contexts.ads](../blob/master/src/el-contexts.ads))
+(See [el-contexts.ads](blob/master/src/el-contexts.ads))
 
 ## EL.Functions
 
@@ -199,7 +199,7 @@ The function will be registered as follows:
    Fm.Set_Function ("year", Year'Access);
 ```
 
-(See [el-functions.ads](../blob/master/src/el-functions.ads))
+(See [el-functions.ads](blob/master/src/el-functions.ads))
 
 ## EL.Variables
 
@@ -215,7 +215,7 @@ be able to use any Java object).
    Ctx.Set_Variable ("user", Joe);
 ```
 
-(See [el-variables.ads](../blob/master/src/el-variables.ads))
+(See [el-variables.ads](blob/master/src/el-variables.ads))
 
 ## EL.Expressions
 
@@ -238,10 +238,10 @@ shared by several threads and evaluated at the same time.
   Val : EL.Objects.Object := E.Get_Value (Ctx);
 ```
 
-(See [el-expressions.ads](../blob/master/src/el-expressions.ads))
+(See [el-expressions.ads](blob/master/src/el-expressions.ads))
 
 # Class Diagram
 
-[[images/Expression.png]]
+[[doc/Expression.png]]
 
 
