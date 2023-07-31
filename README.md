@@ -242,6 +242,6 @@ shared by several threads and evaluated at the same time.
 
 # Class Diagram
 
-[[doc/Expression.png]]
+![Class diagram](doc/Expression.png)
 
 
