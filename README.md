@@ -4,10 +4,10 @@
 [![Build Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/build.json)](https://porion.vacs.fr/porion/projects/view/ada-el/summary)
 [![Test Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/tests.json)](https://porion.vacs.fr/porion/projects/view/ada-el/xunits)
 [![Coverage](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/coverage.json)](https://porion.vacs.fr/porion/projects/view/ada-el/summary)
-[![Download](https://img.shields.io/badge/download-1.8.5-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.5.tar.gz)
+[![Download](https://img.shields.io/badge/download-1.8.6-brightgreen.svg)](http://download.vacs.fr/ada-el/ada-el-1.8.6.tar.gz)
 [![License](https://img.shields.io/badge/license-APACHE2-blue.svg)](LICENSE)
 [![GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/stcarrez/ada-el)
-[![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.5.svg)](Commits)
+[![Commits](https://img.shields.io/github/commits-since/stcarrez/ada-el/1.8.6.svg)](Commits)
 
 This Ada05 library provides the support for a simple Expression Language
 close to the Java Unified Expression Language (EL).
@@ -23,7 +23,7 @@ on top of various Java technologies but also on top of
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
 
-## Version 1.8.5   - Jul 2023
+## Version 1.8.6   - Jul 2023
   - Fix compilation with GCC 13.1
   - Fix support for EL expression with functions returning a bean object
   - Fix Get_Value to handle the Invalid_Variable exception
