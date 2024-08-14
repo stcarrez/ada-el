@@ -2,18 +2,18 @@ with "elada_config";
 with "utilada_base";
 
 library project ElAda is
-   Version := "1.8.6";
+   Version := "1.8.7";
    Library_Dir := "lib";
    Library_Type : ElAda_Config.Library_Type_Type := external ("EL_LIBRARY_TYPE", "static");
    Mode : ElAda_Config.Build_Type := ElAda_Config.Mode;
 
-   for Source_Dirs use ("../src");
+   for Source_Dirs use ("src");
    for Library_Name use "elada";
    for Library_Kind use Library_Type;
    for Library_Version use "lib" & Project'Library_Name & ".so." & Version;
 
-   for Library_Dir use "../lib/elada/" & Project'Library_Kind;
-   for Object_Dir use "../obj/elada/" & Project'Library_Kind;
+   for Library_Dir use "lib/elada/" & Project'Library_Kind;
+   for Object_Dir use "obj/elada/" & Project'Library_Kind;
 
    package Builder  renames ElAda_Config.Builder;
    package Compiler renames ElAda_Config.Compiler;

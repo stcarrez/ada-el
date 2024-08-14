@@ -11,8 +11,6 @@ ChangeLog
 .settings
 configure.lineno
 t.gpr
-elada.gpr
-elada_tests.gpr
 tests.xml
 el-tests.xml
 autom4te.cache

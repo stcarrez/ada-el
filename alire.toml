@@ -1,11 +1,11 @@
 description = "Expression Language Library (JSR245)"
 name = "elada"
-version = "1.8.6"
+version = "1.8.7"
 licenses = "Apache-2.0"
 authors = ["Stephane.Carrez@gmail.com"]
 maintainers = ["Stephane.Carrez@gmail.com"]
 maintainers-logins = ["stcarrez"]
-project-files = [".alire/elada.gpr"]
+project-files = ["elada.gpr"]
 tags = ["web", "expression", "expander", "parser"]
 website = "https://gitlab.com/stcarrez/ada-el"
 long-description = """

@@ -1,0 +1,25 @@
+with "elada_config";
+with "utilada_base";
+with "utilada_sys";
+with "utilada_unit";
+with "elada";
+
+project ElAda_Tests is
+
+   for Languages use ("Ada");
+
+   Mains := ("el_harness.adb");
+
+   for Source_Dirs use ("regtests");
+
+   for Main use Mains;
+
+   for Object_Dir use "./" & ElAda_Config'Object_Dir & "/obj";
+   for Exec_Dir use "./" & ElAda_Config'Exec_Dir & "/bin";
+
+   package Binder renames ElAda_Config.Binder;
+   package Builder renames ElAda_Config.Builder;
+   package Compiler renames ElAda_Config.Compiler;
+   package Linker renames ElAda_Config.Linker;
+
+end ElAda_Tests;

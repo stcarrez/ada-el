@@ -1,4 +1,8 @@
 NAME=elada
+ALIRE=alr --non-interactive
+BUILD_COMMAND=$(ALIRE) build -- $(MAKE_ARGS)
+
+MAKE_ARGS += -XEL_BUILD=$(BUILD) -XPROCESSORS=$(PROCESSORS)
 
 -include Makefile.conf
 
@@ -12,7 +16,7 @@ include Makefile.defaults
 
 # Build executables for all mains defined by the project.
 build-test::	setup
-	$(GNATMAKE) $(GPRFLAGS) -p -P$(NAME)_tests $(MAKE_ARGS)
+	cd regtests && $(BUILD_COMMAND) $(GPRFLAGS) $(MAKE_ARGS)
 
 # Build and run the unit tests
 test:	build
@@ -27,7 +31,7 @@ install-samples:
 	cp -p $(srcdir)/samples.gpr $(samplesdir)
 	cp -p $(srcdir)/config.gpr $(samplesdir)
 
-$(eval $(call ada_library,$(NAME)))
+# $(eval $(call ada_library,$(NAME)))
 $(eval $(call alire_publish,alire.toml,el/elada,elada-$(VERSION).toml))
 
 .PHONY: samples
