@@ -40,21 +40,13 @@ alr with elada
 
 The samples can be built using:
 ```
-   gprbuild -Psamples
+cd samples
+alr build
 ```
    
-The unit tests are built using:
+The unit tests are built and executed using:
 ```
-   make test
-```
-
-And unit tests are executed with:
-```
-   bin/el_harness
-```
-or just
-```
-   make test
+make test
 ```
 
 # Using Ada EL
