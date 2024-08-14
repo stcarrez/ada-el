@@ -1,7 +1,6 @@
 *~
 *.log
 Makefile.conf
-config.status
 CHANGES
 *.cproject
 *.gb_project
@@ -10,10 +9,8 @@ CHANGES
 ChangeLog
 .settings
 configure.lineno
-t.gpr
 tests.xml
 el-tests.xml
-autom4te.cache
 bin/
 obj/
 lib/
