@@ -1,8 +1,6 @@
 NAME=elada
-ALIRE=alr --non-interactive
-BUILD_COMMAND=$(ALIRE) build -- $(MAKE_ARGS)
 
-MAKE_ARGS += -XEL_BUILD=$(BUILD) -XPROCESSORS=$(PROCESSORS)
+MAKE_ARGS += -XEL_BUILD=$(BUILD)
 
 -include Makefile.conf
 
@@ -31,7 +29,7 @@ install-samples:
 	cp -p $(srcdir)/samples.gpr $(samplesdir)
 	cp -p $(srcdir)/config.gpr $(samplesdir)
 
-# $(eval $(call ada_library,$(NAME)))
+$(eval $(call ada_library,$(NAME)))
 $(eval $(call alire_publish,alire.toml,el/elada,elada-$(VERSION).toml))
 
 .PHONY: samples
