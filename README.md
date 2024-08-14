@@ -22,6 +22,8 @@ on top of various Java technologies but also on top of
 [Ada Web Application](https://github.com/stcarrez/ada-awa)
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
+## Version 1.8.7   - Under development
+  - Cleanup build to drop configure
 
 ## Version 1.8.6   - Jul 2023
   - Fix compilation with GCC 13.1
@@ -36,14 +38,6 @@ and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 alr with elada
 ```
 
-## Build with configure
-
-Build with the following commands:
-```
-   ./configure
-   make
-```
-
 The samples can be built using:
 ```
    gprbuild -Psamples
@@ -51,7 +45,7 @@ The samples can be built using:
    
 The unit tests are built using:
 ```
-   gprbuild -Ptests
+   make test
 ```
 
 And unit tests are executed with:
