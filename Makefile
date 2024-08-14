@@ -23,7 +23,7 @@ test:	build
 	bin/el_harness -l $(NAME): -xml el-aunit.xml
 
 samples:
-	$(GNATMAKE) $(GPRFLAGS) -p samples.gpr $(MAKE_ARGS)
+	cd samples && $(BUILD_COMMAND) $(GPRFLAGS) $(MAKE_ARGS)
 
 install-samples:
 	$(MKDIR) -p $(samplesdir)/samples
