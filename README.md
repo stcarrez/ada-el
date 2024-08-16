@@ -23,7 +23,7 @@ on top of various Java technologies but also on top of
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
 ## Version 1.8.7   - Under development
-  - Cleanup build to drop configure
+  - Cleanup build environment to drop configure
 
 ## Version 1.8.6   - Jul 2023
   - Fix compilation with GCC 13.1
