@@ -1,4 +1,8 @@
 NAME=elada
+VERSION=1.8.7
+
+DIST_DIR=ada-el-$(VERSION)
+DIST_FILE=ada-el-$(VERSION).tar.gz
 
 MAKE_ARGS += -XEL_BUILD=$(BUILD)
 
@@ -13,7 +17,7 @@ SHARED_MAKE_ARGS += -XLIBRARY_TYPE=relocatable
 include Makefile.defaults
 
 # Build executables for all mains defined by the project.
-build-test::	setup
+build-test::	lib-setup
 	cd regtests && $(BUILD_COMMAND) $(GPRFLAGS) $(MAKE_ARGS)
 
 # Build and run the unit tests
