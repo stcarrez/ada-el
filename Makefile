@@ -33,7 +33,7 @@ install-samples:
 	cp -p $(srcdir)/samples.gpr $(samplesdir)
 	cp -p $(srcdir)/config.gpr $(samplesdir)
 
-$(eval $(call ada_library,$(NAME)))
+$(eval $(call ada_library,$(NAME),.))
 $(eval $(call alire_publish,alire.toml,el/elada,elada-$(VERSION).toml))
 
 .PHONY: samples
