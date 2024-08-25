@@ -1,4 +1,4 @@
-Version 1.8.7   - Under development
+Version 1.8.7   - Aug 2024
   - Cleanup build environment to drop configure
 
 Version 1.8.6   - Jul 2023

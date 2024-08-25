@@ -22,7 +22,7 @@ on top of various Java technologies but also on top of
 [Ada Web Application](https://github.com/stcarrez/ada-awa)
 and [Ada Server Faces](https://github.com/stcarrez/ada-asf).
 
-## Version 1.8.7   - Under development
+## Version 1.8.7   - Aug 2024
   - Cleanup build environment to drop configure
 
 ## Version 1.8.6   - Jul 2023
