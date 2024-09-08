@@ -3,6 +3,7 @@ NAME=elada.cov
 alr exec -- lcov --quiet --base-directory . --directory . \
    --no-external \
    --exclude '*/b__*.adb' \
+   --exclude '*/<unknown>' \
    --exclude '*/samples/*' \
    --exclude '*/regtests*'  -c -o $NAME
 rm -rf cover
