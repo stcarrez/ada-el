@@ -1,6 +1,7 @@
 # Expression Language
 
 [![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/elada.json)](https://alire.ada.dev/crates/elada)
+[![Ada 2012](https://img.shields.io/badge/2012-inside-green?logo=ada&logoColor=white&logoSize=auto)](https://adaic.org/ada-resources/standards/ada12)
 [![Build Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/build.json)](https://porion.vacs.fr/porion/projects/view/ada-el/summary)
 [![Test Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/tests.json)](https://porion.vacs.fr/porion/projects/view/ada-el/xunits)
 [![Coverage](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ada-el/badges/coverage.json)](https://porion.vacs.fr/porion/projects/view/ada-el/summary)
