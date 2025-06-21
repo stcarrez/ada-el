@@ -1,5 +1,5 @@
 NAME=elada
-VERSION=1.8.7
+VERSION=1.8.8
 
 DIST_DIR=ada-el-$(VERSION)
 DIST_FILE=ada-el-$(VERSION).tar.gz

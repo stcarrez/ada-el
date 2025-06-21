@@ -1,6 +1,6 @@
 description = "Expression Language Library (JSR245)"
 name = "elada_tests"
-version = "1.8.7"
+version = "1.8.8"
 licenses = "Apache-2.0"
 authors = ["Stephane.Carrez@gmail.com"]
 maintainers = ["Stephane.Carrez@gmail.com"]
@@ -16,7 +16,7 @@ Build and unit tests for elada
 
 [[depends-on]]
 elada = "*"
-utilada_unit = "^2.5.0"
+utilada_unit = "^2.8.0"
 
 [configuration]
 disabled = true
