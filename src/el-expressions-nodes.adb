@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  el-expressions-nodes -- Expression Nodes
---  Copyright (C) 2009 - 2023 Stephane Carrez
+--  Copyright (C) 2009 - 2026 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --  SPDX-License-Identifier: Apache-2.0
 -----------------------------------------------------------------------
@@ -850,7 +850,7 @@ package body EL.Expressions.Nodes is
       Result : constant ELValue_Access := new ELValue '(Len         => Name'Length,
                                                         Variable    => Variable,
                                                         Ref_Counter => Counters.ONE,
-                                                        Name        => (others => <>));
+                                                        Name        => [others => <>]);
       Pos    : Positive := 1;
    begin
       for I in Name'Range loop

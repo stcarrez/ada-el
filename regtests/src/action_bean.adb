@@ -71,9 +71,9 @@ package body Action_Bean is
      new Proc_Action.Bind (Bean => Action, Method => Print, Name => "print");
 
    Binding_Array : aliased constant Util.Beans.Methods.Method_Binding_Array
-     := (Notify_Binding.Proxy'Access,
+     := [Notify_Binding.Proxy'Access,
          Print_Binding.Proxy'Access,
-         Notify_Count_Binding.Proxy'Access);
+         Notify_Count_Binding.Proxy'Access];
 
    --  ------------------------------
    --  Get the EL method bindings exposed by the Action type.
